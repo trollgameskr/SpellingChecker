@@ -66,6 +66,12 @@ namespace SpellingChecker.Services
                 }
             }
 
+            // At least one modifier is required for global hotkeys
+            if (modifiers == 0)
+            {
+                return false;
+            }
+
             // Parse the key
             try
             {
