@@ -31,8 +31,8 @@ namespace SpellingChecker.Models
     {
         public string ApiKey { get; set; } = string.Empty;
         public string ApiEndpoint { get; set; } = "https://api.openai.com/v1";
-        public string SpellingCorrectionHotkey { get; set; } = "Ctrl+Shift+Y";
-        public string TranslationHotkey { get; set; } = "Ctrl+Shift+T";
+        public string SpellingCorrectionHotkey { get; set; } = "Ctrl+Shift+Alt+Y";
+        public string TranslationHotkey { get; set; } = "Ctrl+Shift+Alt+T";
         public bool AutoStartWithWindows { get; set; } = true;
         public string Model { get; set; } = "gpt-4o-mini";
     }

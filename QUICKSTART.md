@@ -52,7 +52,7 @@ That's it! You're ready to use the app.
 ### Spelling Correction
 
 1. **Select text** anywhere (Word, Notepad, Chrome, etc.)
-2. Press **Ctrl+Shift+Y**
+2. Press **Ctrl+Shift+Alt+Y**
 3. A notification will appear: "Processing..." - wait a moment for the AI to process
 4. A popup will show:
    - **Original**: Your text
@@ -68,7 +68,7 @@ Result:   "This is a test sentence with errors."
 ### Translation
 
 1. **Select Korean or English text**
-2. Press **Ctrl+Shift+T**
+2. Press **Ctrl+Shift+Alt+T**
 3. A notification will appear: "Processing..." - wait a moment for the AI to translate
 4. A popup will show:
    - **Original**: Your text
@@ -103,27 +103,27 @@ Result:   "오늘 어떻게 지내세요?"
 **Writing Emails**:
 1. Write your email in Korean
 2. Select the text
-3. Press Ctrl+Shift+T to translate to English
-4. Press Ctrl+Shift+Y to correct any mistakes
+3. Press Ctrl+Shift+Alt+T to translate to English
+4. Press Ctrl+Shift+Alt+Y to correct any mistakes
 5. Copy and send!
 
 **Editing Documents**:
 1. Write your document
 2. Select paragraphs one at a time
-3. Press Ctrl+Shift+Y to correct
+3. Press Ctrl+Shift+Alt+Y to correct
 4. Review and replace
 
 **Learning Languages**:
 1. Write in your target language
-2. Press Ctrl+Shift+Y to see corrections
+2. Press Ctrl+Shift+Alt+Y to see corrections
 3. Compare original and corrected versions
 
 ### 3. Keyboard Shortcuts
 
 | Shortcut | Function |
 |----------|----------|
-| Ctrl+Shift+Y | Spelling correction |
-| Ctrl+Shift+T | Translation |
+| Ctrl+Shift+Alt+Y | Spelling correction |
+| Ctrl+Shift+Alt+T | Translation |
 
 ### 4. System Tray Menu
 

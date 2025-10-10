@@ -13,8 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Automatic language detection for Korean and English
 - Korean-to-English and English-to-Korean translation
 - Global hotkeys:
-  - Ctrl+Shift+Y for spelling correction
-  - Ctrl+Shift+T for translation
+  - Ctrl+Shift+Alt+Y for spelling correction
+  - Ctrl+Shift+Alt+T for translation
 - System tray integration
 - Background operation mode
 - Settings window for API configuration
@@ -26,8 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MIT License
 
 ### Features
-- **Spelling Correction**: Select any text in any application and press Ctrl+Shift+Y to get AI-powered corrections
-- **Translation**: Select text and press Ctrl+Shift+T to translate between Korean and English
+- **Spelling Correction**: Select any text in any application and press Ctrl+Shift+Alt+Y to get AI-powered corrections
+- **Translation**: Select text and press Ctrl+Shift+Alt+T to translate between Korean and English
 - **Privacy**: All settings encrypted locally, no data stored
 - **Performance**: Uses gpt-4o-mini model for fast responses
 - **User Experience**: Intuitive popup UI, easy copy and replace functions

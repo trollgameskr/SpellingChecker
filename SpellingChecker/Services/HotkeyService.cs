@@ -34,19 +34,19 @@ namespace SpellingChecker.Services
         {
             _windowHandle = windowHandle;
 
-            // Ctrl+Shift+Y for spelling correction
+            // Ctrl+Shift+Alt+Y for spelling correction
             var spellingRegistered = RegisterHotKey(
                 _windowHandle,
                 SPELLING_HOTKEY_ID,
-                MOD_CONTROL | MOD_SHIFT,
+                MOD_CONTROL | MOD_SHIFT | MOD_ALT,
                 (uint)KeyInterop.VirtualKeyFromKey(Key.Y)
             );
 
-            // Ctrl+Shift+T for translation
+            // Ctrl+Shift+Alt+T for translation
             var translationRegistered = RegisterHotKey(
                 _windowHandle,
                 TRANSLATION_HOTKEY_ID,
-                MOD_CONTROL | MOD_SHIFT,
+                MOD_CONTROL | MOD_SHIFT | MOD_ALT,
                 (uint)KeyInterop.VirtualKeyFromKey(Key.T)
             );
 

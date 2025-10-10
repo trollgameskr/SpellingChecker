@@ -9,8 +9,8 @@
 **Workflow**:
 1. Write your email in Korean
 2. Select the entire email body
-3. Press `Ctrl+Shift+T` to translate to English
-4. Press `Ctrl+Shift+Y` to polish the English version
+3. Press `Ctrl+Shift+Alt+T` to translate to English
+4. Press `Ctrl+Shift+Alt+Y` to polish the English version
 5. Copy the result
 
 **Example**:
@@ -20,12 +20,12 @@ Original (Korean):
 회의 일정을 다음주 월요일로 변경하고 싶습니다.
 가능하신지 확인 부탁드립니다.
 
-After Translation (Ctrl+Shift+T):
+After Translation (Ctrl+Shift+Alt+T):
 Hello,
 I would like to change the meeting schedule to next Monday.
 Please confirm if this is possible.
 
-After Correction (Ctrl+Shift+Y):
+After Correction (Ctrl+Shift+Alt+Y):
 Hello,
 I would like to reschedule our meeting to next Monday.
 Please let me know if this works for you.
@@ -43,7 +43,7 @@ Please let me know if this works for you.
 **Workflow**:
 ```
 1. Select first paragraph
-2. Ctrl+Shift+Y
+2. Ctrl+Shift+Alt+Y
 3. Review correction → Replace if good
 4. Select next paragraph
 5. Repeat
@@ -61,10 +61,10 @@ Please let me know if this works for you.
 
 **Workflow for Korean learners**:
 1. Write a sentence in Korean
-2. Press `Ctrl+Shift+Y` to see corrections
+2. Press `Ctrl+Shift+Alt+Y` to see corrections
 3. Compare original vs corrected
 4. Learn from the differences
-5. Press `Ctrl+Shift+T` to see English translation
+5. Press `Ctrl+Shift+Alt+T` to see English translation
 
 **Example learning session**:
 ```
@@ -85,7 +85,7 @@ Lesson learned:
 1. Copy the Korean message
 2. Paste into any text field
 3. Select the text
-4. Press `Ctrl+Shift+T`
+4. Press `Ctrl+Shift+Alt+T`
 5. Read the English translation
 
 **Speed tip**: Keep Notepad open for quick paste-translate-read operations.
@@ -96,14 +96,14 @@ Lesson learned:
 
 **Workflow**:
 1. Write in your primary language
-2. Translate with `Ctrl+Shift+T`
-3. Correct both versions with `Ctrl+Shift+Y`
+2. Translate with `Ctrl+Shift+Alt+T`
+3. Correct both versions with `Ctrl+Shift+Alt+Y`
 4. Post both versions
 
 **Example**:
 ```
 Korean post: 오늘 새로운 프로젝트를 시작했습니다! 🚀
-English version (Ctrl+Shift+T): I started a new project today! 🚀
+English version (Ctrl+Shift+Alt+T): I started a new project today! 🚀
 ```
 
 ## Configuration Examples
@@ -256,7 +256,7 @@ Auto Start: Yes
 **Standard workflow**:
 ```
 1. Select text (mouse)
-2. Ctrl+Shift+Y (keyboard)
+2. Ctrl+Shift+Alt+Y (keyboard)
 3. Review popup (visual)
 4. Click Replace (mouse)
 ```
@@ -264,7 +264,7 @@ Auto Start: Yes
 **Faster workflow**:
 ```
 1. Triple-click to select paragraph (mouse)
-2. Ctrl+Shift+Y
+2. Ctrl+Shift+Alt+Y
 3. Quick review
 4. Click Replace
 5. Triple-click next paragraph
@@ -274,7 +274,7 @@ Auto Start: Yes
 **Power user workflow**:
 ```
 1. Keep one hand on mouse for selecting
-2. Keep other hand on Ctrl+Shift+Y/T position
+2. Keep other hand on Ctrl+Shift+Alt+Y/T position
 3. Use Tab to switch between popup buttons
 4. Press Enter to activate selected button
 ```
@@ -297,14 +297,14 @@ Original:
 
 Workflow:
 1. Select "This is a test."
-   → Ctrl+Shift+Y (correction only)
+   → Ctrl+Shift+Alt+Y (correction only)
 
 2. Select "이것은 테스트입니다."
-   → Ctrl+Shift+Y (correction)
-   → Or Ctrl+Shift+T (if need English version)
+   → Ctrl+Shift+Alt+Y (correction)
+   → Or Ctrl+Shift+Alt+T (if need English version)
 
 3. Select "More English here."
-   → Ctrl+Shift+Y (correction only)
+   → Ctrl+Shift+Alt+Y (correction only)
 ```
 
 ## Performance Optimization
@@ -359,7 +359,7 @@ Workflow:
 ```
 1. Compose email
 2. Select body before sending
-3. Ctrl+Shift+Y for final check
+3. Ctrl+Shift+Alt+Y for final check
 4. Send with confidence
 ```
 
@@ -403,8 +403,8 @@ Workflow:
 
 **Solution**:
 ```
-1. Translate first (Ctrl+Shift+T)
-2. Then correct the translation (Ctrl+Shift+Y)
+1. Translate first (Ctrl+Shift+Alt+T)
+2. Then correct the translation (Ctrl+Shift+Alt+Y)
 3. This gives more natural target language
 ```
 
