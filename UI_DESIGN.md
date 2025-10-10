@@ -35,7 +35,7 @@ The application uses a modern, clean design with minimal UI footprint. It runs e
 
 ### 2. Settings Window
 
-**Dimensions:** 600x450 pixels
+**Dimensions:** 600x520 pixels
 **Position:** Center screen
 **Style:** Modern, clean, white background
 
