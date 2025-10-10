@@ -103,27 +103,35 @@ Result:   "오늘 어떻게 지내세요?"
 **Writing Emails**:
 1. Write your email in Korean
 2. Select the text
-3. Press Ctrl+Shift+Alt+T to translate to English
-4. Press Ctrl+Shift+Alt+Y to correct any mistakes
+3. Press your translation hotkey (default: Ctrl+Shift+Alt+T) to translate to English
+4. Press your spelling correction hotkey (default: Ctrl+Shift+Alt+Y) to correct any mistakes
 5. Copy and send!
 
 **Editing Documents**:
 1. Write your document
 2. Select paragraphs one at a time
-3. Press Ctrl+Shift+Alt+Y to correct
+3. Press your spelling correction hotkey (default: Ctrl+Shift+Alt+Y) to correct
 4. Review and replace
 
 **Learning Languages**:
 1. Write in your target language
-2. Press Ctrl+Shift+Alt+Y to see corrections
+2. Press your spelling correction hotkey (default: Ctrl+Shift+Alt+Y) to see corrections
 3. Compare original and corrected versions
 
 ### 3. Keyboard Shortcuts
+
+The default hotkeys are:
 
 | Shortcut | Function |
 |----------|----------|
 | Ctrl+Shift+Alt+Y | Spelling correction |
 | Ctrl+Shift+Alt+T | Translation |
+
+**You can customize these hotkeys!**
+1. Open Settings (double-click tray icon)
+2. Scroll to the "Hotkeys" section
+3. Enter your preferred hotkey combinations
+4. Click Save and restart the application
 
 ### 4. System Tray Menu
 
@@ -163,6 +171,18 @@ Right-click the system tray icon:
 - Try reinstalling
 
 ## Advanced Features
+
+### Hotkey Customization
+
+Customize your hotkeys to your preference:
+1. Open Settings
+2. In the "Hotkeys" section, enter your preferred combinations
+3. Supported formats:
+   - `Ctrl+Y` (single modifier + key)
+   - `Ctrl+Shift+Y` (multiple modifiers + key)
+   - `Alt+F1` (modifier + function key)
+4. Click Save
+5. Restart the application
 
 ### Auto-Start with Windows
 
