@@ -40,12 +40,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Usage statistics and history tracking
+  - Track token usage (prompt and completion tokens)
+  - Calculate costs based on model pricing
+  - View detailed usage history with date/time, operation type, and costs
+  - Filter statistics by period (today, this week, this month, all time)
+  - Clear usage history option
+  - Accessible from Settings window
 - **Change highlighting**: Spelling corrections now highlight changed words in yellow for easy identification of modifications
 
 ### Planned Features
 - Customizable hotkeys
 - Support for additional languages (Japanese, Chinese, Spanish, etc.)
 - Offline model support
+- Change highlighting in correction results
 - Usage statistics and history
 - Automatic updates
 - Dark mode theme

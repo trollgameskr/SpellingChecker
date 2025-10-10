@@ -36,4 +36,31 @@ namespace SpellingChecker.Models
         public bool AutoStartWithWindows { get; set; } = true;
         public string Model { get; set; } = "gpt-4o-mini";
     }
+
+    /// <summary>
+    /// Represents a single usage record for API calls
+    /// </summary>
+    public class UsageRecord
+    {
+        public DateTime Timestamp { get; set; }
+        public string OperationType { get; set; } = string.Empty; // "Correction" or "Translation"
+        public string Model { get; set; } = string.Empty;
+        public int PromptTokens { get; set; }
+        public int CompletionTokens { get; set; }
+        public int TotalTokens { get; set; }
+        public decimal Cost { get; set; }
+    }
+
+    /// <summary>
+    /// Aggregated usage statistics
+    /// </summary>
+    public class UsageStatistics
+    {
+        public int TotalCorrectionCount { get; set; }
+        public int TotalTranslationCount { get; set; }
+        public int TotalPromptTokens { get; set; }
+        public int TotalCompletionTokens { get; set; }
+        public int TotalTokens { get; set; }
+        public decimal TotalCost { get; set; }
+    }
 }

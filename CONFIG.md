@@ -101,6 +101,80 @@ You can customize hotkeys through the settings window:
    - Some security software may block global hotkeys
    - Try disabling temporarily to test
 
+## Usage Statistics and History
+
+### Viewing Usage Statistics
+
+To view your API usage:
+1. Open Settings (double-click tray icon or right-click → Settings)
+2. Click "📊 View Usage Statistics" button
+3. View your token usage, costs, and operation history
+
+### What is Tracked
+
+The application automatically tracks:
+- **Date and time** of each operation
+- **Operation type** (Correction or Translation)
+- **Model used** (e.g., gpt-4o-mini)
+- **Prompt tokens** (input text tokens)
+- **Completion tokens** (output text tokens)
+- **Total tokens** (sum of prompt + completion)
+- **Estimated cost** (calculated using current OpenAI pricing)
+
+### Filtering Statistics
+
+You can filter statistics by period:
+- **All Time**: Complete history
+- **Today**: Operations from today only
+- **This Week**: Current week (Monday to Sunday)
+- **This Month**: Current calendar month
+
+### Cost Calculation
+
+Costs are calculated based on OpenAI's pricing:
+
+**gpt-4o-mini** (default):
+- Input: $0.15 per 1M tokens
+- Output: $0.60 per 1M tokens
+
+**gpt-4o**:
+- Input: $5.00 per 1M tokens
+- Output: $15.00 per 1M tokens
+
+**gpt-3.5-turbo**:
+- Input: $0.50 per 1M tokens
+- Output: $1.50 per 1M tokens
+
+Note: Actual costs may vary. Check https://openai.com/pricing for current rates.
+
+### Data Storage
+
+Usage history is stored locally at:
+```
+%APPDATA%\SpellingChecker\usage_history.json
+```
+
+This file:
+- Contains all your usage records
+- Is stored in plain JSON (not encrypted)
+- Can be manually deleted if needed
+- Does not contain API keys or sensitive information
+- Only contains timestamps, token counts, and calculated costs
+
+### Clearing History
+
+To clear all usage history:
+1. Open Usage Statistics window
+2. Click "Clear History" button
+3. Confirm the action
+
+**Warning**: This action cannot be undone. All usage records will be permanently deleted.
+
+### Privacy
+
+- Usage data is stored locally only
+- No data is sent to external servers (except API requests to OpenAI)
+- Usage tracking can be disabled by deleting the usage_history.json file
 4. Verify hotkey format:
    - Make sure the hotkey is in the correct format
    - The application will validate the format when you save settings
