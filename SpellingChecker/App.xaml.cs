@@ -15,6 +15,7 @@ namespace SpellingChecker
             // Create and show main window (hidden, runs in background)
             var mainWindow = new MainWindow();
             MainWindow = mainWindow;
+            mainWindow.Show(); // Must call Show() to trigger OnSourceInitialized and create window handle
         }
     }
 }
