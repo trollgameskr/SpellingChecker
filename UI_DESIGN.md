@@ -116,18 +116,24 @@ The application uses a modern, clean design with minimal UI footprint. It runs e
 │                                                               │
 │  Result:                                                     │
 │  ┌═════════════════════════════════════════════════════┐   │
-│  ║ This is a test sentence with some errors in it.    ║   │
+│  ║ [This] is a [test] [sentence] with some [errors]   ║   │
+│  ║ in it.                                              ║   │
 │  ║                                                      ║   │
-│  ║                                                      ║   │
-│  ║                                                      ║   │
+│  ║ [highlighted] = changed words (yellow background)   ║   │
 │  └═════════════════════════════════════════════════════┘   │
 │                                                               │
 │                   ┌──────────────┐ ┌─────────┐ ┌───────┐   │
-│                   │Copy to       │ │ Replace │ │ Close │   │
+│                   │Copy to       │ │  변환   │ │ Close │   │
 │                   │Clipboard     │ │         │ │       │   │
 │                   └──────────────┘ └─────────┘ └───────┘   │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+**Change Highlighting:**
+- Changed/corrected words are highlighted with a yellow background
+- Only active in spelling correction mode (not translation)
+- Visual indicator helps users quickly identify what was corrected
+- Highlighting is applied automatically by comparing original and corrected text
 
 **Translation Layout:**
 ```
