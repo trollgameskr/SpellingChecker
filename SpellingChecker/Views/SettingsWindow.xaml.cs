@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using System.Windows;
 using SpellingChecker.Models;
 using SpellingChecker.Services;
@@ -16,6 +17,10 @@ namespace SpellingChecker.Views
         public SettingsWindow()
         {
             InitializeComponent();
+            
+            // Set window title with app version
+            var version = Assembly.GetExecutingAssembly().GetName().Version;
+            Title = $"Settings - AI Spelling Checker v{version?.Major}.{version?.Minor}.{version?.Build}";
             
             _settingsService = new SettingsService();
             _settings = _settingsService.LoadSettings();

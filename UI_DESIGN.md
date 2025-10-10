@@ -42,7 +42,7 @@ The application uses a modern, clean design with minimal UI footprint. It runs e
 **Layout:**
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  Settings - AI Spelling Checker                     [_][□][X]│
+│  Settings - AI Spelling Checker v1.0.0              [_][□][X]│
 ├─────────────────────────────────────────────────────────────┤
 │                                                               │
 │  Application Settings                                        │
@@ -86,6 +86,11 @@ The application uses a modern, clean design with minimal UI footprint. It runs e
 - Secondary Button: Gray (#9E9E9E)
 - Text: Dark Gray (#333333)
 - Hints: Light Gray (#888888)
+
+**Title Bar:**
+- Title includes application version dynamically retrieved from assembly
+- Format: "Settings - AI Spelling Checker v{Major}.{Minor}.{Build}"
+- Version is automatically updated when the version in .csproj changes
 
 ---
 
