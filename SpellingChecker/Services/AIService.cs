@@ -15,12 +15,14 @@ namespace SpellingChecker.Services
     {
         private readonly HttpClient _httpClient;
         private readonly SettingsService _settingsService;
+        private readonly UsageService _usageService;
         private AppSettings _settings;
 
         public AIService(SettingsService settingsService)
         {
             _httpClient = new HttpClient();
             _settingsService = settingsService;
+            _usageService = new UsageService();
             _settings = _settingsService.LoadSettings();
             _httpClient.Timeout = TimeSpan.FromSeconds(30);
         }
@@ -50,6 +52,7 @@ namespace SpellingChecker.Services
 
                 var response = await SendRequestAsync(requestBody);
                 var correctedText = ExtractContentFromResponse(response);
+                RecordUsageFromResponse(response, "Correction");
 
                 return new CorrectionResult
                 {
@@ -94,6 +97,7 @@ namespace SpellingChecker.Services
 
                 var response = await SendRequestAsync(requestBody);
                 var translatedText = ExtractContentFromResponse(response);
+                RecordUsageFromResponse(response, "Translation");
 
                 return new TranslationResult
                 {
@@ -162,6 +166,25 @@ namespace SpellingChecker.Services
                 }
             }
             return "English";
+        }
+
+        private void RecordUsageFromResponse(string response, string operationType)
+        {
+            try
+            {
+                var json = JObject.Parse(response);
+                var usage = json["usage"];
+                if (usage != null)
+                {
+                    var promptTokens = usage["prompt_tokens"]?.Value<int>() ?? 0;
+                    var completionTokens = usage["completion_tokens"]?.Value<int>() ?? 0;
+                    _usageService.RecordUsage(operationType, _settings.Model, promptTokens, completionTokens);
+                }
+            }
+            catch
+            {
+                // Silently fail - don't interrupt user operations
+            }
         }
     }
 }

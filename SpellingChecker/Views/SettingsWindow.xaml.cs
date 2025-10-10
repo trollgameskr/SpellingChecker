@@ -62,5 +62,11 @@ namespace SpellingChecker.Views
         {
             Close();
         }
+
+        private void ViewUsageStatisticsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var usageWindow = new UsageStatisticsWindow();
+            usageWindow.ShowDialog();
+        }
     }
 }
