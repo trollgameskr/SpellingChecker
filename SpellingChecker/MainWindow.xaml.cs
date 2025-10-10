@@ -72,8 +72,8 @@ namespace SpellingChecker
                 // Show startup notification with hotkey information
                 ShowNotification("프로그램 시작", 
                     "프로그램이 시작되었습니다.\n" +
-                    "맞춤법 교정: Ctrl+Shift+Y\n" +
-                    "번역: Ctrl+Shift+T");
+                    "맞춤법 교정: Ctrl+Shift+Alt+Y\n" +
+                    "번역: Ctrl+Shift+Alt+T");
             }
 
             _hotkeyService.SpellingCorrectionRequested += OnSpellingCorrectionRequested;
