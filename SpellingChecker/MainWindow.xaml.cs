@@ -99,6 +99,9 @@ namespace SpellingChecker
                     return;
                 }
 
+                // Show progress notification
+                ShowNotification("Processing...", "AI is correcting your text. Please wait...");
+
                 var result = await _aiService.CorrectSpellingAsync(selectedText);
                 
                 var popup = new ResultPopupWindow(result.CorrectedText, selectedText, "Spelling Correction");
@@ -123,6 +126,9 @@ namespace SpellingChecker
                     ShowNotification("No text selected", "Please select some text to translate.");
                     return;
                 }
+
+                // Show progress notification
+                ShowNotification("Processing...", "AI is translating your text. Please wait...");
 
                 var result = await _aiService.TranslateAsync(selectedText);
                 
