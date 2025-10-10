@@ -20,6 +20,12 @@ AI 기반 맞춤법 교정 및 한영/영한 번역을 제공하는 Windows 데�
 - 시스템 트레이 아이콘으로 접근
 - 설정 창을 통한 API 키 및 환경 설정
 
+### 4. 사용 통계 및 히스토리
+- API 사용량 추적 (토큰 수, 비용 계산)
+- 교정 및 번역 작업 기록
+- 기간별 통계 조회 (오늘, 이번 주, 이번 달, 전체)
+- 사용 내역 상세 조회 및 관리
+
 ## 시스템 요구사항
 
 - **운영체제**: Windows 10 이상
@@ -71,6 +77,13 @@ dotnet run
 3. 번역 결과가 팝업 창에 표시됩니다
 4. "Copy to Clipboard" 버튼으로 결과를 복사하거나 "Replace" 버튼으로 원본 텍스트를 교체합니다
 
+### 사용 통계 확인
+1. 시스템 트레이 아이콘 → "Settings" 선택
+2. "📊 View Usage Statistics" 버튼 클릭
+3. 토큰 사용량, 비용, 작업 내역 확인
+4. 기간별 필터링 (오늘, 이번 주, 이번 달, 전체)
+5. 필요시 사용 내역 삭제 가능
+
 ## 기술 스택
 
 - **Frontend**: WPF (Windows Presentation Foundation)
@@ -90,10 +103,12 @@ SpellingChecker/
 │   │   ├── AIService.cs      # AI API 통신
 │   │   ├── ClipboardService.cs  # 클립보드 및 텍스트 선택
 │   │   ├── HotkeyService.cs  # 전역 단축키
-│   │   └── SettingsService.cs   # 설정 관리
+│   │   ├── SettingsService.cs   # 설정 관리
+│   │   └── UsageService.cs   # 사용 통계 추적
 │   ├── Views/                # UI 창
 │   │   ├── ResultPopupWindow.xaml/cs  # 결과 팝업
-│   │   └── SettingsWindow.xaml/cs     # 설정 창
+│   │   ├── SettingsWindow.xaml/cs     # 설정 창
+│   │   └── UsageStatisticsWindow.xaml/cs  # 사용 통계 창
 │   ├── App.xaml/cs           # 애플리케이션 진입점
 │   ├── MainWindow.xaml/cs    # 메인 윈도우 (백그라운드)
 │   └── SpellingChecker.csproj

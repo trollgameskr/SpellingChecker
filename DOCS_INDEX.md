@@ -63,28 +63,34 @@ Complete guide to SpellingChecker documentation.
    - Responsive design
    - Future enhancements
 
+9. **[TESTING_USAGE_STATS.md](TESTING_USAGE_STATS.md)** - Usage Statistics Testing Guide
+   - Feature testing checklist
+   - Test scenarios
+   - Expected behavior
+   - Troubleshooting guide
+
 ### Project Information
 
-9. **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
+10. **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
    - How to contribute
    - Coding standards
    - Pull request process
    - Development workflow
 
-10. **[CHANGELOG.md](CHANGELOG.md)** - Version history
+11. **[CHANGELOG.md](CHANGELOG.md)** - Version history
     - Release notes
     - Feature additions
     - Bug fixes
     - Future roadmap
 
-11. **[PROJECT_STATUS.md](PROJECT_STATUS.md)** - Implementation summary
+12. **[PROJECT_STATUS.md](PROJECT_STATUS.md)** - Implementation summary
     - Requirements completion
     - Technology stack
     - Implementation statistics
     - Testing status
     - Deployment readiness
 
-12. **[LICENSE](LICENSE)** - MIT License
+13. **[LICENSE](LICENSE)** - MIT License
     - Open source license
     - Usage rights
     - Liability disclaimer
@@ -105,6 +111,7 @@ Start here:
 2. [ARCHITECTURE.md](ARCHITECTURE.md) - Understand the design
 3. [CONTRIBUTING.md](CONTRIBUTING.md) - Learn how to contribute
 4. [PROJECT_STATUS.md](PROJECT_STATUS.md) - See implementation status
+5. [TESTING_USAGE_STATS.md](TESTING_USAGE_STATS.md) - Test new features
 
 ### I'm a System Administrator
 Start here:
@@ -144,13 +151,13 @@ Start here:
 
 ## 📊 Documentation Statistics
 
-- **Total Documentation**: 13 files
-- **Total Words**: ~35,000 words
-- **Total Pages**: ~100+ pages (if printed)
+- **Total Documentation**: 14 files
+- **Total Words**: ~40,000 words
+- **Total Pages**: ~110+ pages (if printed)
 
 ### By Document Type
 - User Guides: 5 documents
-- Developer Guides: 3 documents
+- Developer Guides: 4 documents
 - Reference Documentation: 3 documents
 - Project Information: 2 documents
 
@@ -180,6 +187,11 @@ Start here:
 - [README.md](README.md) - Correction feature
 - [EXAMPLES.md](EXAMPLES.md) - Correction examples
 - [FAQ.md](FAQ.md) - Correction questions
+
+### Usage Statistics
+- [README.md](README.md) - Usage statistics overview
+- [CONFIG.md](CONFIG.md) - Usage statistics configuration
+- [TESTING_USAGE_STATS.md](TESTING_USAGE_STATS.md) - Testing guide
 
 ### Hotkeys
 - [README.md](README.md) - Hotkey reference
@@ -251,8 +263,8 @@ This documentation is maintained with the project. Check:
 
 ---
 
-**Last Updated**: 2025-01-10
+**Last Updated**: 2025-10-10
 
-**Documentation Version**: 1.0.0
+**Documentation Version**: 1.1.0
 
-**Total Pages**: 13 documents, ~35,000 words
+**Total Pages**: 14 documents, ~40,000 words
