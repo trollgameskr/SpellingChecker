@@ -34,20 +34,39 @@ namespace SpellingChecker.Views
             ApiEndpointTextBox.Text = _settings.ApiEndpoint;
             ModelTextBox.Text = _settings.Model;
             AutoStartCheckBox.IsChecked = _settings.AutoStartWithWindows;
+            SpellingHotkeyTextBox.Text = _settings.SpellingCorrectionHotkey;
+            TranslationHotkeyTextBox.Text = _settings.TranslationHotkey;
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
+                // Validate hotkeys before saving
+                if (!HotkeyParser.IsValidHotkey(SpellingHotkeyTextBox.Text))
+                {
+                    MessageBox.Show("Invalid spelling correction hotkey format. Please use format like 'Ctrl+Shift+Alt+Y'", "Error", 
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                if (!HotkeyParser.IsValidHotkey(TranslationHotkeyTextBox.Text))
+                {
+                    MessageBox.Show("Invalid translation hotkey format. Please use format like 'Ctrl+Shift+Alt+T'", "Error", 
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
                 _settings.ApiKey = ApiKeyTextBox.Password;
                 _settings.ApiEndpoint = ApiEndpointTextBox.Text;
                 _settings.Model = ModelTextBox.Text;
                 _settings.AutoStartWithWindows = AutoStartCheckBox.IsChecked ?? false;
+                _settings.SpellingCorrectionHotkey = SpellingHotkeyTextBox.Text;
+                _settings.TranslationHotkey = TranslationHotkeyTextBox.Text;
 
                 _settingsService.SaveSettings(_settings);
                 
-                MessageBox.Show("Settings saved successfully!", "Success", 
+                MessageBox.Show("Settings saved successfully! Please restart the application for hotkey changes to take effect.", "Success", 
                     MessageBoxButton.OK, MessageBoxImage.Information);
                 Close();
             }

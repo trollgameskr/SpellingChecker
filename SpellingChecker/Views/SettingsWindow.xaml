@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Settings - AI Spelling Checker"
-        Height="600" Width="600"
+        Height="620" Width="600"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         Background="White">
@@ -75,8 +75,30 @@
         <!-- Hotkeys Info -->
         <StackPanel Grid.Row="5" Margin="0,0,0,15">
             <TextBlock Text="Hotkeys:" FontWeight="SemiBold" Margin="0,0,0,5"/>
-            <TextBlock Text="• Ctrl+Shift+Y: Spelling Correction" FontSize="12" Margin="10,0,0,3"/>
-            <TextBlock Text="• Ctrl+Shift+T: Translation" FontSize="12" Margin="10,0,0,3"/>
+            
+            <!-- Spelling Correction Hotkey -->
+            <StackPanel Margin="0,0,0,10">
+                <TextBlock Text="Spelling Correction Hotkey:" FontSize="12" Margin="0,0,0,3"/>
+                <TextBox x:Name="SpellingHotkeyTextBox" 
+                         Padding="5"
+                         Height="30"/>
+                <TextBlock Text="Example: Ctrl+Shift+Alt+Y" 
+                           FontSize="10" 
+                           Foreground="Gray" 
+                           Margin="0,3,0,0"/>
+            </StackPanel>
+            
+            <!-- Translation Hotkey -->
+            <StackPanel>
+                <TextBlock Text="Translation Hotkey:" FontSize="12" Margin="0,0,0,3"/>
+                <TextBox x:Name="TranslationHotkeyTextBox" 
+                         Padding="5"
+                         Height="30"/>
+                <TextBlock Text="Example: Ctrl+Shift+Alt+T" 
+                           FontSize="10" 
+                           Foreground="Gray" 
+                           Margin="0,3,0,0"/>
+            </StackPanel>
         </StackPanel>
 
         <!-- Usage Statistics Button -->

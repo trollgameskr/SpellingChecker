@@ -55,11 +55,37 @@ Data: "C:\Program Files\SpellingChecker\SpellingChecker.exe"
 
 ## Hotkey Customization
 
-Currently, hotkeys are fixed:
+You can customize hotkeys through the settings window:
+
+**Default hotkeys:**
 - **Ctrl+Shift+Alt+Y**: Spelling correction
 - **Ctrl+Shift+Alt+T**: Translation
 
-Future versions will allow customization through the settings window.
+**To customize hotkeys:**
+
+1. Open Settings (double-click tray icon or right-click → Settings)
+2. In the "Hotkeys" section, modify the hotkey combinations
+3. Use the format: `Modifier+Modifier+Key` (e.g., `Ctrl+Shift+Y`, `Alt+F1`, `Ctrl+Alt+S`)
+4. Click Save
+5. Restart the application for hotkey changes to take effect
+
+**Supported modifiers:**
+- `Ctrl` or `Control`
+- `Shift`
+- `Alt`
+- `Win` or `Windows`
+
+**Supported keys:**
+- Letter keys: A-Z
+- Number keys: 0-9
+- Function keys: F1-F12
+- Other keys: Home, End, Delete, Insert, PageUp, PageDown, etc.
+
+**Examples:**
+- `Ctrl+Y` - Control + Y
+- `Shift+Alt+T` - Shift + Alt + T
+- `Ctrl+F1` - Control + F1
+- `Win+S` - Windows + S
 
 ### If Hotkeys Don't Work
 
@@ -149,6 +175,9 @@ To clear all usage history:
 - Usage data is stored locally only
 - No data is sent to external servers (except API requests to OpenAI)
 - Usage tracking can be disabled by deleting the usage_history.json file
+4. Verify hotkey format:
+   - Make sure the hotkey is in the correct format
+   - The application will validate the format when you save settings
 
 ## Performance Tuning
 
