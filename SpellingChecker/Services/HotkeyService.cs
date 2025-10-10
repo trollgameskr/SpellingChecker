@@ -30,24 +30,40 @@ namespace SpellingChecker.Services
         private const int SPELLING_HOTKEY_ID = 1;
         private const int TRANSLATION_HOTKEY_ID = 2;
 
-        public bool RegisterHotkeys(IntPtr windowHandle)
+        public bool RegisterHotkeys(IntPtr windowHandle, string spellingHotkey, string translationHotkey)
         {
             _windowHandle = windowHandle;
 
-            // Ctrl+Shift+Alt+Y for spelling correction
+            // Parse spelling correction hotkey
+            if (!HotkeyParser.TryParseHotkey(spellingHotkey, out uint spellingModifiers, out Key spellingKey))
+            {
+                // Fallback to default if parsing fails
+                spellingModifiers = MOD_CONTROL | MOD_SHIFT | MOD_ALT;
+                spellingKey = Key.Y;
+            }
+
+            // Parse translation hotkey
+            if (!HotkeyParser.TryParseHotkey(translationHotkey, out uint translationModifiers, out Key translationKey))
+            {
+                // Fallback to default if parsing fails
+                translationModifiers = MOD_CONTROL | MOD_SHIFT | MOD_ALT;
+                translationKey = Key.T;
+            }
+
+            // Register spelling correction hotkey
             var spellingRegistered = RegisterHotKey(
                 _windowHandle,
                 SPELLING_HOTKEY_ID,
-                MOD_CONTROL | MOD_SHIFT | MOD_ALT,
-                (uint)KeyInterop.VirtualKeyFromKey(Key.Y)
+                spellingModifiers,
+                (uint)KeyInterop.VirtualKeyFromKey(spellingKey)
             );
 
-            // Ctrl+Shift+Alt+T for translation
+            // Register translation hotkey
             var translationRegistered = RegisterHotKey(
                 _windowHandle,
                 TRANSLATION_HOTKEY_ID,
-                MOD_CONTROL | MOD_SHIFT | MOD_ALT,
-                (uint)KeyInterop.VirtualKeyFromKey(Key.T)
+                translationModifiers,
+                (uint)KeyInterop.VirtualKeyFromKey(translationKey)
             );
 
             return spellingRegistered && translationRegistered;
