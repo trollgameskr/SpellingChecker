@@ -20,10 +20,11 @@
         <TextBlock Grid.Row="0" Text="Original:" FontWeight="Bold" Margin="0,0,0,5"/>
         <Border Grid.Row="1" BorderBrush="LightGray" BorderThickness="1" Margin="0,0,0,10">
             <TextBox x:Name="OriginalTextBox" 
-                     IsReadOnly="True" 
+                     IsReadOnly="False" 
                      TextWrapping="Wrap" 
                      VerticalScrollBarVisibility="Auto"
-                     Background="#F5F5F5"
+                     AcceptsReturn="True"
+                     Background="White"
                      Padding="5"/>
         </Border>
 
@@ -49,8 +50,8 @@
                     Foreground="White"
                     BorderThickness="0"
                     Cursor="Hand"/>
-            <Button Content="Replace" 
-                    Click="ReplaceButton_Click" 
+            <Button Content="변환" 
+                    Click="ConvertButton_Click" 
                     Padding="15,5" 
                     Margin="0,0,10,0"
                     Background="#2196F3"

@@ -120,9 +120,9 @@ namespace SpellingChecker
                 ShowNotification("맞춤법 교정 완료", 
                     $"교정 결과는 '{result.CorrectedText}' 입니다.");
                 
-                var popup = new ResultPopupWindow(result.CorrectedText, selectedText, "Spelling Correction");
-                popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(result.CorrectedText);
-                popup.ReplaceRequested += (s, args) => _clipboardService.ReplaceSelectedText(result.CorrectedText);
+                var popup = new ResultPopupWindow(result.CorrectedText, selectedText, "Spelling Correction", false);
+                popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(popup.GetResultText());
+                popup.ConvertRequested += async (s, text) => await ReprocessSpellingCorrection(popup, text);
                 popup.ShowDialog();
             }
             catch (Exception ex)
@@ -160,11 +160,63 @@ namespace SpellingChecker
                 var popup = new ResultPopupWindow(
                     result.TranslatedText, 
                     selectedText, 
-                    $"Translation ({result.SourceLanguage} → {result.TargetLanguage})"
+                    $"Translation ({result.SourceLanguage} → {result.TargetLanguage})",
+                    true
                 );
-                popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(result.TranslatedText);
-                popup.ReplaceRequested += (s, args) => _clipboardService.ReplaceSelectedText(result.TranslatedText);
+                popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(popup.GetResultText());
+                popup.ConvertRequested += async (s, text) => await ReprocessTranslation(popup, text);
                 popup.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                ShowNotification("Error", ex.Message);
+            }
+        }
+
+        private async Task ReprocessSpellingCorrection(ResultPopupWindow popup, string text)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(text))
+                {
+                    ShowNotification("No text", "Please enter some text to correct.");
+                    return;
+                }
+
+                ShowNotification("Processing...", "AI is correcting your text. Please wait...");
+
+                var result = await _aiService.CorrectSpellingAsync(text);
+                
+                ShowNotification("맞춤법 교정 완료", 
+                    $"교정 결과는 '{result.CorrectedText}' 입니다.");
+                
+                popup.UpdateResult(result.CorrectedText);
+            }
+            catch (Exception ex)
+            {
+                ShowNotification("Error", ex.Message);
+            }
+        }
+
+        private async Task ReprocessTranslation(ResultPopupWindow popup, string text)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(text))
+                {
+                    ShowNotification("No text", "Please enter some text to translate.");
+                    return;
+                }
+
+                ShowNotification("Processing...", "AI is translating your text. Please wait...");
+
+                var result = await _aiService.TranslateAsync(text);
+                
+                ShowNotification("번역 완료", 
+                    $"번역 결과는 '{result.TranslatedText}' 입니다.\n" +
+                    $"언어: {result.SourceLanguage} → {result.TargetLanguage}");
+                
+                popup.UpdateResult(result.TranslatedText);
             }
             catch (Exception ex)
             {

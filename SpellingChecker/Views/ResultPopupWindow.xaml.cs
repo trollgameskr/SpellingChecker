@@ -9,15 +9,18 @@ namespace SpellingChecker.Views
     public partial class ResultPopupWindow : Window
     {
         public event EventHandler? CopyRequested;
-        public event EventHandler? ReplaceRequested;
+        public event EventHandler<string>? ConvertRequested;
 
-        public ResultPopupWindow(string result, string original, string title)
+        private readonly bool _isTranslationMode;
+
+        public ResultPopupWindow(string result, string original, string title, bool isTranslationMode = false)
         {
             InitializeComponent();
             
             Title = title;
             ResultTextBox.Text = result;
             OriginalTextBox.Text = original;
+            _isTranslationMode = isTranslationMode;
 
             // Position window near cursor
             var point = System.Windows.Forms.Cursor.Position;
@@ -31,16 +34,27 @@ namespace SpellingChecker.Views
                 Left = SystemParameters.PrimaryScreenWidth - Width;
         }
 
+        public string GetResultText()
+        {
+            return ResultTextBox.Text;
+        }
+
+        public void UpdateResult(string newResult)
+        {
+            ResultTextBox.Text = newResult;
+        }
+
         private void CopyButton_Click(object sender, RoutedEventArgs e)
         {
             CopyRequested?.Invoke(this, EventArgs.Empty);
             MessageBox.Show("Copied to clipboard!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        private void ReplaceButton_Click(object sender, RoutedEventArgs e)
+        private void ConvertButton_Click(object sender, RoutedEventArgs e)
         {
-            ReplaceRequested?.Invoke(this, EventArgs.Empty);
-            Close();
+            // Get the text from the Original TextBox and request re-conversion
+            string textToConvert = OriginalTextBox.Text;
+            ConvertRequested?.Invoke(this, textToConvert);
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
