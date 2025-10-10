@@ -190,8 +190,8 @@ The application uses a modern, clean design with minimal UI footprint. It runs e
    
 2. User presses Ctrl+Shift+Y
    └─> [Background] Clipboard captures text
-   └─> [Background] Text sent to AI
-   └─> User sees brief loading cursor (1-3 seconds)
+   └─> Balloon notification appears: "Processing... - AI is correcting your text. Please wait..."
+   └─> [Background] Text sent to AI (1-3 seconds)
    
 3. Result popup appears near cursor
    └─> Shows original vs corrected text side-by-side
@@ -215,9 +215,9 @@ The application uses a modern, clean design with minimal UI footprint. It runs e
    
 2. User presses Ctrl+Shift+T
    └─> [Background] Clipboard captures text
+   └─> Balloon notification appears: "Processing... - AI is translating your text. Please wait..."
    └─> [Background] Language detected
-   └─> [Background] Translation requested from AI
-   └─> User sees brief loading cursor
+   └─> [Background] Translation requested from AI (1-3 seconds)
    
 3. Result popup appears
    └─> Title shows: "Translation (Korean → English)"

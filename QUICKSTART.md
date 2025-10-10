@@ -53,7 +53,7 @@ That's it! You're ready to use the app.
 
 1. **Select text** anywhere (Word, Notepad, Chrome, etc.)
 2. Press **Ctrl+Shift+Y**
-3. Wait a moment for the AI to process
+3. A notification will appear: "Processing..." - wait a moment for the AI to process
 4. A popup will show:
    - **Original**: Your text
    - **Result**: Corrected text
@@ -69,7 +69,7 @@ Result:   "This is a test sentence with errors."
 
 1. **Select Korean or English text**
 2. Press **Ctrl+Shift+T**
-3. Wait a moment for the AI to translate
+3. A notification will appear: "Processing..." - wait a moment for the AI to translate
 4. A popup will show:
    - **Original**: Your text
    - **Result**: Translated text
