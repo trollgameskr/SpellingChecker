@@ -70,8 +70,8 @@ The application uses a modern, clean design with minimal UI footprint. It runs e
 │  Launch the application automatically when Windows starts    │
 │                                                               │
 │  Hotkeys:                                                    │
-│  • Ctrl+Shift+Y: Spelling Correction                        │
-│  • Ctrl+Shift+T: Translation                                │
+│  • Ctrl+Shift+Alt+Y: Spelling Correction                    │
+│  • Ctrl+Shift+Alt+T: Translation                            │
 │                                                               │
 │                                                               │
 │                                          ┌──────┐ ┌────────┐ │
@@ -193,7 +193,7 @@ The application uses a modern, clean design with minimal UI footprint. It runs e
 1. User selects text in any application
    └─> Text highlighted
    
-2. User presses Ctrl+Shift+Y
+2. User presses Ctrl+Shift+Alt+Y
    └─> [Background] Clipboard captures text
    └─> Balloon notification appears: "Processing... - AI is correcting your text. Please wait..."
    └─> [Background] Text sent to AI (1-3 seconds)
@@ -218,7 +218,7 @@ The application uses a modern, clean design with minimal UI footprint. It runs e
 1. User selects Korean or English text
    └─> Text highlighted
    
-2. User presses Ctrl+Shift+T
+2. User presses Ctrl+Shift+Alt+T
    └─> [Background] Clipboard captures text
    └─> Balloon notification appears: "Processing... - AI is translating your text. Please wait..."
    └─> [Background] Language detected
@@ -239,7 +239,7 @@ The application uses a modern, clean design with minimal UI footprint. It runs e
 ```
 Scenario: API key not configured
 
-1. User presses Ctrl+Shift+Y
+1. User presses Ctrl+Shift+Alt+Y
    └─> System captures text
    └─> Attempts API call
    └─> Error: "API key not configured"

@@ -73,14 +73,14 @@ Yes! Your API key is encrypted using Windows Data Protection API (DPAPI) with th
 ### How do I use spelling correction?
 
 1. Select text in any application
-2. Press **Ctrl+Shift+Y**
+2. Press **Ctrl+Shift+Alt+Y**
 3. Wait for the popup (usually 1-3 seconds)
 4. Click **Copy to Clipboard** or **Replace**
 
 ### How do I use translation?
 
 1. Select text in any application
-2. Press **Ctrl+Shift+T**
+2. Press **Ctrl+Shift+Alt+T**
 3. The app detects the language automatically
 4. Review the translation in the popup
 5. Click **Copy to Clipboard** or **Replace**
@@ -88,8 +88,8 @@ Yes! Your API key is encrypted using Windows Data Protection API (DPAPI) with th
 ### Can I change the hotkeys?
 
 Not in version 1.0. Customizable hotkeys are planned for a future release. Currently:
-- **Ctrl+Shift+Y**: Spelling correction
-- **Ctrl+Shift+T**: Translation
+- **Ctrl+Shift+Alt+Y**: Spelling correction
+- **Ctrl+Shift+Alt+T**: Translation
 
 ### The hotkeys don't work. What should I do?
 

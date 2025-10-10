@@ -125,7 +125,7 @@ Name: startupicon; Description: "Start with Windows"
    - [ ] Settings are encrypted and persisted
    - [ ] Settings load correctly on restart
 
-3. **Spelling Correction (Ctrl+Shift+Y)**
+3. **Spelling Correction (Ctrl+Shift+Alt+Y)**
    - [ ] Hotkey works globally
    - [ ] Selected text is captured
    - [ ] AI corrects spelling errors
@@ -133,7 +133,7 @@ Name: startupicon; Description: "Start with Windows"
    - [ ] Copy to clipboard works
    - [ ] Replace works
 
-4. **Translation (Ctrl+Shift+T)**
+4. **Translation (Ctrl+Shift+Alt+T)**
    - [ ] Hotkey works globally
    - [ ] Language detection works (Korean/English)
    - [ ] Translation is accurate

@@ -56,8 +56,8 @@ Data: "C:\Program Files\SpellingChecker\SpellingChecker.exe"
 ## Hotkey Customization
 
 Currently, hotkeys are fixed:
-- **Ctrl+Shift+Y**: Spelling correction
-- **Ctrl+Shift+T**: Translation
+- **Ctrl+Shift+Alt+Y**: Spelling correction
+- **Ctrl+Shift+Alt+T**: Translation
 
 Future versions will allow customization through the settings window.
 

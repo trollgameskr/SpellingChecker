@@ -85,7 +85,7 @@ The application follows a **Service-Oriented Architecture** with clear separatio
 
 **Implementation Details**:
 - Uses Windows API (`user32.dll`)
-- Registers `MOD_CONTROL | MOD_SHIFT` combinations
+- Registers `MOD_CONTROL | MOD_SHIFT | MOD_ALT` combinations
 - Handles WM_HOTKEY messages
 - Thread-safe event dispatching
 
@@ -173,7 +173,7 @@ The application follows a **Service-Oriented Architecture** with clear separatio
 
 ```
 1. User selects text in any application
-2. User presses Ctrl+Shift+Y
+2. User presses Ctrl+Shift+Alt+Y
 3. HotkeyService detects hotkey → fires event
 4. MainWindow receives event
 5. ClipboardService captures selected text (Ctrl+C simulation)
@@ -188,7 +188,7 @@ The application follows a **Service-Oriented Architecture** with clear separatio
 
 ```
 1. User selects text in any application
-2. User presses Ctrl+Shift+T
+2. User presses Ctrl+Shift+Alt+T
 3. HotkeyService detects hotkey → fires event
 4. MainWindow receives event
 5. ClipboardService captures selected text

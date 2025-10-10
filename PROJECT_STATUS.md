@@ -20,8 +20,8 @@
 
 | Requirement | Status | Implementation |
 |-------------|--------|----------------|
-| 맞춤법 교정 (Ctrl+Shift+Y) | ✅ Complete | AIService with OpenAI GPT |
-| 영한/한영 번역 (Ctrl+Shift+T) | ✅ Complete | AIService with language detection |
+| 맞춤법 교정 (Ctrl+Shift+Alt+Y) | ✅ Complete | AIService with OpenAI GPT |
+| 영한/한영 번역 (Ctrl+Shift+Alt+T) | ✅ Complete | AIService with language detection |
 | Windows 10+ 지원 | ✅ Complete | WPF with .NET 9.0 |
 | 시스템 트레이 통합 | ✅ Complete | NotifyIcon with context menu |
 | 백그라운드 실행 | ✅ Complete | Hidden main window |
