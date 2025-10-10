@@ -67,6 +67,14 @@ namespace SpellingChecker
                 MessageBox.Show("Failed to register hotkeys. The application may not work correctly.", 
                     "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
+            else
+            {
+                // Show startup notification with hotkey information
+                ShowNotification("프로그램 시작", 
+                    "프로그램이 시작되었습니다.\n" +
+                    "맞춤법 교정: Ctrl+Shift+Y\n" +
+                    "번역: Ctrl+Shift+T");
+            }
 
             _hotkeyService.SpellingCorrectionRequested += OnSpellingCorrectionRequested;
             _hotkeyService.TranslationRequested += OnTranslationRequested;
@@ -99,10 +107,18 @@ namespace SpellingChecker
                     return;
                 }
 
+                // Show debug notification when request is made
+                ShowNotification("맞춤법 교정 요청", 
+                    $"'{selectedText}' 문장의 맞춤법 교정을 요청했습니다.");
+
                 // Show progress notification
                 ShowNotification("Processing...", "AI is correcting your text. Please wait...");
 
                 var result = await _aiService.CorrectSpellingAsync(selectedText);
+                
+                // Show debug notification with result
+                ShowNotification("맞춤법 교정 완료", 
+                    $"교정 결과는 '{result.CorrectedText}' 입니다.");
                 
                 var popup = new ResultPopupWindow(result.CorrectedText, selectedText, "Spelling Correction");
                 popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(result.CorrectedText);
@@ -127,10 +143,19 @@ namespace SpellingChecker
                     return;
                 }
 
+                // Show debug notification when request is made
+                ShowNotification("번역 요청", 
+                    $"'{selectedText}' 문장의 번역을 요청했습니다.");
+
                 // Show progress notification
                 ShowNotification("Processing...", "AI is translating your text. Please wait...");
 
                 var result = await _aiService.TranslateAsync(selectedText);
+                
+                // Show debug notification with result
+                ShowNotification("번역 완료", 
+                    $"번역 결과는 '{result.TranslatedText}' 입니다.\n" +
+                    $"언어: {result.SourceLanguage} → {result.TargetLanguage}");
                 
                 var popup = new ResultPopupWindow(
                     result.TranslatedText, 
