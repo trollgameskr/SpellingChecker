@@ -45,6 +45,8 @@ namespace SpellingChecker.Views
 
         private void LoadTonePresets()
         {
+            // Clear ItemsSource first to force ComboBox to refresh
+            TonePresetComboBox.ItemsSource = null;
             TonePresetComboBox.ItemsSource = _settings.TonePresets;
             
             // Select the current tone preset
