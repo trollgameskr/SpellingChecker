@@ -127,7 +127,6 @@ namespace SpellingChecker.Views
             var correctedWords = SplitIntoWords(corrected);
             
             int correctedPos = 0;
-            int originalPos = 0;
             
             for (int i = 0; i < Math.Max(originalWords.Count, correctedWords.Count); i++)
             {
