@@ -87,6 +87,97 @@ You can customize hotkeys through the settings window:
 - `Ctrl+F1` - Control + F1
 - `Win+S` - Windows + S
 
+## Tone Presets (문장 톤 프리셋)
+
+Tone presets allow you to apply different speaking styles to your corrected text. The application comes with 11 default tone presets and allows you to create custom ones.
+
+### Default Tone Presets
+
+1. **톤 없음** (No Tone)
+   - Maintains the original tone of the text
+   - Only corrects spelling and grammar
+
+2. **근엄한 팀장님 톤** (Strict Manager Tone)
+   - Authoritative and strict speaking style
+   - Mixed with instructions and advice
+
+3. **싹싹한 신입 사원 톤** (Eager New Employee Tone)
+   - Bright, polite, and proactive attitude
+   - Cheerful and respectful
+
+4. **MZ세대 톤** (MZ Generation Tone)
+   - Uses latest slang and internet memes
+   - Casual and light-hearted
+
+5. **심드렁한 알바생 톤** (Bored Part-timer Tone)
+   - Unmotivated and indifferent style
+   - Minimal response feel
+
+6. **유난히 예의 바른 경비원 톤** (Overly Polite Guard Tone)
+   - Excessively polite
+   - Emphasizes procedures and formality
+
+7. **오버하는 홈쇼핑 쇼호스트 톤** (Excited TV Shopping Host Tone)
+   - Overly excited
+   - Emphasizes everything as the best
+
+8. **유행어 난발하는 예능인 톤** (Comedian with Trendy Phrases Tone)
+   - Fast-paced speech with trendy words
+   - Mixes humor and current slang
+
+9. **100년 된 할머니 톤** (100-year-old Grandmother Tone)
+   - Old-fashioned words and slow speech
+   - Nostalgic sentences
+
+10. **드라마 재벌 2세 톤** (Drama Chaebol Heir Tone)
+    - Arrogant and luxurious atmosphere
+    - Wealthy and spoiled tone
+
+11. **외국인 한국어 학습자 톤** (Korean Learner Tone)
+    - Slightly awkward grammar
+    - Cute expressions mixed in
+
+### Using Tone Presets
+
+1. Open Settings (tray icon → Settings)
+2. Find the "문장 톤 프리셋" (Tone Preset) section
+3. Select your desired tone from the dropdown
+4. The description will update to show what the tone does
+5. Click Save to apply the tone
+6. When you use spelling correction (Ctrl+Shift+Alt+Y), the selected tone will be automatically applied
+
+### Managing Custom Tone Presets
+
+**To Add a Custom Tone:**
+1. Open Settings → Tone Presets section
+2. Click "➕ 추가" (Add) button
+3. Enter a name for your tone (e.g., "공식 보고서 톤")
+4. Enter a description (e.g., "격식 있고 전문적인 말투, 보고서에 적합")
+5. Click "확인" (OK) to save
+
+**To Edit a Custom Tone:**
+1. Select a custom tone from the dropdown (default tones cannot be edited)
+2. Click "✏️ 수정" (Edit) button
+3. Modify the name and/or description
+4. Click "확인" (OK) to save changes
+
+**To Delete a Custom Tone:**
+1. Select a custom tone from the dropdown (default tones cannot be deleted)
+2. Click "🗑️ 삭제" (Delete) button
+3. Confirm the deletion
+
+**Note**: Default tone presets are protected and cannot be edited or deleted. You can only add, edit, and delete custom tone presets that you create.
+
+### Examples of Custom Tones
+
+Here are some ideas for custom tone presets:
+
+- **공식 보고서 톤**: 격식 있고 전문적인 말투, 보고서 작성에 적합
+- **친근한 메시지 톤**: 부드럽고 친근한 말투, 메신저 대화에 적합
+- **학술 논문 톤**: 객관적이고 학문적인 표현, 논문 작성에 적합
+- **블로그 포스팅 톤**: 편안하고 설명적인 말투, 블로그 글쓰기에 적합
+- **이메일 공손 톤**: 정중하면서도 업무적인 말투, 공식 이메일에 적합
+
 ### If Hotkeys Don't Work
 
 1. Check if another application is using the same hotkeys:

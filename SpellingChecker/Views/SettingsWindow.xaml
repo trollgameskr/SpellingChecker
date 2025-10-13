@@ -2,12 +2,13 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Settings - AI Spelling Checker"
-        Height="700" Width="600"
+        Height="800" Width="650"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         Background="White">
     <Grid Margin="20">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -110,8 +111,59 @@
             </StackPanel>
         </StackPanel>
 
-        <!-- Usage Statistics Button -->
+        <!-- Tone Preset Selection -->
         <StackPanel Grid.Row="6" Margin="0,0,0,15">
+            <TextBlock Text="문장 톤 프리셋:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+            <ComboBox x:Name="TonePresetComboBox" 
+                      Padding="5"
+                      Height="35"
+                      DisplayMemberPath="Name"
+                      SelectedValuePath="Id"
+                      SelectionChanged="TonePresetComboBox_SelectionChanged"/>
+            <TextBlock x:Name="TonePresetDescriptionTextBlock"
+                       Text="맞춤법 교정 시 적용할 문장 톤을 선택하세요." 
+                       FontSize="10" 
+                       Foreground="Gray" 
+                       Margin="0,5,0,5"
+                       TextWrapping="Wrap"/>
+            
+            <!-- Tone Preset Management Buttons -->
+            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                <Button Content="➕ 추가" 
+                        Click="AddTonePresetButton_Click"
+                        Padding="10,5"
+                        Margin="0,0,5,0"
+                        Background="#4CAF50"
+                        Foreground="White"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        FontSize="11"/>
+                <Button Content="✏️ 수정" 
+                        x:Name="EditTonePresetButton"
+                        Click="EditTonePresetButton_Click"
+                        Padding="10,5"
+                        Margin="0,0,5,0"
+                        Background="#2196F3"
+                        Foreground="White"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        FontSize="11"
+                        IsEnabled="False"/>
+                <Button Content="🗑️ 삭제" 
+                        x:Name="DeleteTonePresetButton"
+                        Click="DeleteTonePresetButton_Click"
+                        Padding="10,5"
+                        Background="#F44336"
+                        Foreground="White"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        FontSize="11"
+                        IsEnabled="False"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Usage Statistics Button -->
+        <StackPanel Grid.Row="7" Margin="0,0,0,15">
             <Button Content="📊 View Usage Statistics" 
                     Click="ViewUsageStatisticsButton_Click"
                     Padding="15,10"
@@ -128,7 +180,7 @@
         </StackPanel>
 
         <!-- Buttons -->
-        <StackPanel Grid.Row="7" 
+        <StackPanel Grid.Row="8" 
                     Orientation="Horizontal" 
                     HorizontalAlignment="Right">
             <Button Content="Save" 

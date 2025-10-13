@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace SpellingChecker.Models
 {
@@ -25,6 +26,17 @@ namespace SpellingChecker.Models
     }
 
     /// <summary>
+    /// Represents a tone preset for spelling correction
+    /// </summary>
+    public class TonePreset
+    {
+        public string Id { get; set; } = Guid.NewGuid().ToString();
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public bool IsDefault { get; set; } = false;
+    }
+
+    /// <summary>
     /// Application configuration settings
     /// </summary>
     public class AppSettings
@@ -35,6 +47,8 @@ namespace SpellingChecker.Models
         public string TranslationHotkey { get; set; } = "Ctrl+Shift+Alt+T";
         public bool AutoStartWithWindows { get; set; } = true;
         public string Model { get; set; } = "gpt-4o-mini";
+        public List<TonePreset> TonePresets { get; set; } = new List<TonePreset>();
+        public string SelectedTonePresetId { get; set; } = string.Empty;
         public bool ShowProgressNotifications { get; set; } = false;
     }
 

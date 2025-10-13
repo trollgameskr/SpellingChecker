@@ -36,14 +36,30 @@ namespace SpellingChecker.Services
 
             try
             {
-                var prompt = $"맞춤법과 문법을 교정해주세요. 교정된 텍스트만 반환하고 설명은 하지 마세요:\n\n{text}";
+                // Get the selected tone preset
+                var tonePreset = TonePresetService.GetSelectedTonePreset(_settings);
+                
+                string prompt;
+                string systemMessage = "당신은 한국어와 영어 맞춤법 및 문법 교정 전문가입니다. 오류를 정확하게 교정하되, 원문의 의미와 어조를 최대한 유지하세요.";
+                
+                if (tonePreset != null && tonePreset.Id != "default-none")
+                {
+                    // Apply tone to the corrected text
+                    prompt = $"맞춤법과 문법을 교정하고, 다음 톤으로 변환해주세요.\n\n톤: {tonePreset.Name}\n설명: {tonePreset.Description}\n\n교정 및 톤 변환된 텍스트만 반환하고 설명은 하지 마세요:\n\n{text}";
+                    systemMessage = $"당신은 한국어와 영어 맞춤법 및 문법 교정 전문가입니다. 오류를 정확하게 교정하고, 지정된 톤({tonePreset.Description})으로 자연스럽게 변환하세요.";
+                }
+                else
+                {
+                    // No tone applied, just correction
+                    prompt = $"맞춤법과 문법을 교정해주세요. 교정된 텍스트만 반환하고 설명은 하지 마세요:\n\n{text}";
+                }
                 
                 var requestBody = new
                 {
                     model = _settings.Model,
                     messages = new[]
                     {
-                        new { role = "system", content = "당신은 한국어와 영어 맞춤법 및 문법 교정 전문가입니다. 오류를 정확하게 교정하되, 원문의 의미와 어조를 최대한 유지하세요." },
+                        new { role = "system", content = systemMessage },
                         new { role = "user", content = prompt }
                     },
                     temperature = 0.3,
