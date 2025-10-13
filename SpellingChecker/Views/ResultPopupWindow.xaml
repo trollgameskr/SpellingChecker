@@ -14,6 +14,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- Original Text Section -->
@@ -40,8 +41,23 @@
                          BorderThickness="0"/>
         </Border>
 
+        <!-- Tone Preset Selection (only visible in spelling correction mode) -->
+        <StackPanel x:Name="TonePresetPanel" Grid.Row="4" Margin="0,0,0,10" Visibility="Collapsed">
+            <TextBlock Text="문장 톤:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+            <ComboBox x:Name="TonePresetComboBox"
+                      DisplayMemberPath="Name"
+                      SelectedValuePath="Id"
+                      SelectionChanged="TonePresetComboBox_SelectionChanged"
+                      Margin="0,0,0,5"/>
+            <TextBlock x:Name="TonePresetDescriptionTextBlock"
+                       FontSize="10"
+                       Foreground="Gray"
+                       TextWrapping="Wrap"
+                       Margin="0,0,0,0"/>
+        </StackPanel>
+
         <!-- Buttons -->
-        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
+        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Copy to Clipboard" 
                     Click="CopyButton_Click" 
                     Padding="15,5" 
