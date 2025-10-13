@@ -21,9 +21,9 @@ The SpellingChecker now supports **문장 톤 프리셋 (Tone Presets)** - apply
 
 ### 🛠️ Custom Tone Management
 - ➕ **Add** your own custom tones
-- ✏️ **Edit** custom tones
-- 🗑️ **Delete** custom tones
-- 🔒 Default tones are protected
+- ✏️ **Edit** any tone preset (including defaults)
+- 🗑️ **Delete** any tone preset (including defaults)
+- 🔓 All presets can be customized
 
 ## 📖 How to Use
 
@@ -136,10 +136,10 @@ For more detailed information, see:
 - Save settings after selecting tone
 - Verify API key is configured correctly
 
-### Can't edit/delete tone?
-- Default tones cannot be edited or deleted
-- Only custom tones can be modified
-- Edit/Delete buttons are disabled for default tones
+### Want to restore default tones?
+- All tones (including defaults) can now be edited or deleted
+- To restore defaults: delete settings file and restart application
+- Settings file location: `%APPDATA%\SpellingChecker\settings.json`
 
 ### Tone presets missing after restart?
 - Check settings file: `%APPDATA%\SpellingChecker\settings.json`
@@ -155,7 +155,7 @@ For more detailed information, see:
 - ✅ Settings persist after restart
 - ✅ UI updates correctly
 - ✅ Validation prevents empty inputs
-- ✅ Default tones are protected
+- ✅ All tones can be customized
 
 ### Backward Compatibility
 - ✅ Existing functionality unchanged

@@ -277,7 +277,7 @@ Delete:
 - [ ] Add a custom tone preset and verify it's saved
 - [ ] Edit a custom tone preset and verify changes are saved
 - [ ] Delete a custom tone preset and verify it's removed
-- [ ] Verify default presets cannot be edited or deleted
+- [ ] Verify all presets (including defaults) can be edited and deleted
 - [ ] Verify selected tone persists after application restart
 - [ ] Verify tone preset UI updates correctly when selection changes
 - [ ] Test with Korean and English text
