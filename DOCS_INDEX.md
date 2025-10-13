@@ -169,14 +169,15 @@ Start here:
 
 ## 📊 Documentation Statistics
 
-- **Total Documentation**: 14 files
-- **Total Words**: ~40,000 words
-- **Total Pages**: ~110+ pages (if printed)
+- **Total Documentation**: 17 files
+- **Total Words**: ~50,000 words
+- **Total Pages**: ~130+ pages (if printed)
 
 ### By Document Type
 - User Guides: 5 documents
 - Developer Guides: 4 documents
 - Reference Documentation: 3 documents
+- Verification & Troubleshooting: 3 documents
 - Project Information: 2 documents
 
 ## 🔍 Search by Keyword
@@ -284,8 +285,8 @@ This documentation is maintained with the project. Check:
 
 ---
 
-**Last Updated**: 2025-10-10
+**Last Updated**: 2025-10-13
 
-**Documentation Version**: 1.1.0
+**Documentation Version**: 1.2.0
 
-**Total Pages**: 14 documents, ~40,000 words
+**Total Pages**: 17 documents, ~50,000 words
