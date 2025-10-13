@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
@@ -62,7 +63,7 @@ namespace SpellingChecker
             
             var helper = new WindowInteropHelper(this);
             var settings = _settingsService.LoadSettings();
-            var success = _hotkeyService.RegisterHotkeys(helper.Handle, settings.SpellingCorrectionHotkey, settings.TranslationHotkey);
+            var success = _hotkeyService.RegisterHotkeys(helper.Handle, settings.SpellingCorrectionHotkey, settings.TranslationHotkey, settings.VariableNameSuggestionHotkey);
 
             if (!success)
             {
@@ -75,11 +76,13 @@ namespace SpellingChecker
                 ShowNotification("프로그램 시작", 
                     $"프로그램이 시작되었습니다.\n" +
                     $"맞춤법 교정: {settings.SpellingCorrectionHotkey}\n" +
-                    $"번역: {settings.TranslationHotkey}");
+                    $"번역: {settings.TranslationHotkey}\n" +
+                    $"변수명 추천: {settings.VariableNameSuggestionHotkey}");
             }
 
             _hotkeyService.SpellingCorrectionRequested += OnSpellingCorrectionRequested;
             _hotkeyService.TranslationRequested += OnTranslationRequested;
+            _hotkeyService.VariableNameSuggestionRequested += OnVariableNameSuggestionRequested;
 
             // Add hook to process hotkey messages
             HwndSource? source = PresentationSource.FromVisual(this) as HwndSource;
@@ -224,6 +227,49 @@ namespace SpellingChecker
                     $"언어: {result.SourceLanguage} → {result.TargetLanguage}", true);
                 
                 popup.UpdateResult(result.TranslatedText);
+            }
+            catch (Exception ex)
+            {
+                ShowNotification("Error", ex.Message);
+            }
+        }
+
+        private async void OnVariableNameSuggestionRequested(object? sender, EventArgs e)
+        {
+            try
+            {
+                var selectedText = _clipboardService.GetSelectedText();
+                
+                if (string.IsNullOrWhiteSpace(selectedText))
+                {
+                    ShowNotification("No text selected", "Please select some text to suggest variable names.");
+                    return;
+                }
+
+                // Show debug notification when request is made
+                ShowNotification("변수명 추천 요청", 
+                    $"'{selectedText}' 텍스트의 변수명을 추천합니다.", true);
+
+                // Show progress notification
+                ShowNotification("Processing...", "AI is suggesting variable names. Please wait...", true);
+
+                var result = await _aiService.SuggestVariableNamesAsync(selectedText);
+                
+                // Show debug notification with result
+                ShowNotification("변수명 추천 완료", 
+                    $"추천된 변수명: {string.Join(", ", result.SuggestedNames)}", true);
+                
+                // Format the suggestions for display
+                var formattedSuggestions = string.Join("\n", result.SuggestedNames.Select((name, index) => $"{index + 1}. {name}"));
+                
+                var popup = new ResultPopupWindow(
+                    formattedSuggestions, 
+                    selectedText, 
+                    "Variable Name Suggestions (C#)",
+                    false
+                );
+                popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(popup.GetResultText());
+                popup.ShowDialog();
             }
             catch (Exception ex)
             {

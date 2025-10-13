@@ -100,12 +100,24 @@
             </StackPanel>
             
             <!-- Translation Hotkey -->
-            <StackPanel>
+            <StackPanel Margin="0,0,0,10">
                 <TextBlock Text="Translation Hotkey:" FontSize="12" Margin="0,0,0,3"/>
                 <TextBox x:Name="TranslationHotkeyTextBox" 
                          Padding="5"
                          Height="30"/>
                 <TextBlock Text="Example: Ctrl+Shift+Alt+T" 
+                           FontSize="10" 
+                           Foreground="Gray" 
+                           Margin="0,3,0,0"/>
+            </StackPanel>
+            
+            <!-- Variable Name Suggestion Hotkey -->
+            <StackPanel>
+                <TextBlock Text="Variable Name Suggestion Hotkey:" FontSize="12" Margin="0,0,0,3"/>
+                <TextBox x:Name="VariableNameSuggestionHotkeyTextBox" 
+                         Padding="5"
+                         Height="30"/>
+                <TextBlock Text="Example: Ctrl+Shift+Alt+V" 
                            FontSize="10" 
                            Foreground="Gray" 
                            Margin="0,3,0,0"/>

@@ -26,6 +26,15 @@ namespace SpellingChecker.Models
     }
 
     /// <summary>
+    /// Represents the result of a variable name suggestion operation
+    /// </summary>
+    public class VariableNameSuggestionResult
+    {
+        public string OriginalText { get; set; } = string.Empty;
+        public string[] SuggestedNames { get; set; } = Array.Empty<string>();
+    }
+
+    /// <summary>
     /// Represents a tone preset for spelling correction
     /// </summary>
     public class TonePreset
@@ -45,6 +54,7 @@ namespace SpellingChecker.Models
         public string ApiEndpoint { get; set; } = "https://api.openai.com/v1";
         public string SpellingCorrectionHotkey { get; set; } = "Ctrl+Shift+Alt+Y";
         public string TranslationHotkey { get; set; } = "Ctrl+Shift+Alt+T";
+        public string VariableNameSuggestionHotkey { get; set; } = "Ctrl+Shift+Alt+V";
         public bool AutoStartWithWindows { get; set; } = true;
         public string Model { get; set; } = "gpt-4o-mini";
         public List<TonePreset> TonePresets { get; set; } = new List<TonePreset>();

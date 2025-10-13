@@ -38,6 +38,7 @@ namespace SpellingChecker.Views
             ShowProgressNotificationsCheckBox.IsChecked = _settings.ShowProgressNotifications;
             SpellingHotkeyTextBox.Text = _settings.SpellingCorrectionHotkey;
             TranslationHotkeyTextBox.Text = _settings.TranslationHotkey;
+            VariableNameSuggestionHotkeyTextBox.Text = _settings.VariableNameSuggestionHotkey;
             
             // Load tone presets
             LoadTonePresets();
@@ -83,6 +84,13 @@ namespace SpellingChecker.Views
                     return;
                 }
 
+                if (!HotkeyParser.IsValidHotkey(VariableNameSuggestionHotkeyTextBox.Text))
+                {
+                    MessageBox.Show("Invalid variable name suggestion hotkey format. Please use format like 'Ctrl+Shift+Alt+V'", "Error", 
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
                 _settings.ApiKey = ApiKeyTextBox.Password;
                 _settings.ApiEndpoint = ApiEndpointTextBox.Text;
                 _settings.Model = ModelTextBox.Text;
@@ -90,6 +98,7 @@ namespace SpellingChecker.Views
                 _settings.ShowProgressNotifications = ShowProgressNotificationsCheckBox.IsChecked ?? false;
                 _settings.SpellingCorrectionHotkey = SpellingHotkeyTextBox.Text;
                 _settings.TranslationHotkey = TranslationHotkeyTextBox.Text;
+                _settings.VariableNameSuggestionHotkey = VariableNameSuggestionHotkeyTextBox.Text;
 
                 // Save selected tone preset
                 if (TonePresetComboBox.SelectedItem is TonePreset selectedPreset)
