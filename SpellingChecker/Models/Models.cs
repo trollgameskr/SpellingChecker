@@ -49,6 +49,7 @@ namespace SpellingChecker.Models
         public string Model { get; set; } = "gpt-4o-mini";
         public List<TonePreset> TonePresets { get; set; } = new List<TonePreset>();
         public string SelectedTonePresetId { get; set; } = string.Empty;
+        public bool ShowProgressNotifications { get; set; } = false;
     }
 
     /// <summary>

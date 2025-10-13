@@ -35,6 +35,7 @@ namespace SpellingChecker.Views
             ApiEndpointTextBox.Text = _settings.ApiEndpoint;
             ModelTextBox.Text = _settings.Model;
             AutoStartCheckBox.IsChecked = _settings.AutoStartWithWindows;
+            ShowProgressNotificationsCheckBox.IsChecked = _settings.ShowProgressNotifications;
             SpellingHotkeyTextBox.Text = _settings.SpellingCorrectionHotkey;
             TranslationHotkeyTextBox.Text = _settings.TranslationHotkey;
             
@@ -84,6 +85,7 @@ namespace SpellingChecker.Views
                 _settings.ApiEndpoint = ApiEndpointTextBox.Text;
                 _settings.Model = ModelTextBox.Text;
                 _settings.AutoStartWithWindows = AutoStartCheckBox.IsChecked ?? false;
+                _settings.ShowProgressNotifications = ShowProgressNotificationsCheckBox.IsChecked ?? false;
                 _settings.SpellingCorrectionHotkey = SpellingHotkeyTextBox.Text;
                 _settings.TranslationHotkey = TranslationHotkeyTextBox.Text;
 
