@@ -32,13 +32,23 @@
         <!-- Result Section -->
         <TextBlock Grid.Row="2" Text="Result:" FontWeight="Bold" Margin="0,0,0,5"/>
         <Border Grid.Row="3" BorderBrush="LightBlue" BorderThickness="2" Margin="0,0,0,10">
-            <RichTextBox x:Name="ResultRichTextBox" 
-                         IsReadOnly="True" 
-                         VerticalScrollBarVisibility="Auto"
-                         Background="#F0F8FF"
-                         Padding="5"
-                         FontWeight="SemiBold"
-                         BorderThickness="0"/>
+            <Grid>
+                <RichTextBox x:Name="ResultRichTextBox" 
+                             IsReadOnly="True" 
+                             VerticalScrollBarVisibility="Auto"
+                             Background="#F0F8FF"
+                             Padding="5"
+                             FontWeight="SemiBold"
+                             BorderThickness="0"/>
+                
+                <!-- Progress Indicator Overlay -->
+                <Grid x:Name="ProgressOverlay" Background="#B0FFFFFF" Visibility="Collapsed">
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <ProgressBar IsIndeterminate="True" Width="200" Height="20" Margin="0,0,0,10"/>
+                        <TextBlock Text="대화톤 변경 중..." FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+            </Grid>
         </Border>
 
         <!-- Tone Preset Selection (only visible in spelling correction mode) -->
