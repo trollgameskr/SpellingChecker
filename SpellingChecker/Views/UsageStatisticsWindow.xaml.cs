@@ -50,6 +50,10 @@ namespace SpellingChecker.Views
 
         private void PeriodComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            // Prevent execution during initialization before controls are ready
+            if (TotalOperationsText == null)
+                return;
+
             if (PeriodComboBox.SelectedItem is ComboBoxItem selectedItem)
             {
                 var now = DateTime.Now;
