@@ -32,8 +32,8 @@ The system includes 11 default tone presets:
 
 Users can:
 - **Add** custom tone presets with name and description
-- **Edit** custom tone presets (default presets are protected)
-- **Delete** custom tone presets (default presets are protected)
+- **Edit** any tone preset (including default ones)
+- **Delete** any tone preset (including default ones)
 
 ### 3. Tone Application in Spelling Correction
 
@@ -219,10 +219,11 @@ Delete:
 
 ## Key Design Decisions
 
-### 1. Preset Protection
-- Default presets are marked with `IsDefault = true`
-- Edit and Delete operations are blocked for default presets
-- This ensures users always have the original 11 presets available
+### 1. Preset Management
+- Default presets are marked with `IsDefault = true` for identification
+- All presets (including default ones) can now be edited and deleted
+- Users have full control over their tone preset collection
+- Deleted default presets can be restored by resetting the application settings
 
 ### 2. Tone Application Strategy
 - Tone is applied during spelling correction, not as a separate step
@@ -312,9 +313,9 @@ Possible improvements for future versions:
 
 ✅ **프리셋은 사용자가 추가/수정/삭제할 수 있습니다**
 - Users can add custom tone presets
-- Users can edit custom tone presets
-- Users can delete custom tone presets
-- Default presets are protected from modification
+- Users can edit any tone preset (including default ones)
+- Users can delete any tone preset (including default ones)
+- All presets can now be modified or removed as needed
 
 ## Conclusion
 

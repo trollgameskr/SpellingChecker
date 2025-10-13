@@ -27,7 +27,7 @@ This guide provides step-by-step instructions for testing the tone preset featur
 - ✅ ComboBox should show 11 tone presets
 - ✅ First preset should be "톤 없음" (selected by default)
 - ✅ Description should display: "원문의 톤을 그대로 유지합니다."
-- ✅ Edit and Delete buttons should be disabled (default preset selected)
+- ✅ Edit and Delete buttons should be enabled (all presets can be edited)
 
 ---
 
@@ -46,7 +46,7 @@ This guide provides step-by-step instructions for testing the tone preset featur
 **Expected Results**:
 - ✅ Selecting "근엄한 팀장님 톤" displays: "권위 있고 엄격한 말투, 지시와 조언이 섞인 느낌."
 - ✅ Selecting "MZ세대 톤" displays: "최신 유행어와 인터넷 밈을 섞은 가벼운 말투."
-- ✅ Edit and Delete buttons remain disabled (default presets)
+- ✅ Edit and Delete buttons remain enabled (all presets can be edited)
 
 ---
 
@@ -127,7 +127,7 @@ This guide provides step-by-step instructions for testing the tone preset featur
 - ✅ New preset appears in ComboBox
 - ✅ New preset is automatically selected
 - ✅ Description displays the entered text
-- ✅ Edit and Delete buttons are now enabled (custom preset)
+- ✅ Edit and Delete buttons remain enabled
 
 ---
 
@@ -168,9 +168,9 @@ This guide provides step-by-step instructions for testing the tone preset featur
 
 ---
 
-### Scenario 9: Cannot Edit Default Preset
+### Scenario 9: Can Edit and Delete Default Preset
 
-**Objective**: Verify default presets are protected from editing
+**Objective**: Verify all presets (including default ones) can be edited and deleted
 
 **Steps**:
 1. Open Settings → "문장 톤 프리셋" section
@@ -178,9 +178,9 @@ This guide provides step-by-step instructions for testing the tone preset featur
 3. Observe Edit and Delete buttons
 
 **Expected Results**:
-- ✅ Edit button is disabled
-- ✅ Delete button is disabled
-- ✅ Cannot modify default presets
+- ✅ Edit button is enabled
+- ✅ Delete button is enabled
+- ✅ Can modify default presets
 
 ---
 
