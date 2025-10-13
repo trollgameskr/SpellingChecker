@@ -69,28 +69,45 @@ Complete guide to SpellingChecker documentation.
    - Expected behavior
    - Troubleshooting guide
 
+10. **[USAGE_STATISTICS_VERIFICATION.md](USAGE_STATISTICS_VERIFICATION.md)** - Usage Statistics Integration Verification
+    - Confirms feature is merged into main branch
+    - File locations and code verification
+    - Integration details
+    - How to access the feature
+
+11. **[TROUBLESHOOTING_USAGE_STATS_UI.md](TROUBLESHOOTING_USAGE_STATS_UI.md)** - Usage Statistics UI Troubleshooting
+    - Step-by-step troubleshooting guide
+    - Common issues and solutions
+    - Build verification checklist
+    - Debug tips
+
+12. **[USAGE_STATISTICS_통합확인.md](USAGE_STATISTICS_통합확인.md)** - 사용 통계 통합 확인 (Bilingual Quick Reference)
+    - Korean/English quick reference
+    - Quick verification steps
+    - Usage instructions
+
 ### Project Information
 
-10. **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
+13. **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
    - How to contribute
    - Coding standards
    - Pull request process
    - Development workflow
 
-11. **[CHANGELOG.md](CHANGELOG.md)** - Version history
+14. **[CHANGELOG.md](CHANGELOG.md)** - Version history
     - Release notes
     - Feature additions
     - Bug fixes
     - Future roadmap
 
-12. **[PROJECT_STATUS.md](PROJECT_STATUS.md)** - Implementation summary
+15. **[PROJECT_STATUS.md](PROJECT_STATUS.md)** - Implementation summary
     - Requirements completion
     - Technology stack
     - Implementation statistics
     - Testing status
     - Deployment readiness
 
-13. **[LICENSE](LICENSE)** - MIT License
+16. **[LICENSE](LICENSE)** - MIT License
     - Open source license
     - Usage rights
     - Liability disclaimer
@@ -138,6 +155,7 @@ Start here:
 ### Troubleshooting
 - [FAQ.md](FAQ.md) - Common issues
 - [CONFIG.md](CONFIG.md) - Troubleshooting section
+- [TROUBLESHOOTING_USAGE_STATS_UI.md](TROUBLESHOOTING_USAGE_STATS_UI.md) - Usage statistics UI issues
 
 ### Development
 - [BUILD.md](BUILD.md) - Building and testing
@@ -192,6 +210,9 @@ Start here:
 - [README.md](README.md) - Usage statistics overview
 - [CONFIG.md](CONFIG.md) - Usage statistics configuration
 - [TESTING_USAGE_STATS.md](TESTING_USAGE_STATS.md) - Testing guide
+- [USAGE_STATISTICS_VERIFICATION.md](USAGE_STATISTICS_VERIFICATION.md) - Integration verification
+- [TROUBLESHOOTING_USAGE_STATS_UI.md](TROUBLESHOOTING_USAGE_STATS_UI.md) - UI troubleshooting
+- [USAGE_STATISTICS_통합확인.md](USAGE_STATISTICS_통합확인.md) - Korean quick reference
 
 ### Hotkeys
 - [README.md](README.md) - Hotkey reference
