@@ -14,21 +14,33 @@ namespace SpellingChecker.Views
     {
         public event EventHandler? CopyRequested;
         public event EventHandler<string>? ConvertRequested;
+        public event EventHandler<string>? ToneChangeRequested;
 
         private readonly bool _isTranslationMode;
+        private readonly Models.AppSettings? _settings;
+        private readonly string _originalText;
 
-        public ResultPopupWindow(string result, string original, string title, bool isTranslationMode = false)
+        public ResultPopupWindow(string result, string original, string title, bool isTranslationMode = false, Models.AppSettings? settings = null)
         {
             InitializeComponent();
             
             Title = title;
             OriginalTextBox.Text = original;
             _isTranslationMode = isTranslationMode;
+            _settings = settings;
+            _originalText = original;
 
             // Set result text with highlighting if in spelling correction mode
             if (!isTranslationMode)
             {
                 SetResultWithHighlighting(result, original);
+                
+                // Show tone preset UI only in spelling correction mode
+                if (settings != null)
+                {
+                    TonePresetPanel.Visibility = Visibility.Visible;
+                    LoadTonePresets();
+                }
             }
             else
             {
@@ -207,6 +219,47 @@ namespace SpellingChecker.Views
             public int Start { get; set; }
         }
 
+
+        private void LoadTonePresets()
+        {
+            if (_settings == null || _settings.TonePresets == null)
+                return;
+
+            TonePresetComboBox.ItemsSource = _settings.TonePresets;
+            
+            // Select the current tone preset
+            if (!string.IsNullOrEmpty(_settings.SelectedTonePresetId))
+            {
+                var selectedPreset = _settings.TonePresets.FirstOrDefault(p => p.Id == _settings.SelectedTonePresetId);
+                if (selectedPreset != null)
+                {
+                    TonePresetComboBox.SelectedItem = selectedPreset;
+                    TonePresetDescriptionTextBlock.Text = selectedPreset.Description;
+                }
+            }
+            else if (_settings.TonePresets.Count > 0)
+            {
+                TonePresetComboBox.SelectedIndex = 0;
+                TonePresetDescriptionTextBlock.Text = _settings.TonePresets[0].Description;
+            }
+        }
+
+        private void TonePresetComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (TonePresetComboBox.SelectedItem is Models.TonePreset selectedPreset)
+            {
+                TonePresetDescriptionTextBlock.Text = selectedPreset.Description;
+                
+                // Update the selected tone preset in settings
+                if (_settings != null)
+                {
+                    _settings.SelectedTonePresetId = selectedPreset.Id;
+                }
+                
+                // Request re-correction with the new tone
+                ToneChangeRequested?.Invoke(this, _originalText);
+            }
+        }
 
         private void CopyButton_Click(object sender, RoutedEventArgs e)
         {

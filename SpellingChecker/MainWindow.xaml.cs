@@ -122,10 +122,15 @@ namespace SpellingChecker
                 ShowNotification("맞춤법 교정 완료", 
                     $"교정 결과는 '{result.CorrectedText}' 입니다.", true);
                 
-                var popup = new ResultPopupWindow(result.CorrectedText, selectedText, "Spelling Correction", false);
+                var settings = _settingsService.LoadSettings();
+                var popup = new ResultPopupWindow(result.CorrectedText, selectedText, "Spelling Correction", false, settings);
                 popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(popup.GetResultText());
                 popup.ConvertRequested += async (s, text) => await ReprocessSpellingCorrection(popup, text);
+                popup.ToneChangeRequested += async (s, text) => await ReprocessSpellingCorrection(popup, text);
                 popup.ShowDialog();
+                
+                // Save settings after popup closes to persist tone selection
+                _settingsService.SaveSettings(settings);
             }
             catch (Exception ex)
             {
