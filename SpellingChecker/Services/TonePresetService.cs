@@ -149,9 +149,9 @@ namespace SpellingChecker.Services
         public static bool UpdateTonePreset(AppSettings settings, string id, string name, string description)
         {
             var preset = settings.TonePresets?.FirstOrDefault(p => p.Id == id);
-            if (preset == null || preset.IsDefault)
+            if (preset == null)
             {
-                return false; // Can't update default presets
+                return false;
             }
 
             preset.Name = name;
@@ -165,9 +165,9 @@ namespace SpellingChecker.Services
         public static bool DeleteTonePreset(AppSettings settings, string id)
         {
             var preset = settings.TonePresets?.FirstOrDefault(p => p.Id == id);
-            if (preset == null || preset.IsDefault)
+            if (preset == null)
             {
-                return false; // Can't delete default presets
+                return false;
             }
 
             settings.TonePresets?.Remove(preset);
