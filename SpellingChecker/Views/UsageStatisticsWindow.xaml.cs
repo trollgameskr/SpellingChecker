@@ -15,8 +15,8 @@ namespace SpellingChecker.Views
 
         public UsageStatisticsWindow()
         {
-            InitializeComponent();
             _usageService = new UsageService();
+            InitializeComponent();
             LoadStatistics();
         }
 
@@ -45,7 +45,8 @@ namespace SpellingChecker.Views
             TotalCostText.Text = statistics.TotalCost.ToString("C6");
 
             // Update history grid (sorted by most recent first)
-            HistoryDataGrid.ItemsSource = records.OrderByDescending(r => r.Timestamp).ToList();
+            if(HistoryDataGrid != null)
+                HistoryDataGrid.ItemsSource = records.OrderByDescending(r => r.Timestamp).ToList();
         }
 
         private void PeriodComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
