@@ -19,6 +19,7 @@ namespace SpellingChecker.Views
         private readonly bool _isTranslationMode;
         private readonly Models.AppSettings? _settings;
         private readonly string _originalText;
+        private bool _isInitializing = true;
 
         public ResultPopupWindow(string result, string original, string title, bool isTranslationMode = false, Models.AppSettings? settings = null)
         {
@@ -74,6 +75,16 @@ namespace SpellingChecker.Views
             {
                 SetResultTextPlain(newResult);
             }
+        }
+
+        public void ShowProgressIndicator()
+        {
+            ProgressOverlay.Visibility = Visibility.Visible;
+        }
+
+        public void HideProgressIndicator()
+        {
+            ProgressOverlay.Visibility = Visibility.Collapsed;
         }
 
         private void SetResultTextPlain(string text)
@@ -241,10 +252,17 @@ namespace SpellingChecker.Views
                 TonePresetComboBox.SelectedIndex = 0;
                 TonePresetDescriptionTextBlock.Text = _settings.TonePresets[0].Description;
             }
+            
+            // Initialization complete
+            _isInitializing = false;
         }
 
         private void TonePresetComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
+            // Skip if this is triggered during initialization
+            if (_isInitializing)
+                return;
+            
             if (TonePresetComboBox.SelectedItem is Models.TonePreset selectedPreset)
             {
                 TonePresetDescriptionTextBlock.Text = selectedPreset.Description;
@@ -254,6 +272,9 @@ namespace SpellingChecker.Views
                 {
                     _settings.SelectedTonePresetId = selectedPreset.Id;
                 }
+                
+                // Show progress indicator
+                ShowProgressIndicator();
                 
                 // Request re-correction with the new tone using current text from Original TextBox
                 // (user may have edited it)

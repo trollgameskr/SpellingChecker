@@ -186,6 +186,7 @@ namespace SpellingChecker
             {
                 if (string.IsNullOrWhiteSpace(text))
                 {
+                    popup.HideProgressIndicator();
                     ShowNotification("No text", "Please enter some text to correct.");
                     return;
                 }
@@ -198,9 +199,11 @@ namespace SpellingChecker
                     $"교정 결과는 '{result.CorrectedText}' 입니다.", true);
                 
                 popup.UpdateResult(result.CorrectedText);
+                popup.HideProgressIndicator();
             }
             catch (Exception ex)
             {
+                popup.HideProgressIndicator();
                 ShowNotification("Error", ex.Message);
             }
         }
