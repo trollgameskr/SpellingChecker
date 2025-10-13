@@ -111,16 +111,16 @@ namespace SpellingChecker
 
                 // Show debug notification when request is made
                 ShowNotification("맞춤법 교정 요청", 
-                    $"'{selectedText}' 문장의 맞춤법 교정을 요청했습니다.");
+                    $"'{selectedText}' 문장의 맞춤법 교정을 요청했습니다.", true);
 
                 // Show progress notification
-                ShowNotification("Processing...", "AI is correcting your text. Please wait...");
+                ShowNotification("Processing...", "AI is correcting your text. Please wait...", true);
 
                 var result = await _aiService.CorrectSpellingAsync(selectedText);
                 
                 // Show debug notification with result
                 ShowNotification("맞춤법 교정 완료", 
-                    $"교정 결과는 '{result.CorrectedText}' 입니다.");
+                    $"교정 결과는 '{result.CorrectedText}' 입니다.", true);
                 
                 var popup = new ResultPopupWindow(result.CorrectedText, selectedText, "Spelling Correction", false);
                 popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(popup.GetResultText());
@@ -147,17 +147,17 @@ namespace SpellingChecker
 
                 // Show debug notification when request is made
                 ShowNotification("번역 요청", 
-                    $"'{selectedText}' 문장의 번역을 요청했습니다.");
+                    $"'{selectedText}' 문장의 번역을 요청했습니다.", true);
 
                 // Show progress notification
-                ShowNotification("Processing...", "AI is translating your text. Please wait...");
+                ShowNotification("Processing...", "AI is translating your text. Please wait...", true);
 
                 var result = await _aiService.TranslateAsync(selectedText);
                 
                 // Show debug notification with result
                 ShowNotification("번역 완료", 
                     $"번역 결과는 '{result.TranslatedText}' 입니다.\n" +
-                    $"언어: {result.SourceLanguage} → {result.TargetLanguage}");
+                    $"언어: {result.SourceLanguage} → {result.TargetLanguage}", true);
                 
                 var popup = new ResultPopupWindow(
                     result.TranslatedText, 
@@ -185,12 +185,12 @@ namespace SpellingChecker
                     return;
                 }
 
-                ShowNotification("Processing...", "AI is correcting your text. Please wait...");
+                ShowNotification("Processing...", "AI is correcting your text. Please wait...", true);
 
                 var result = await _aiService.CorrectSpellingAsync(text);
                 
                 ShowNotification("맞춤법 교정 완료", 
-                    $"교정 결과는 '{result.CorrectedText}' 입니다.");
+                    $"교정 결과는 '{result.CorrectedText}' 입니다.", true);
                 
                 popup.UpdateResult(result.CorrectedText);
             }
@@ -210,13 +210,13 @@ namespace SpellingChecker
                     return;
                 }
 
-                ShowNotification("Processing...", "AI is translating your text. Please wait...");
+                ShowNotification("Processing...", "AI is translating your text. Please wait...", true);
 
                 var result = await _aiService.TranslateAsync(text);
                 
                 ShowNotification("번역 완료", 
                     $"번역 결과는 '{result.TranslatedText}' 입니다.\n" +
-                    $"언어: {result.SourceLanguage} → {result.TargetLanguage}");
+                    $"언어: {result.SourceLanguage} → {result.TargetLanguage}", true);
                 
                 popup.UpdateResult(result.TranslatedText);
             }
@@ -243,8 +243,18 @@ namespace SpellingChecker
             Application.Current.Shutdown();
         }
 
-        private void ShowNotification(string title, string message)
+        private void ShowNotification(string title, string message, bool isProgress = false)
         {
+            // Only show progress notifications if enabled in settings
+            if (isProgress)
+            {
+                var settings = _settingsService.LoadSettings();
+                if (!settings.ShowProgressNotifications)
+                {
+                    return;
+                }
+            }
+            
             _notifyIcon?.ShowBalloonTip(3000, title, message, ToolTipIcon.Info);
         }
 

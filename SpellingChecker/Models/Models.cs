@@ -35,6 +35,7 @@ namespace SpellingChecker.Models
         public string TranslationHotkey { get; set; } = "Ctrl+Shift+Alt+T";
         public bool AutoStartWithWindows { get; set; } = true;
         public string Model { get; set; } = "gpt-4o-mini";
+        public bool ShowProgressNotifications { get; set; } = false;
     }
 
     /// <summary>
