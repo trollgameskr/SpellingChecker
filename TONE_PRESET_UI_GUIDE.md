@@ -69,9 +69,10 @@
 
 ### Window Properties
 - **Title**: "톤 프리셋 관리" (changes to "새 톤 프리셋 추가" or "톤 프리셋 수정")
-- **Size**: 300px (height) × 500px (width)
+- **Size**: 600px (height) × 500px (width)
 - **WindowStartupLocation**: CenterOwner
 - **ResizeMode**: NoResize
+- **Scrolling**: Enabled via ScrollViewer when content exceeds window height
 
 ### Dialog Layout
 
