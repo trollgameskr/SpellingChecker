@@ -125,10 +125,9 @@ namespace SpellingChecker.Views
             {
                 TonePresetDescriptionTextBlock.Text = selectedPreset.Description;
                 
-                // Enable edit/delete buttons only for custom presets
-                bool isCustomPreset = !selectedPreset.IsDefault;
-                EditTonePresetButton.IsEnabled = isCustomPreset;
-                DeleteTonePresetButton.IsEnabled = isCustomPreset;
+                // Enable edit/delete buttons for all presets
+                EditTonePresetButton.IsEnabled = true;
+                DeleteTonePresetButton.IsEnabled = true;
             }
         }
 
@@ -151,7 +150,7 @@ namespace SpellingChecker.Views
 
         private void EditTonePresetButton_Click(object sender, RoutedEventArgs e)
         {
-            if (TonePresetComboBox.SelectedItem is TonePreset selectedPreset && !selectedPreset.IsDefault)
+            if (TonePresetComboBox.SelectedItem is TonePreset selectedPreset)
             {
                 var dialog = new TonePresetDialog(selectedPreset.Name, selectedPreset.Description);
                 if (dialog.ShowDialog() == true)
@@ -167,7 +166,7 @@ namespace SpellingChecker.Views
 
         private void DeleteTonePresetButton_Click(object sender, RoutedEventArgs e)
         {
-            if (TonePresetComboBox.SelectedItem is TonePreset selectedPreset && !selectedPreset.IsDefault)
+            if (TonePresetComboBox.SelectedItem is TonePreset selectedPreset)
             {
                 var result = MessageBox.Show(
                     $"'{selectedPreset.Name}' 톤 프리셋을 삭제하시겠습니까?",

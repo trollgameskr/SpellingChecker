@@ -16,9 +16,9 @@ This PR implements a comprehensive **Tone Preset Feature** for the SpellingCheck
 
 ✅ **프리셋은 사용자가 추가/수정/삭제할 수 있습니다**
 - Users can add custom tone presets
-- Users can edit custom tone presets
-- Users can delete custom tone presets
-- Default presets are protected from modification
+- Users can edit any tone preset (including default ones)
+- Users can delete any tone preset (including default ones)
+- All presets can now be modified or removed as needed
 
 ## 📊 Changes Summary
 
@@ -122,9 +122,9 @@ This PR implements a comprehensive **Tone Preset Feature** for the SpellingCheck
 ### 2. Custom Tone Management
 
 - **Add**: Create custom tones with name and description
-- **Edit**: Modify existing custom tones
-- **Delete**: Remove custom tones (with confirmation)
-- **Protection**: Default tones cannot be edited or deleted
+- **Edit**: Modify any tone preset (including default ones)
+- **Delete**: Remove any tone preset (with confirmation)
+- **Flexibility**: All presets can be edited or deleted
 
 ### 3. Seamless Integration
 
@@ -248,7 +248,7 @@ Display Result
 - ✅ Tone presets encrypted with DPAPI
 - ✅ Stored per-user (Windows user account)
 - ✅ No external data transmission (except OpenAI API)
-- ✅ Default presets protected from modification
+- ✅ All presets can be customized by users
 
 ## ⚡ Performance
 

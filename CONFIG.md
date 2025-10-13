@@ -155,18 +155,18 @@ Tone presets allow you to apply different speaking styles to your corrected text
 4. Enter a description (e.g., "격식 있고 전문적인 말투, 보고서에 적합")
 5. Click "확인" (OK) to save
 
-**To Edit a Custom Tone:**
-1. Select a custom tone from the dropdown (default tones cannot be edited)
+**To Edit a Tone:**
+1. Select a tone from the dropdown
 2. Click "✏️ 수정" (Edit) button
 3. Modify the name and/or description
 4. Click "확인" (OK) to save changes
 
-**To Delete a Custom Tone:**
-1. Select a custom tone from the dropdown (default tones cannot be deleted)
+**To Delete a Tone:**
+1. Select a tone from the dropdown
 2. Click "🗑️ 삭제" (Delete) button
 3. Confirm the deletion
 
-**Note**: Default tone presets are protected and cannot be edited or deleted. You can only add, edit, and delete custom tone presets that you create.
+**Note**: You can now edit and delete any tone preset, including the default ones. Be careful when modifying or deleting default presets as you may lose the original configurations.
 
 ### Examples of Custom Tones
 
