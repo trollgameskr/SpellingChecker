@@ -70,6 +70,15 @@
                        FontSize="10" 
                        Foreground="Gray" 
                        Margin="20,3,0,0"/>
+            
+            <CheckBox x:Name="ShowProgressNotificationsCheckBox" 
+                      Content="Show progress notifications" 
+                      FontWeight="SemiBold"
+                      Margin="0,10,0,0"/>
+            <TextBlock Text="Display desktop notifications for spelling correction and translation progress" 
+                       FontSize="10" 
+                       Foreground="Gray" 
+                       Margin="20,3,0,0"/>
         </StackPanel>
 
         <!-- Hotkeys Info -->
