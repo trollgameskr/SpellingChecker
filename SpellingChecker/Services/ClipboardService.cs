@@ -141,11 +141,44 @@ namespace SpellingChecker.Services
         {
             try
             {
+                // Save current clipboard content to restore later
+                string? previousClipboard = null;
+                bool hadPreviousClipboard = false;
                 if (Clipboard.ContainsText())
                 {
-                    return Clipboard.GetText();
+                    previousClipboard = Clipboard.GetText();
+                    hadPreviousClipboard = true;
                 }
-                return string.Empty;
+
+                // Simulate Ctrl+C to copy selected text
+                keybd_event(VK_CONTROL, 0, 0, UIntPtr.Zero);
+                keybd_event(VK_C, 0, 0, UIntPtr.Zero);
+                keybd_event(VK_C, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
+                keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
+
+                // Wait for clipboard to be updated
+                Thread.Sleep(100);
+
+                string selectedText = string.Empty;
+                if (Clipboard.ContainsText())
+                {
+                    selectedText = Clipboard.GetText();
+                }
+
+                // Restore previous clipboard content if it was different
+                // This preserves the user's clipboard for their other work
+                if (hadPreviousClipboard && !string.IsNullOrEmpty(selectedText) && 
+                    selectedText != previousClipboard)
+                {
+                    // Give a moment for the clipboard to be read by us first
+                    Thread.Sleep(50);
+                    if (!string.IsNullOrEmpty(previousClipboard))
+                    {
+                        Clipboard.SetText(previousClipboard);
+                    }
+                }
+
+                return selectedText;
             }
             catch
             {
