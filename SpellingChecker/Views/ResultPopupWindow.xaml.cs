@@ -255,8 +255,9 @@ namespace SpellingChecker.Views
                     _settings.SelectedTonePresetId = selectedPreset.Id;
                 }
                 
-                // Request re-correction with the new tone
-                ToneChangeRequested?.Invoke(this, _originalText);
+                // Request re-correction with the new tone using current text from Original TextBox
+                // (user may have edited it)
+                ToneChangeRequested?.Invoke(this, OriginalTextBox.Text);
             }
         }
 
