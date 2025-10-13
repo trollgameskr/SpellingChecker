@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Windows;
 using SpellingChecker.Models;
@@ -36,6 +37,28 @@ namespace SpellingChecker.Views
             AutoStartCheckBox.IsChecked = _settings.AutoStartWithWindows;
             SpellingHotkeyTextBox.Text = _settings.SpellingCorrectionHotkey;
             TranslationHotkeyTextBox.Text = _settings.TranslationHotkey;
+            
+            // Load tone presets
+            LoadTonePresets();
+        }
+
+        private void LoadTonePresets()
+        {
+            TonePresetComboBox.ItemsSource = _settings.TonePresets;
+            
+            // Select the current tone preset
+            if (!string.IsNullOrEmpty(_settings.SelectedTonePresetId))
+            {
+                var selectedPreset = _settings.TonePresets?.FirstOrDefault(p => p.Id == _settings.SelectedTonePresetId);
+                if (selectedPreset != null)
+                {
+                    TonePresetComboBox.SelectedItem = selectedPreset;
+                }
+            }
+            else if (_settings.TonePresets?.Count > 0)
+            {
+                TonePresetComboBox.SelectedIndex = 0;
+            }
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -64,6 +87,12 @@ namespace SpellingChecker.Views
                 _settings.SpellingCorrectionHotkey = SpellingHotkeyTextBox.Text;
                 _settings.TranslationHotkey = TranslationHotkeyTextBox.Text;
 
+                // Save selected tone preset
+                if (TonePresetComboBox.SelectedItem is TonePreset selectedPreset)
+                {
+                    _settings.SelectedTonePresetId = selectedPreset.Id;
+                }
+
                 _settingsService.SaveSettings(_settings);
                 
                 MessageBox.Show("Settings saved successfully! Please restart the application for hotkey changes to take effect.", "Success", 
@@ -86,6 +115,70 @@ namespace SpellingChecker.Views
         {
             var usageWindow = new UsageStatisticsWindow();
             usageWindow.ShowDialog();
+        }
+
+        private void TonePresetComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (TonePresetComboBox.SelectedItem is TonePreset selectedPreset)
+            {
+                TonePresetDescriptionTextBlock.Text = selectedPreset.Description;
+                
+                // Enable edit/delete buttons only for custom presets
+                bool isCustomPreset = !selectedPreset.IsDefault;
+                EditTonePresetButton.IsEnabled = isCustomPreset;
+                DeleteTonePresetButton.IsEnabled = isCustomPreset;
+            }
+        }
+
+        private void AddTonePresetButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new TonePresetDialog();
+            if (dialog.ShowDialog() == true)
+            {
+                TonePresetService.AddTonePreset(_settings, dialog.PresetName, dialog.PresetDescription);
+                LoadTonePresets();
+                
+                // Select the newly added preset
+                var newPreset = _settings.TonePresets?.LastOrDefault(p => !p.IsDefault);
+                if (newPreset != null)
+                {
+                    TonePresetComboBox.SelectedItem = newPreset;
+                }
+            }
+        }
+
+        private void EditTonePresetButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (TonePresetComboBox.SelectedItem is TonePreset selectedPreset && !selectedPreset.IsDefault)
+            {
+                var dialog = new TonePresetDialog(selectedPreset.Name, selectedPreset.Description);
+                if (dialog.ShowDialog() == true)
+                {
+                    if (TonePresetService.UpdateTonePreset(_settings, selectedPreset.Id, dialog.PresetName, dialog.PresetDescription))
+                    {
+                        LoadTonePresets();
+                        TonePresetComboBox.SelectedItem = selectedPreset;
+                    }
+                }
+            }
+        }
+
+        private void DeleteTonePresetButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (TonePresetComboBox.SelectedItem is TonePreset selectedPreset && !selectedPreset.IsDefault)
+            {
+                var result = MessageBox.Show(
+                    $"'{selectedPreset.Name}' 톤 프리셋을 삭제하시겠습니까?",
+                    "톤 프리셋 삭제",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    TonePresetService.DeleteTonePreset(_settings, selectedPreset.Id);
+                    LoadTonePresets();
+                }
+            }
         }
     }
 }

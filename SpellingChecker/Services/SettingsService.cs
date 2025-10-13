@@ -26,17 +26,26 @@ namespace SpellingChecker.Services
             {
                 if (!File.Exists(SettingsPath))
                 {
-                    return new AppSettings();
+                    var newSettings = new AppSettings();
+                    TonePresetService.InitializeTonePresets(newSettings);
+                    return newSettings;
                 }
 
                 var encryptedData = File.ReadAllBytes(SettingsPath);
                 var decryptedData = ProtectedData.Unprotect(encryptedData, Entropy, DataProtectionScope.CurrentUser);
                 var json = Encoding.UTF8.GetString(decryptedData);
-                return JsonConvert.DeserializeObject<AppSettings>(json) ?? new AppSettings();
+                var settings = JsonConvert.DeserializeObject<AppSettings>(json) ?? new AppSettings();
+                
+                // Initialize tone presets if they don't exist (for backward compatibility)
+                TonePresetService.InitializeTonePresets(settings);
+                
+                return settings;
             }
             catch
             {
-                return new AppSettings();
+                var newSettings = new AppSettings();
+                TonePresetService.InitializeTonePresets(newSettings);
+                return newSettings;
             }
         }
 
