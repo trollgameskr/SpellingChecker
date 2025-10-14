@@ -265,7 +265,7 @@ namespace SpellingChecker
                 var popup = new ResultPopupWindow(
                     formattedSuggestions, 
                     selectedText, 
-                    "Variable Name Suggestions (C#)",
+                    "Variable Name Suggestions (C#) - Ctrl+Enter to reconvert",
                     false
                 );
                 popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(popup.GetResultText());
