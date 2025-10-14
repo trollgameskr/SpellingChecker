@@ -21,6 +21,9 @@ namespace SpellingChecker.Services
         private static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);
 
         [DllImport("user32.dll")]
+        private static extern uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);
+
+        [DllImport("user32.dll")]
         private static extern IntPtr GetFocus();
 
         [DllImport("user32.dll")]
@@ -43,6 +46,49 @@ namespace SpellingChecker.Services
         private const byte VK_V = 0x56;
         private const uint KEYEVENTF_KEYUP = 0x0002;
 
+        // SendInput constants and structures (used by RPA tools)
+        private const int INPUT_KEYBOARD = 1;
+        private const uint KEYEVENTF_EXTENDEDKEY = 0x0001;
+        private const uint KEYEVENTF_KEYUP_SENDINPUT = 0x0002;
+        private const uint KEYEVENTF_SCANCODE = 0x0008;
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct INPUT
+        {
+            public uint Type;
+            public INPUTUNION Union;
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        private struct INPUTUNION
+        {
+            [FieldOffset(0)]
+            public MOUSEINPUT Mouse;
+            [FieldOffset(0)]
+            public KEYBDINPUT Keyboard;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct MOUSEINPUT
+        {
+            public int dx;
+            public int dy;
+            public uint mouseData;
+            public uint dwFlags;
+            public uint time;
+            public IntPtr dwExtraInfo;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct KEYBDINPUT
+        {
+            public ushort wVk;
+            public ushort wScan;
+            public uint dwFlags;
+            public uint time;
+            public IntPtr dwExtraInfo;
+        }
+
         private const uint WM_GETTEXT = 0x000D;
         private const uint WM_GETTEXTLENGTH = 0x000E;
         private const uint EM_GETSEL = 0x00B0;
@@ -50,13 +96,51 @@ namespace SpellingChecker.Services
         private const uint EM_EXGETSEL = 0x0434;
 
         /// <summary>
-        /// Gets the currently selected text using Ctrl+C simulation (like RPA tools such as UiPath)
+        /// Sends keyboard input using SendInput API (same as RPA tools like UiPath)
+        /// </summary>
+        private void SendKeyInput(ushort keyCode, bool keyUp = false)
+        {
+            INPUT[] inputs = new INPUT[1];
+            inputs[0].Type = INPUT_KEYBOARD;
+            inputs[0].Union.Keyboard.wVk = keyCode;
+            inputs[0].Union.Keyboard.wScan = 0;
+            inputs[0].Union.Keyboard.dwFlags = keyUp ? KEYEVENTF_KEYUP_SENDINPUT : 0;
+            inputs[0].Union.Keyboard.time = 0;
+            inputs[0].Union.Keyboard.dwExtraInfo = IntPtr.Zero;
+
+            SendInput(1, inputs, Marshal.SizeOf(typeof(INPUT)));
+        }
+
+        /// <summary>
+        /// Simulates Ctrl+C using SendInput API (used by RPA tools like UiPath)
+        /// </summary>
+        private void SimulateCtrlC()
+        {
+            SendKeyInput(VK_CONTROL, false);  // Press Ctrl
+            SendKeyInput(VK_C, false);         // Press C
+            SendKeyInput(VK_C, true);          // Release C
+            SendKeyInput(VK_CONTROL, true);    // Release Ctrl
+        }
+
+        /// <summary>
+        /// Simulates Ctrl+V using SendInput API (used by RPA tools like UiPath)
+        /// </summary>
+        private void SimulateCtrlV()
+        {
+            SendKeyInput(VK_CONTROL, false);  // Press Ctrl
+            SendKeyInput(VK_V, false);         // Press V
+            SendKeyInput(VK_V, true);          // Release V
+            SendKeyInput(VK_CONTROL, true);    // Release Ctrl
+        }
+
+        /// <summary>
+        /// Gets the currently selected text using SendInput API (like RPA tools such as UiPath)
         /// </summary>
         public string GetSelectedText()
         {
             try
             {
-                // Use clipboard method with Ctrl+C simulation (RPA tool approach)
+                // Use clipboard method with SendInput API (same as RPA tools)
                 var selectedText = GetSelectedTextViaClipboard();
 
                 return selectedText;
@@ -130,7 +214,7 @@ namespace SpellingChecker.Services
         }
 
         /// <summary>
-        /// Gets selected text via clipboard by simulating Ctrl+C (RPA tool approach)
+        /// Gets selected text via clipboard using SendInput API (same as RPA tools like UiPath)
         /// </summary>
         private string GetSelectedTextViaClipboard()
         {
@@ -162,11 +246,8 @@ namespace SpellingChecker.Services
 
                 Thread.Sleep(50);
 
-                // Simulate Ctrl+C to copy selected text
-                keybd_event(VK_CONTROL, 0, 0, UIntPtr.Zero);
-                keybd_event(VK_C, 0, 0, UIntPtr.Zero);
-                keybd_event(VK_C, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
-                keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
+                // Simulate Ctrl+C using SendInput API (same as RPA tools)
+                SimulateCtrlC();
 
                 // Wait for clipboard to be updated
                 Thread.Sleep(100);
@@ -221,7 +302,7 @@ namespace SpellingChecker.Services
         }
 
         /// <summary>
-        /// Replaces selected text by pasting from clipboard
+        /// Replaces selected text by pasting from clipboard using SendInput API (same as RPA tools)
         /// </summary>
         public void ReplaceSelectedText(string text)
         {
@@ -230,11 +311,8 @@ namespace SpellingChecker.Services
                 SetClipboard(text);
                 Thread.Sleep(50);
 
-                // Simulate Ctrl+V to paste
-                keybd_event(VK_CONTROL, 0, 0, UIntPtr.Zero);
-                keybd_event(VK_V, 0, 0, UIntPtr.Zero);
-                keybd_event(VK_V, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
-                keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
+                // Simulate Ctrl+V using SendInput API (same as RPA tools)
+                SimulateCtrlV();
             }
             catch
             {
