@@ -59,6 +59,10 @@ AI 기반 맞춤법 교정 및 한영/영한 번역을 제공하는 Windows 데�
 
 ## 설치 및 실행
 
+⚠️ **중요**: 이 애플리케이션은 **관리자 권한**으로 실행되어야 합니다. Windows 11 보안 정책으로 인해 선택된 텍스트를 캡처하려면 관리자 권한이 필요합니다.
+
+⚠️ **Important**: This application requires **Administrator privileges** to run. Due to Windows 11 security policies, administrator access is required to capture selected text.
+
 ### 빌드 방법
 
 1. 저장소 클론:
@@ -79,6 +83,8 @@ dotnet run
 ```
 
 또는 Visual Studio에서 `SpellingChecker.sln` 파일을 열고 빌드/실행합니다.
+
+**Note**: 실행 파일을 직접 실행할 경우, Windows UAC 프롬프트가 나타나며 관리자 권한을 요청합니다. 권한을 허용해야 애플리케이션이 정상적으로 작동합니다.
 
 ### 초기 설정
 
