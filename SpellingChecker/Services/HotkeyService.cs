@@ -25,12 +25,14 @@ namespace SpellingChecker.Services
 
         public event EventHandler? SpellingCorrectionRequested;
         public event EventHandler? TranslationRequested;
+        public event EventHandler? VariableNameSuggestionRequested;
 
         private IntPtr _windowHandle;
         private const int SPELLING_HOTKEY_ID = 1;
         private const int TRANSLATION_HOTKEY_ID = 2;
+        private const int VARIABLE_NAME_SUGGESTION_HOTKEY_ID = 3;
 
-        public bool RegisterHotkeys(IntPtr windowHandle, string spellingHotkey, string translationHotkey)
+        public bool RegisterHotkeys(IntPtr windowHandle, string spellingHotkey, string translationHotkey, string variableNameSuggestionHotkey)
         {
             _windowHandle = windowHandle;
 
@@ -50,6 +52,14 @@ namespace SpellingChecker.Services
                 translationKey = Key.T;
             }
 
+            // Parse variable name suggestion hotkey
+            if (!HotkeyParser.TryParseHotkey(variableNameSuggestionHotkey, out uint variableNameModifiers, out Key variableNameKey))
+            {
+                // Fallback to default if parsing fails
+                variableNameModifiers = MOD_CONTROL | MOD_SHIFT | MOD_ALT;
+                variableNameKey = Key.V;
+            }
+
             // Register spelling correction hotkey
             var spellingRegistered = RegisterHotKey(
                 _windowHandle,
@@ -66,7 +76,15 @@ namespace SpellingChecker.Services
                 (uint)KeyInterop.VirtualKeyFromKey(translationKey)
             );
 
-            return spellingRegistered && translationRegistered;
+            // Register variable name suggestion hotkey
+            var variableNameRegistered = RegisterHotKey(
+                _windowHandle,
+                VARIABLE_NAME_SUGGESTION_HOTKEY_ID,
+                variableNameModifiers,
+                (uint)KeyInterop.VirtualKeyFromKey(variableNameKey)
+            );
+
+            return spellingRegistered && translationRegistered && variableNameRegistered;
         }
 
         public void UnregisterHotkeys()
@@ -75,6 +93,7 @@ namespace SpellingChecker.Services
             {
                 UnregisterHotKey(_windowHandle, SPELLING_HOTKEY_ID);
                 UnregisterHotKey(_windowHandle, TRANSLATION_HOTKEY_ID);
+                UnregisterHotKey(_windowHandle, VARIABLE_NAME_SUGGESTION_HOTKEY_ID);
             }
         }
 
@@ -87,6 +106,10 @@ namespace SpellingChecker.Services
             else if (hotkeyId == TRANSLATION_HOTKEY_ID)
             {
                 TranslationRequested?.Invoke(this, EventArgs.Empty);
+            }
+            else if (hotkeyId == VARIABLE_NAME_SUGGESTION_HOTKEY_ID)
+            {
+                VariableNameSuggestionRequested?.Invoke(this, EventArgs.Empty);
             }
         }
 

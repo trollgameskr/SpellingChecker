@@ -299,5 +299,15 @@ namespace SpellingChecker.Views
         {
             Close();
         }
+
+        private void OriginalTextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            // Trigger conversion when Ctrl+Enter is pressed
+            if (e.Key == System.Windows.Input.Key.Enter && (System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftCtrl) || System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightCtrl)))
+            {
+                e.Handled = true;
+                ConvertButton_Click(sender, new RoutedEventArgs());
+            }
+        }
     }
 }
