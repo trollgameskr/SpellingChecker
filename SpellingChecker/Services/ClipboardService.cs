@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows;
+using System.Windows.Automation;
 
 namespace SpellingChecker.Services
 {
@@ -50,7 +51,7 @@ namespace SpellingChecker.Services
         private const uint EM_EXGETSEL = 0x0434;
 
         /// <summary>
-        /// Gets the currently selected text using SendMessage API
+        /// Gets the currently selected text using multiple methods
         /// </summary>
         public string GetSelectedText()
         {
@@ -59,7 +60,13 @@ namespace SpellingChecker.Services
                 // First, try using SendMessage to get selected text directly
                 var selectedText = GetSelectedTextViaSendMessage();
                 
-                // If SendMessage fails, fallback to clipboard method
+                // If SendMessage fails, try UI Automation (works on Windows 11)
+                if (string.IsNullOrEmpty(selectedText))
+                {
+                    selectedText = GetSelectedTextViaUIAutomation();
+                }
+                
+                // If UI Automation fails, fallback to clipboard method
                 if (string.IsNullOrEmpty(selectedText))
                 {
                     selectedText = GetSelectedTextViaClipboard();
@@ -135,9 +142,57 @@ namespace SpellingChecker.Services
         }
 
         /// <summary>
+        /// Gets selected text using UI Automation (works reliably on Windows 11)
+        /// </summary>
+        private string GetSelectedTextViaUIAutomation()
+        {
+            try
+            {
+                // Get the focused element using UI Automation
+                AutomationElement? focusedElement = AutomationElement.FocusedElement;
+                
+                if (focusedElement == null)
+                    return string.Empty;
+
+                // Try to get the text using TextPattern (most reliable for text controls)
+                object? patternObject;
+                if (focusedElement.TryGetCurrentPattern(TextPattern.Pattern, out patternObject))
+                {
+                    TextPattern? textPattern = patternObject as TextPattern;
+                    if (textPattern != null)
+                    {
+                        var selections = textPattern.GetSelection();
+                        if (selections != null && selections.Length > 0)
+                        {
+                            // Get the text from the first selection
+                            string selectedText = selections[0].GetText(-1);
+                            if (!string.IsNullOrEmpty(selectedText))
+                                return selectedText;
+                        }
+                    }
+                }
+
+                // Alternative: Try ValuePattern for simple text controls
+                if (focusedElement.TryGetCurrentPattern(ValuePattern.Pattern, out patternObject))
+                {
+                    ValuePattern? valuePattern = patternObject as ValuePattern;
+                    if (valuePattern != null)
+                    {
+                        return valuePattern.Current.Value ?? string.Empty;
+                    }
+                }
+
+                return string.Empty;
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
+        /// <summary>
         /// Gets selected text via clipboard as fallback method
-        /// Note: On Windows 11, keyboard simulation often doesn't work due to security restrictions.
-        /// Users should manually copy text (Ctrl+C) before using this fallback.
+        /// Note: This method reads from clipboard without copying, so users need to manually copy (Ctrl+C) first.
         /// </summary>
         private string GetSelectedTextViaClipboard()
         {
