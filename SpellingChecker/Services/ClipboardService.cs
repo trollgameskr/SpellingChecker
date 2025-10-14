@@ -50,21 +50,15 @@ namespace SpellingChecker.Services
         private const uint EM_EXGETSEL = 0x0434;
 
         /// <summary>
-        /// Gets the currently selected text using SendMessage API
+        /// Gets the currently selected text by simulating Ctrl+C
         /// </summary>
         public string GetSelectedText()
         {
             try
             {
-                // First, try using SendMessage to get selected text directly
-                var selectedText = GetSelectedTextViaSendMessage();
+                // Use Ctrl+C simulation method (required for Windows 11 security policies)
+                var selectedText = GetSelectedTextViaClipboard();
                 
-                // If SendMessage fails, fallback to clipboard method
-                if (string.IsNullOrEmpty(selectedText))
-                {
-                    selectedText = GetSelectedTextViaClipboard();
-                }
-
                 return selectedText;
             }
             catch
@@ -135,17 +129,78 @@ namespace SpellingChecker.Services
         }
 
         /// <summary>
-        /// Gets selected text via clipboard as fallback method
+        /// Gets selected text via clipboard by simulating Ctrl+C
         /// </summary>
         private string GetSelectedTextViaClipboard()
         {
             try
             {
-                if (Clipboard.ContainsText())
+                // Save the current clipboard content
+                string? originalClipboard = null;
+                bool hadOriginalClipboard = false;
+                
+                try
                 {
-                    return Clipboard.GetText();
+                    if (Clipboard.ContainsText())
+                    {
+                        originalClipboard = Clipboard.GetText();
+                        hadOriginalClipboard = true;
+                    }
                 }
-                return string.Empty;
+                catch
+                {
+                    // Ignore errors when reading original clipboard
+                }
+
+                // Clear clipboard to ensure we get fresh content
+                try
+                {
+                    Clipboard.Clear();
+                }
+                catch
+                {
+                    // Ignore errors when clearing clipboard
+                }
+                
+                Thread.Sleep(50); // Give time for clipboard to clear
+
+                // Simulate Ctrl+C to copy selected text
+                keybd_event(VK_CONTROL, 0, 0, UIntPtr.Zero);
+                keybd_event(VK_C, 0, 0, UIntPtr.Zero);
+                keybd_event(VK_C, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
+                keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
+
+                // Wait for clipboard to be updated
+                Thread.Sleep(100);
+
+                // Get the copied text
+                string selectedText = string.Empty;
+                try
+                {
+                    if (Clipboard.ContainsText())
+                    {
+                        selectedText = Clipboard.GetText();
+                    }
+                }
+                catch
+                {
+                    // Ignore errors when reading clipboard
+                }
+
+                // Restore original clipboard content
+                if (hadOriginalClipboard && !string.IsNullOrEmpty(originalClipboard))
+                {
+                    try
+                    {
+                        Clipboard.SetText(originalClipboard);
+                    }
+                    catch
+                    {
+                        // Ignore errors when restoring clipboard
+                    }
+                }
+
+                return selectedText;
             }
             catch
             {
