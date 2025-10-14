@@ -2,6 +2,21 @@
 
 AI 기반 맞춤법 교정 및 한영/영한 번역을 제공하는 Windows 데스크탑 애플리케이션입니다.
 
+## ⚠️ 중요: UiPath RPA 구현으로 마이그레이션됨
+
+이 프로젝트는 **UiPath Studio RPA** 플랫폼으로 마이그레이션되었습니다. 선택한 텍스트를 복사하는 기능 구현을 위해 RPA 기술을 사용합니다.
+
+- **UiPath 구현**: [`UiPathProject/`](./UiPathProject/) 디렉토리 참조
+- **마이그레이션 가이드**: [UIPATH_MIGRATION_GUIDE.md](./UIPATH_MIGRATION_GUIDE.md) 참조
+- **기존 .NET 구현**: `SpellingChecker/` 디렉토리에 보관 (참고용)
+
+### 두 가지 구현 방식
+
+| 구현 | 상태 | 사용 시나리오 |
+|------|------|---------------|
+| **UiPath RPA** | ✅ 활성 | RPA 기반 자동화, Orchestrator 배포, 시각적 워크플로우 개발 |
+| **.NET/C# WPF** | 📦 보관 | 참고 및 학습 목적, 백그라운드 서비스 필요 시 |
+
 ## 주요 기능
 
 ### 1. 맞춤법 교정 (Ctrl+Shift+Alt+Y)

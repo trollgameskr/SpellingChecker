@@ -1,0 +1,7 @@
+# UiPath workflow files
+*.xaml text eol=crlf
+*.json text eol=crlf
+
+# Binary files
+*.nupkg binary
+*.dll binary
