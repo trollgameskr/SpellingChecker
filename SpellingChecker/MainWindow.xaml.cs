@@ -105,7 +105,7 @@ namespace SpellingChecker
                 
                 if (string.IsNullOrWhiteSpace(selectedText))
                 {
-                    ShowNotification("No text selected", "Please select some text to correct.");
+                    ShowNotification("텍스트 없음 / No text", "텍스트를 복사(Ctrl+C)한 후 교정 단축키를 눌러주세요.\nPlease copy text (Ctrl+C) first, then use the correction hotkey.");
                     return;
                 }
 
@@ -146,7 +146,7 @@ namespace SpellingChecker
                 
                 if (string.IsNullOrWhiteSpace(selectedText))
                 {
-                    ShowNotification("No text selected", "Please select some text to translate.");
+                    ShowNotification("텍스트 없음 / No text", "텍스트를 복사(Ctrl+C)한 후 번역 단축키를 눌러주세요.\nPlease copy text (Ctrl+C) first, then use the translation hotkey.");
                     return;
                 }
 
