@@ -46,8 +46,8 @@ namespace SpellingChecker.Services
                 if (tonePreset != null && tonePreset.Id != "default-none")
                 {
                     // Apply tone to the corrected text
-                    prompt = $"맞춤법과 문법을 교정하고, 다음 톤으로 변환해주세요.\n\n톤: {tonePreset.Name}\n설명: {tonePreset.Description}\n\n교정 및 톤 변환된 텍스트만 반환하고 설명은 하지 마세요:\n\n{text}";
-                    systemMessage = $"당신은 한국어와 영어 맞춤법 및 문법 교정 전문가입니다. 오류를 정확하게 교정하고, 지정된 톤({tonePreset.Description})으로 자연스럽게 변환하세요.";
+                    prompt = $"맞춤법과 문법을 교정하고, 원문의 톤은 완전히 무시한 채 오직 내용만 유지하여 다음 톤으로 변환해주세요.\n\n톤: {tonePreset.Name}\n설명: {tonePreset.Description}\n\n교정 및 톤 변환된 텍스트만 반환하고 설명은 하지 마세요:\n\n{text}";
+                    systemMessage = $"당신은 한국어와 영어 맞춤법 및 문법 교정 전문가입니다. 오류를 정확하게 교정하고, 원문의 톤이나 말투는 완전히 무시한 채 오직 의미만 유지하면서 지정된 톤({tonePreset.Description})으로 완전히 새롭게 변환하세요.";
                 }
                 else
                 {
