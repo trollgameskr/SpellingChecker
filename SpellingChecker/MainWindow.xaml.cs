@@ -269,7 +269,36 @@ namespace SpellingChecker
                     false
                 );
                 popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(popup.GetResultText());
+                popup.ConvertRequested += async (s, text) => await ReprocessVariableNameSuggestion(popup, text);
                 popup.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                ShowNotification("Error", ex.Message);
+            }
+        }
+
+        private async Task ReprocessVariableNameSuggestion(ResultPopupWindow popup, string text)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(text))
+                {
+                    ShowNotification("No text", "Please enter some text to suggest variable names.");
+                    return;
+                }
+
+                ShowNotification("Processing...", "AI is suggesting variable names. Please wait...", true);
+
+                var result = await _aiService.SuggestVariableNamesAsync(text);
+                
+                ShowNotification("변수명 추천 완료", 
+                    $"추천된 변수명: {string.Join(", ", result.SuggestedNames)}", true);
+                
+                // Format the suggestions for display
+                var formattedSuggestions = string.Join("\n", result.SuggestedNames.Select((name, index) => $"{index + 1}. {name}"));
+                
+                popup.UpdateResult(formattedSuggestions);
             }
             catch (Exception ex)
             {

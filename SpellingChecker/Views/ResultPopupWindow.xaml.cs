@@ -278,5 +278,15 @@ namespace SpellingChecker.Views
         {
             Close();
         }
+
+        private void OriginalTextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            // Trigger conversion when Enter is pressed (without Shift for single line entry)
+            if (e.Key == System.Windows.Input.Key.Enter && !System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftShift) && !System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightShift))
+            {
+                e.Handled = true;
+                ConvertButton_Click(sender, new RoutedEventArgs());
+            }
+        }
     }
 }
