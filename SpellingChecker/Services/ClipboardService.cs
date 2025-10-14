@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -38,6 +39,9 @@ namespace SpellingChecker.Services
         [DllImport("kernel32.dll")]
         private static extern uint GetCurrentThreadId();
 
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);
+
         private const byte VK_CONTROL = 0x11;
         private const byte VK_C = 0x43;
         private const byte VK_V = 0x56;
@@ -48,6 +52,44 @@ namespace SpellingChecker.Services
         private const uint EM_GETSEL = 0x00B0;
         private const uint EM_GETSELTEXT = 0x00B1;
         private const uint EM_EXGETSEL = 0x0434;
+
+        private const int INPUT_KEYBOARD = 1;
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct INPUT
+        {
+            public int type;
+            public InputUnion U;
+            public static int Size => Marshal.SizeOf(typeof(INPUT));
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        private struct InputUnion
+        {
+            [FieldOffset(0)] public MOUSEINPUT mi;
+            [FieldOffset(0)] public KEYBDINPUT ki;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct MOUSEINPUT
+        {
+            public int dx;
+            public int dy;
+            public uint mouseData;
+            public uint dwFlags;
+            public uint time;
+            public IntPtr dwExtraInfo;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct KEYBDINPUT
+        {
+            public ushort wVk;
+            public ushort wScan;
+            public uint dwFlags;
+            public uint time;
+            public IntPtr dwExtraInfo;
+        }
 
         /// <summary>
         /// Gets the currently selected text using SendMessage API
@@ -139,12 +181,93 @@ namespace SpellingChecker.Services
         /// </summary>
         private string GetSelectedTextViaClipboard()
         {
+            return CopySelectedTextWithRetry();
+        }
+
+        /// <summary>
+        /// Copies selected text using SendInput API with clipboard change detection
+        /// </summary>
+        /// <param name="timeoutMs">Timeout in milliseconds to wait for clipboard change</param>
+        /// <returns>The copied text, or null if timeout or error occurred</returns>
+        private string CopySelectedTextWithRetry(int timeoutMs = 500)
+        {
             try
             {
-                if (Clipboard.ContainsText())
+                string previousClipboard = string.Empty;
+                
+                // Save previous clipboard content
+                try
                 {
-                    return Clipboard.GetText();
+                    if (Clipboard.ContainsText())
+                    {
+                        previousClipboard = Clipboard.GetText();
+                    }
                 }
+                catch
+                {
+                    // Ignore clipboard access errors
+                }
+
+                Clipboard.Clear();
+
+                INPUT[] inputs = new INPUT[4];
+
+                // Ctrl Down
+                inputs[0].type = INPUT_KEYBOARD;
+                inputs[0].U.ki.wVk = VK_CONTROL;
+
+                // C Down
+                inputs[1].type = INPUT_KEYBOARD;
+                inputs[1].U.ki.wVk = VK_C;
+
+                // C Up
+                inputs[2].type = INPUT_KEYBOARD;
+                inputs[2].U.ki.wVk = VK_C;
+                inputs[2].U.ki.dwFlags = KEYEVENTF_KEYUP;
+
+                // Ctrl Up
+                inputs[3].type = INPUT_KEYBOARD;
+                inputs[3].U.ki.wVk = VK_CONTROL;
+                inputs[3].U.ki.dwFlags = KEYEVENTF_KEYUP;
+
+                SendInput(4, inputs, Marshal.SizeOf(typeof(INPUT)));
+
+                // Wait for clipboard to change
+                var stopwatch = Stopwatch.StartNew();
+                while (stopwatch.ElapsedMilliseconds < timeoutMs)
+                {
+                    Thread.Sleep(10);
+                    
+                    try
+                    {
+                        if (Clipboard.ContainsText())
+                        {
+                            string current = Clipboard.GetText();
+                            if (!string.IsNullOrEmpty(current) && current != previousClipboard)
+                            {
+                                return current;
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // Ignore clipboard access errors during polling
+                    }
+                }
+
+                // Timeout - restore previous clipboard
+                try
+                {
+                    if (!string.IsNullOrEmpty(previousClipboard))
+                    {
+                        Clipboard.SetText(previousClipboard);
+                    }
+                }
+                catch
+                {
+                    // Ignore clipboard access errors
+                }
+                
                 return string.Empty;
             }
             catch
