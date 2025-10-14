@@ -50,20 +50,14 @@ namespace SpellingChecker.Services
         private const uint EM_EXGETSEL = 0x0434;
 
         /// <summary>
-        /// Gets the currently selected text using SendMessage API
+        /// Gets the currently selected text using Ctrl+C simulation (like RPA tools such as UiPath)
         /// </summary>
         public string GetSelectedText()
         {
             try
             {
-                // First, try using SendMessage to get selected text directly
-                var selectedText = GetSelectedTextViaSendMessage();
-                
-                // If SendMessage fails, fallback to clipboard method
-                if (string.IsNullOrEmpty(selectedText))
-                {
-                    selectedText = GetSelectedTextViaClipboard();
-                }
+                // Use clipboard method with Ctrl+C simulation (RPA tool approach)
+                var selectedText = GetSelectedTextViaClipboard();
 
                 return selectedText;
             }
@@ -74,7 +68,8 @@ namespace SpellingChecker.Services
         }
 
         /// <summary>
-        /// Gets selected text using Windows SendMessage API
+        /// Gets selected text using Windows SendMessage API (DEPRECATED - kept for reference)
+        /// This method is no longer used as the RPA-style Ctrl+C approach is more reliable
         /// </summary>
         private string GetSelectedTextViaSendMessage()
         {
@@ -135,17 +130,75 @@ namespace SpellingChecker.Services
         }
 
         /// <summary>
-        /// Gets selected text via clipboard as fallback method
+        /// Gets selected text via clipboard by simulating Ctrl+C (RPA tool approach)
         /// </summary>
         private string GetSelectedTextViaClipboard()
         {
             try
             {
-                if (Clipboard.ContainsText())
+                // Save current clipboard content
+                string? previousClipboard = null;
+                try
                 {
-                    return Clipboard.GetText();
+                    if (Clipboard.ContainsText())
+                    {
+                        previousClipboard = Clipboard.GetText();
+                    }
                 }
-                return string.Empty;
+                catch
+                {
+                    // Ignore clipboard access errors
+                }
+
+                // Clear clipboard to ensure we get fresh content
+                try
+                {
+                    Clipboard.Clear();
+                }
+                catch
+                {
+                    // Ignore clipboard access errors
+                }
+
+                Thread.Sleep(50);
+
+                // Simulate Ctrl+C to copy selected text
+                keybd_event(VK_CONTROL, 0, 0, UIntPtr.Zero);
+                keybd_event(VK_C, 0, 0, UIntPtr.Zero);
+                keybd_event(VK_C, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
+                keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
+
+                // Wait for clipboard to be updated
+                Thread.Sleep(100);
+
+                string selectedText = string.Empty;
+                try
+                {
+                    if (Clipboard.ContainsText())
+                    {
+                        selectedText = Clipboard.GetText();
+                    }
+                }
+                catch
+                {
+                    // Ignore clipboard access errors
+                }
+
+                // Restore previous clipboard content if different
+                try
+                {
+                    if (!string.IsNullOrEmpty(previousClipboard) && previousClipboard != selectedText)
+                    {
+                        Thread.Sleep(50);
+                        Clipboard.SetText(previousClipboard);
+                    }
+                }
+                catch
+                {
+                    // Ignore clipboard restore errors
+                }
+
+                return selectedText;
             }
             catch
             {
