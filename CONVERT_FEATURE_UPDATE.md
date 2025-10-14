@@ -33,8 +33,8 @@ private async Task ReprocessVariableNameSuggestion(ResultPopupWindow popup, stri
 ```csharp
 private void OriginalTextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
 {
-    // Triggers conversion when Enter is pressed (without Shift)
-    // Shift+Enter still allows multi-line entry
+    // Triggers conversion when Ctrl+Enter is pressed
+    // Enter alone allows normal text entry
 }
 ```
 
@@ -47,9 +47,9 @@ private void OriginalTextBox_KeyDown(object sender, System.Windows.Input.KeyEven
 
 ### After  
 1. User presses Ctrl+Shift+Alt+V to get variable name suggestions
-2. Result window shows 3 suggestions
+2. Result window shows 3 suggestions with title: "Variable Name Suggestions (C#) - Ctrl+Enter to reconvert"
 3. **User can edit the original Korean text in the "Original" textbox**
-4. **User presses Enter or clicks "변환" button**
+4. **User presses Ctrl+Enter or clicks "변환" button**
 5. **New suggestions are generated based on the edited text**
 
 ## Example Usage
@@ -69,7 +69,7 @@ Original: 사용자 전체 이름  ← User edited this
 Result:   (unchanged, waiting for conversion)
 ```
 
-### After Pressing Enter or "변환"
+### After Pressing Ctrl+Enter or "변환"
 ```
 Original: 사용자 전체 이름
 Result:
@@ -80,14 +80,14 @@ Result:
 
 ## Technical Details
 
-### Enter Key Behavior
-- **Enter (alone)**: Triggers conversion
-- **Shift+Enter**: Inserts new line (for multi-line Korean text)
-- Event is marked as handled to prevent default behavior
+### Keyboard Shortcut Behavior
+- **Ctrl+Enter**: Triggers conversion
+- **Enter (alone)**: Inserts new line (normal text entry)
+- Event is marked as handled to prevent default behavior when Ctrl+Enter is pressed
 
 ### Event Flow
 1. User edits text in OriginalTextBox
-2. User presses Enter or clicks "변환" button
+2. User presses Ctrl+Enter or clicks "변환" button
 3. `ConvertRequested` event is raised with edited text
 4. `ReprocessVariableNameSuggestion` method is called in MainWindow
 5. AI service generates new suggestions
