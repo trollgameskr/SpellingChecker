@@ -1,6 +1,8 @@
 # Configuration Guide
 
-## Getting an OpenAI API Key
+## Getting an API Key
+
+### OpenAI API Key
 
 1. Visit https://platform.openai.com/
 2. Sign up or log in to your account
@@ -9,35 +11,79 @@
 5. Copy the key (you won't be able to see it again)
 6. Paste it into the SpellingChecker settings
 
+### Anthropic API Key
+
+1. Visit https://console.anthropic.com/
+2. Sign up or log in to your account
+3. Navigate to API Keys section
+4. Click "Create Key"
+5. Copy the key
+6. Paste it into the SpellingChecker settings
+
+### Google Gemini API Key
+
+1. Visit https://makersuite.google.com/app/apikey
+2. Sign up or log in to your Google account
+3. Click "Create API Key"
+4. Copy the key
+5. Paste it into the SpellingChecker settings
+
 ## API Key Security
 
 Your API key is:
 - Encrypted using Windows Data Protection API (DPAPI)
 - Stored per-user in `%APPDATA%\SpellingChecker\settings.json`
-- Never transmitted anywhere except OpenAI's API
+- Never transmitted anywhere except to your selected AI provider's API
 - Protected from access by other users on the same computer
 
 ## Configuration Options
 
+### AI Provider
+
+**Default**: `OpenAI`
+
+Available providers:
+- **OpenAI**: GPT models, most widely used and tested
+- **Anthropic**: Claude models, known for helpful and harmless AI
+- **Gemini**: Google's latest AI models, powerful and efficient
+
+Select your preferred AI provider from the dropdown in settings. The API endpoint and available models will update automatically based on your selection.
+
 ### API Endpoint
 
-**Default**: `https://api.openai.com/v1`
+The API endpoint is automatically set based on your selected provider:
+- **OpenAI**: `https://api.openai.com/v1`
+- **Anthropic**: `https://api.anthropic.com/v1`
+- **Gemini**: `https://generativelanguage.googleapis.com/v1beta`
 
 You can change this to:
-- Use a different OpenAI-compatible API
 - Use a proxy server
 - Use a local API endpoint for testing
+- Use a custom endpoint (for advanced users)
 
 ### AI Model
 
-**Default**: `gpt-4o-mini`
+The available models depend on your selected provider:
 
-Available models:
+#### OpenAI Models
+**Default**: `gpt-4o-mini`
 - `gpt-4o-mini`: Fast, cost-effective, good quality (recommended)
 - `gpt-4o`: Slower, more expensive, highest quality
 - `gpt-3.5-turbo`: Faster, less expensive, lower quality
 
-**Recommendation**: Use `gpt-4o-mini` for the best balance of speed, cost, and quality.
+#### Anthropic Models
+**Default**: `claude-3-5-sonnet-20241022`
+- `claude-3-5-sonnet-20241022`: Balanced performance and quality (recommended)
+- `claude-3-5-haiku-20241022`: Fast and efficient
+- `claude-3-opus-20240229`: Highest quality and capability
+
+#### Gemini Models
+**Default**: `gemini-2.0-flash-exp`
+- `gemini-2.0-flash-exp`: Latest experimental model (recommended)
+- `gemini-1.5-pro`: High quality, larger context
+- `gemini-1.5-flash`: Fast and efficient
+
+**Recommendation**: Use the default model for each provider for the best balance of speed, cost, and quality.
 
 ### Auto Start with Windows
 

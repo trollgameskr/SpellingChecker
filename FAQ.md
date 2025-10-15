@@ -253,10 +253,12 @@ Absolutely! Works in Outlook, Gmail (browser), and other email clients. Perfect 
 
 ### Can I use a different AI provider?
 
-Version 1.0 only supports OpenAI. Future versions may support:
-- Azure OpenAI
-- Anthropic Claude
-- Local models (Llama, etc.)
+Yes! Version 2.0 supports multiple AI providers:
+- **OpenAI** (GPT models)
+- **Anthropic** (Claude models)
+- **Google Gemini** (Gemini models)
+
+You can select your preferred provider in the Settings window. Each provider has its own set of available models.
 
 ## Privacy & Security
 

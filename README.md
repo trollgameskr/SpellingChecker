@@ -55,7 +55,10 @@ AI 기반 맞춤법 교정 및 한영/영한 번역을 제공하는 Windows 데�
 
 - **운영체제**: Windows 10 이상
 - **프레임워크**: .NET 9.0
-- **API**: OpenAI API 키 필요
+- **API**: 다음 중 하나의 AI 제공자 API 키 필요
+  - OpenAI API 키
+  - Anthropic API 키
+  - Google Gemini API 키
 
 ## 설치 및 실행
 
@@ -84,9 +87,11 @@ dotnet run
 
 1. 애플리케이션을 실행하면 시스템 트레이에 아이콘이 나타납니다
 2. 트레이 아이콘을 더블클릭하거나 우클릭 → "Settings"를 선택
-3. OpenAI API 키를 입력합니다
-4. 필요시 API 엔드포인트 및 모델을 변경합니다
-5. "Save" 버튼을 클릭하여 설정을 저장합니다
+3. AI Provider를 선택합니다 (OpenAI, Anthropic, 또는 Gemini)
+4. 선택한 제공자의 API 키를 입력합니다
+5. 원하는 AI 모델을 선택합니다 (기본값 권장)
+6. 필요시 API 엔드포인트를 변경합니다 (자동 설정됨)
+7. "Save" 버튼을 클릭하여 설정을 저장합니다
 
 ## 사용 방법
 
@@ -131,7 +136,10 @@ dotnet run
 
 - **Frontend**: WPF (Windows Presentation Foundation)
 - **Backend**: C# / .NET 9.0
-- **AI API**: OpenAI GPT (gpt-4o-mini 기본 모델)
+- **AI API**: 
+  - OpenAI GPT (gpt-4o-mini, gpt-4o, gpt-3.5-turbo)
+  - Anthropic Claude (claude-3-5-sonnet, claude-3-5-haiku, claude-3-opus)
+  - Google Gemini (gemini-2.0-flash-exp, gemini-1.5-pro, gemini-1.5-flash)
 - **보안**: Windows Data Protection API를 사용한 API 키 암호화
 - **JSON**: Newtonsoft.Json
 
