@@ -140,7 +140,7 @@ namespace SpellingChecker
                 ShowNotification("맞춤법 교정 완료", 
                     $"교정 결과는 '{result.CorrectedText}' 입니다.", true);
                 
-                popup.UpdateResult(result.CorrectedText);
+                popup.UpdateResultWithTone(result.CorrectedText, result.AppliedToneName);
                 popup.HideProgressIndicator();
                 
                 // Save settings after processing completes to persist tone selection
@@ -216,7 +216,7 @@ namespace SpellingChecker
                 ShowNotification("맞춤법 교정 완료", 
                     $"교정 결과는 '{result.CorrectedText}' 입니다.", true);
                 
-                popup.UpdateResult(result.CorrectedText);
+                popup.UpdateResultWithTone(result.CorrectedText, result.AppliedToneName);
                 popup.HideProgressIndicator();
             }
             catch (Exception ex)

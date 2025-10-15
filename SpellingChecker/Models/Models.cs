@@ -12,6 +12,7 @@ namespace SpellingChecker.Models
         public string CorrectedText { get; set; } = string.Empty;
         public string[] Changes { get; set; } = Array.Empty<string>();
         public bool HasChanges => OriginalText != CorrectedText;
+        public string? AppliedToneName { get; set; } = null;
     }
 
     /// <summary>
