@@ -123,7 +123,12 @@ namespace SpellingChecker
                 popup.ShowProgressIndicator();
                 popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(popup.GetResultText());
                 popup.ConvertRequested += async (s, text) => await ReprocessSpellingCorrection(popup, text);
-                popup.ToneChangeRequested += async (s, text) => await ReprocessSpellingCorrection(popup, text);
+                popup.ToneChangeRequested += async (s, text) => 
+                {
+                    // Save settings before reprocessing to persist the tone change
+                    _settingsService.SaveSettings(settings);
+                    await ReprocessSpellingCorrection(popup, text);
+                };
                 popup.Show();
 
                 // Show progress notification
