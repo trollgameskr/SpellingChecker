@@ -87,15 +87,15 @@ namespace SpellingChecker.Views
         {
             if (provider == "OpenAI")
             {
-                ModelDescriptionTextBlock.Text = "gpt-4o-mini: Fast, cost-effective, good quality (recommended)\ngpt-4o: Slower, more expensive, highest quality\no1: Advanced reasoning model\no1-mini: Faster reasoning model";
+                ModelDescriptionTextBlock.Text = "💡 Tip: Type custom model names like 'gpt-5' or select from: gpt-4o-mini (recommended), gpt-4o, o1, o1-mini";
             }
             else if (provider == "Anthropic")
             {
-                ModelDescriptionTextBlock.Text = "claude-sonnet-4-5: Best for coding and agents (recommended)\nclaude-3-5-sonnet-latest: Balanced performance\nclaude-3-5-haiku-latest: Fast and efficient";
+                ModelDescriptionTextBlock.Text = "💡 Tip: Type custom model names like 'claude-opus-4' or select from: claude-sonnet-4-5 (recommended), claude-3-5-sonnet-latest, claude-3-5-haiku-latest";
             }
             else if (provider == "Gemini")
             {
-                ModelDescriptionTextBlock.Text = "gemini-2.5-pro-latest: Complex reasoning and analysis\ngemini-2.5-flash-latest: Fast with good performance (recommended)\ngemini-2.0-flash-exp: Experimental fast model";
+                ModelDescriptionTextBlock.Text = "💡 Tip: Type custom model names like 'gemini-ultra-2.0' or select from: gemini-2.5-flash-latest (recommended), gemini-2.5-pro-latest, gemini-2.0-flash-exp";
             }
         }
 

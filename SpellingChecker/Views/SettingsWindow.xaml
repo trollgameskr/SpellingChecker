@@ -66,15 +66,25 @@
 
         <!-- Model -->
         <StackPanel Grid.Row="4" Margin="0,0,0,15">
-            <TextBlock Text="AI Model:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock Text="AI Model:" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                <TextBlock Text=" (Editable)" 
+                           FontSize="11" 
+                           FontStyle="Italic"
+                           Foreground="#FF6B9BD1" 
+                           VerticalAlignment="Center"
+                           Margin="5,0,0,0"/>
+            </StackPanel>
             <ComboBox x:Name="ModelComboBox" 
                       Padding="5"
                       Height="35"
-                      IsEditable="True"/>
+                      IsEditable="True"
+                      ToolTip="Select from the list or type a custom model name (e.g., gpt-5, claude-opus-4)"/>
             <TextBlock x:Name="ModelDescriptionTextBlock"
-                       Text="Select or type a custom AI model name" 
+                       Text="💡 Tip: You can type any custom model name directly into this field" 
                        FontSize="10" 
-                       Foreground="Gray" 
+                       Foreground="#FF4A90E2" 
+                       FontWeight="Medium"
                        Margin="0,3,0,0"/>
         </StackPanel>
 
