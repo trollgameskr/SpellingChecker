@@ -29,7 +29,7 @@ namespace SpellingChecker
             
             _settingsService = new SettingsService();
             _aiService = new AIService(_settingsService);
-            _clipboardService = new ClipboardService();
+            _clipboardService = new ClipboardService(_settingsService);
             _hotkeyService = new HotkeyService();
 
             InitializeSystemTray();
