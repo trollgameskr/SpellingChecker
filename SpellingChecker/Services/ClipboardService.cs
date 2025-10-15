@@ -152,6 +152,10 @@ namespace SpellingChecker.Services
         {
             try
             {
+                // Wait for hotkey to be released before simulating Ctrl+C
+                // This prevents the hotkey modifiers from interfering with the copy operation
+                Thread.Sleep(200);
+                
                 string previousClipboard = string.Empty;
                 
                 // Save previous clipboard content
