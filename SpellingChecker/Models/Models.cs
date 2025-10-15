@@ -61,6 +61,7 @@ namespace SpellingChecker.Models
         public string SelectedTonePresetId { get; set; } = string.Empty;
         public bool ShowProgressNotifications { get; set; } = false;
         public string Provider { get; set; } = "OpenAI";
+        public Dictionary<string, List<string>> CustomModels { get; set; } = new Dictionary<string, List<string>>();
     }
 
     /// <summary>
@@ -111,9 +112,27 @@ namespace SpellingChecker.Models
             { "Gemini", "https://generativelanguage.googleapis.com/v1beta" }
         };
 
-        public static string[] GetModelsForProvider(string provider)
+        public static string[] GetModelsForProvider(string provider, Dictionary<string, List<string>>? customModels = null)
         {
-            return ProviderModels.ContainsKey(provider) ? ProviderModels[provider] : new[] { "gpt-4o-mini" };
+            var defaultModels = ProviderModels.ContainsKey(provider) ? ProviderModels[provider] : new[] { "gpt-4o-mini" };
+            
+            // If no custom models, return defaults
+            if (customModels == null || !customModels.ContainsKey(provider) || customModels[provider] == null || customModels[provider].Count == 0)
+            {
+                return defaultModels;
+            }
+            
+            // Merge custom models with defaults (custom models first, then defaults that aren't duplicates)
+            var allModels = new List<string>(customModels[provider]);
+            foreach (var model in defaultModels)
+            {
+                if (!allModels.Contains(model))
+                {
+                    allModels.Add(model);
+                }
+            }
+            
+            return allModels.ToArray();
         }
 
         public static string GetDefaultEndpoint(string provider)

@@ -84,6 +84,11 @@ The available models depend on your selected provider:
 - `gemini-2.5-flash-latest`: Fast with impressive performance (recommended)
 - `gemini-2.0-flash-exp`: Experimental fast model
 
+**Custom Models**: You can also type any custom model name directly into the AI Model field. Custom models will be saved and appear in the dropdown for future use. This is useful for:
+- Using newer models not yet in the default list
+- Testing beta or experimental models
+- Using provider-specific model variants
+
 **Recommendation**: Use the default model for each provider for the best balance of speed, cost, and quality.
 
 ### Auto Start with Windows

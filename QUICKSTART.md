@@ -230,11 +230,14 @@ For advanced users or organizations:
 For different quality/speed trade-offs:
 1. Open Settings
 2. Select your preferred AI Provider (OpenAI, Anthropic, or Gemini)
-3. Choose a Model from the dropdown:
+3. Choose a Model from the dropdown or type a custom model name:
    - **OpenAI**: gpt-4o-mini (fast, recommended), gpt-4o (highest quality), o1 (advanced reasoning), o1-mini (fast reasoning)
    - **Anthropic**: claude-sonnet-4-5 (best for coding, recommended), claude-3-5-sonnet-latest (balanced), claude-3-5-haiku-latest (fast)
    - **Gemini**: gemini-2.5-flash-latest (fast, recommended), gemini-2.5-pro-latest (complex reasoning), gemini-2.0-flash-exp (experimental)
+   - **Custom**: Type any model name directly to use models not in the list
 4. Save
+
+**Tip**: You can type any custom model name into the Model field. It will be saved for future use.
 
 ## Cost Information
 

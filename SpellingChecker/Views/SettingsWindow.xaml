@@ -69,9 +69,10 @@
             <TextBlock Text="AI Model:" FontWeight="SemiBold" Margin="0,0,0,5"/>
             <ComboBox x:Name="ModelComboBox" 
                       Padding="5"
-                      Height="35"/>
+                      Height="35"
+                      IsEditable="True"/>
             <TextBlock x:Name="ModelDescriptionTextBlock"
-                       Text="Select the AI model for your provider" 
+                       Text="Select or type a custom AI model name" 
                        FontSize="10" 
                        Foreground="Gray" 
                        Margin="0,3,0,0"/>

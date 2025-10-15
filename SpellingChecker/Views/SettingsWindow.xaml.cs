@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -61,17 +62,18 @@ namespace SpellingChecker.Views
 
         private void LoadModelsForProvider(string provider)
         {
-            var models = AIProviderConfig.GetModelsForProvider(provider);
+            var models = AIProviderConfig.GetModelsForProvider(provider, _settings.CustomModels);
             ModelComboBox.ItemsSource = models;
             
-            // Select current model if it exists in the list, otherwise select the first one
+            // Select current model if it exists in the list, otherwise just set the text
             if (models.Contains(_settings.Model))
             {
                 ModelComboBox.SelectedItem = _settings.Model;
             }
             else
             {
-                ModelComboBox.SelectedIndex = 0;
+                // If model not in list, set it as text (custom model)
+                ModelComboBox.Text = _settings.Model;
             }
             
             // Update description based on provider
@@ -156,7 +158,40 @@ namespace SpellingChecker.Views
                 _settings.ApiKey = ApiKeyTextBox.Password;
                 _settings.ApiEndpoint = ApiEndpointTextBox.Text;
                 _settings.Provider = ProviderComboBox.SelectedItem?.ToString() ?? "OpenAI";
-                _settings.Model = ModelComboBox.SelectedItem?.ToString() ?? AIProviderConfig.GetDefaultModel(_settings.Provider);
+                
+                // Get model from ComboBox (can be selected item or typed text)
+                string modelName = string.IsNullOrWhiteSpace(ModelComboBox.Text) 
+                    ? (ModelComboBox.SelectedItem?.ToString() ?? AIProviderConfig.GetDefaultModel(_settings.Provider))
+                    : ModelComboBox.Text.Trim();
+                
+                _settings.Model = modelName;
+                
+                // Save custom model if it's not in the default list
+                var defaultModels = AIProviderConfig.ProviderModels.ContainsKey(_settings.Provider) 
+                    ? AIProviderConfig.ProviderModels[_settings.Provider] 
+                    : Array.Empty<string>();
+                
+                if (!defaultModels.Contains(modelName) && !string.IsNullOrWhiteSpace(modelName))
+                {
+                    // Initialize CustomModels dictionary if needed
+                    if (_settings.CustomModels == null)
+                    {
+                        _settings.CustomModels = new Dictionary<string, List<string>>();
+                    }
+                    
+                    // Initialize provider list if needed
+                    if (!_settings.CustomModels.ContainsKey(_settings.Provider))
+                    {
+                        _settings.CustomModels[_settings.Provider] = new List<string>();
+                    }
+                    
+                    // Add custom model if not already present
+                    if (!_settings.CustomModels[_settings.Provider].Contains(modelName))
+                    {
+                        _settings.CustomModels[_settings.Provider].Add(modelName);
+                    }
+                }
+                
                 _settings.AutoStartWithWindows = AutoStartCheckBox.IsChecked ?? false;
                 _settings.ShowProgressNotifications = ShowProgressNotificationsCheckBox.IsChecked ?? false;
                 _settings.SpellingCorrectionHotkey = SpellingHotkeyTextBox.Text;
