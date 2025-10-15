@@ -181,13 +181,13 @@ namespace SpellingChecker.Services
         {
             _settings = _settingsService.LoadSettings(); // Reload settings for API key updates
             
-            if (string.IsNullOrWhiteSpace(_settings.ApiKey))
+            string provider = _settings.Provider ?? "OpenAI";
+            string apiKey = _settings.GetApiKeyForProvider(provider);
+            
+            if (string.IsNullOrWhiteSpace(apiKey))
             {
-                var provider = _settings.Provider ?? "OpenAI";
                 throw new InvalidOperationException($"API Key is not configured for {provider}. Please set your {provider} API key in settings.");
             }
-
-            string provider = _settings.Provider ?? "OpenAI";
             
             if (provider == "OpenAI")
             {
@@ -209,8 +209,9 @@ namespace SpellingChecker.Services
 
         private async Task<string> SendOpenAIRequestAsync(object requestBody)
         {
+            var apiKey = _settings.GetApiKeyForProvider("OpenAI");
             var request = new HttpRequestMessage(HttpMethod.Post, $"{_settings.ApiEndpoint}/chat/completions");
-            request.Headers.Add("Authorization", $"Bearer {_settings.ApiKey}");
+            request.Headers.Add("Authorization", $"Bearer {apiKey}");
             request.Content = new StringContent(
                 JsonConvert.SerializeObject(requestBody),
                 Encoding.UTF8,
@@ -263,8 +264,9 @@ namespace SpellingChecker.Services
                 temperature = openAIBody["temperature"]?.Value<double>() ?? 0.3
             };
 
+            var apiKey = _settings.GetApiKeyForProvider("Anthropic");
             var request = new HttpRequestMessage(HttpMethod.Post, $"{_settings.ApiEndpoint}/messages");
-            request.Headers.Add("x-api-key", _settings.ApiKey);
+            request.Headers.Add("x-api-key", apiKey);
             request.Headers.Add("anthropic-version", "2023-06-01");
             request.Content = new StringContent(
                 JsonConvert.SerializeObject(anthropicBody),
@@ -361,8 +363,9 @@ namespace SpellingChecker.Services
                 };
             }
 
+            var apiKey = _settings.GetApiKeyForProvider("Gemini");
             var request = new HttpRequestMessage(HttpMethod.Post, 
-                $"{_settings.ApiEndpoint}/models/{_settings.Model}:generateContent?key={_settings.ApiKey}");
+                $"{_settings.ApiEndpoint}/models/{_settings.Model}:generateContent?key={apiKey}");
             request.Content = new StringContent(
                 geminiBody.ToString(),
                 Encoding.UTF8,

@@ -64,6 +64,8 @@ Choose one of the supported AI providers:
 
 4. **Enter your API Key**:
    - Paste your API key for the selected provider
+   - Each provider's API key is saved separately
+   - You can switch between providers without re-entering keys
 
 5. **Select a Model** (optional):
    - The default model is recommended for most users

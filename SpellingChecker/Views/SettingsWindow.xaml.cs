@@ -32,7 +32,10 @@ namespace SpellingChecker.Views
 
         private void LoadSettings()
         {
-            ApiKeyTextBox.Password = _settings.ApiKey;
+            // Load API key for current provider
+            string currentProvider = _settings.Provider ?? "OpenAI";
+            ApiKeyTextBox.Password = _settings.GetApiKeyForProvider(currentProvider);
+            
             ApiEndpointTextBox.Text = _settings.ApiEndpoint;
             AutoStartCheckBox.IsChecked = _settings.AutoStartWithWindows;
             ShowProgressNotificationsCheckBox.IsChecked = _settings.ShowProgressNotifications;
@@ -100,6 +103,15 @@ namespace SpellingChecker.Views
         {
             if (ProviderComboBox.SelectedItem is string selectedProvider)
             {
+                // Save current provider's API key before switching
+                if (e.RemovedItems.Count > 0 && e.RemovedItems[0] is string previousProvider)
+                {
+                    _settings.SetApiKeyForProvider(previousProvider, ApiKeyTextBox.Password);
+                }
+                
+                // Load API key for the new provider
+                ApiKeyTextBox.Password = _settings.GetApiKeyForProvider(selectedProvider);
+                
                 // Update API endpoint based on provider
                 ApiEndpointTextBox.Text = AIProviderConfig.GetDefaultEndpoint(selectedProvider);
                 
@@ -155,9 +167,12 @@ namespace SpellingChecker.Views
                     return;
                 }
 
-                _settings.ApiKey = ApiKeyTextBox.Password;
+                // Save provider-specific API key
+                string selectedProvider = ProviderComboBox.SelectedItem?.ToString() ?? "OpenAI";
+                _settings.SetApiKeyForProvider(selectedProvider, ApiKeyTextBox.Password);
+                
                 _settings.ApiEndpoint = ApiEndpointTextBox.Text;
-                _settings.Provider = ProviderComboBox.SelectedItem?.ToString() ?? "OpenAI";
+                _settings.Provider = selectedProvider;
                 
                 // Get model from ComboBox (can be selected item or typed text)
                 string modelName = string.IsNullOrWhiteSpace(ModelComboBox.Text) 

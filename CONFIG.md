@@ -49,6 +49,8 @@ Available providers:
 
 Select your preferred AI provider from the dropdown in settings. The API endpoint and available models will update automatically based on your selection.
 
+**Provider-Specific API Keys**: Each provider can have its own API key. When you switch providers in the Settings window, the application will automatically load and save the API key for that specific provider. This allows you to easily switch between providers without re-entering your credentials.
+
 ### API Endpoint
 
 The API endpoint is automatically set based on your selected provider:

@@ -50,7 +50,7 @@ namespace SpellingChecker.Models
     /// </summary>
     public class AppSettings
     {
-        public string ApiKey { get; set; } = string.Empty;
+        public string ApiKey { get; set; } = string.Empty; // Kept for backward compatibility
         public string ApiEndpoint { get; set; } = "https://api.openai.com/v1";
         public string SpellingCorrectionHotkey { get; set; } = "Ctrl+Shift+Alt+Y";
         public string TranslationHotkey { get; set; } = "Ctrl+Shift+Alt+T";
@@ -62,6 +62,41 @@ namespace SpellingChecker.Models
         public bool ShowProgressNotifications { get; set; } = false;
         public string Provider { get; set; } = "OpenAI";
         public Dictionary<string, List<string>> CustomModels { get; set; } = new Dictionary<string, List<string>>();
+        public Dictionary<string, string> ProviderApiKeys { get; set; } = new Dictionary<string, string>();
+
+        /// <summary>
+        /// Get the API key for the specified provider
+        /// </summary>
+        public string GetApiKeyForProvider(string provider)
+        {
+            // Check provider-specific keys first
+            if (ProviderApiKeys != null && ProviderApiKeys.ContainsKey(provider) && !string.IsNullOrEmpty(ProviderApiKeys[provider]))
+            {
+                return ProviderApiKeys[provider];
+            }
+            
+            // Fall back to legacy ApiKey for backward compatibility
+            return ApiKey ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Set the API key for the specified provider
+        /// </summary>
+        public void SetApiKeyForProvider(string provider, string apiKey)
+        {
+            if (ProviderApiKeys == null)
+            {
+                ProviderApiKeys = new Dictionary<string, string>();
+            }
+            
+            ProviderApiKeys[provider] = apiKey;
+            
+            // Also update legacy ApiKey field for backward compatibility with current provider
+            if (provider == Provider)
+            {
+                ApiKey = apiKey;
+            }
+        }
     }
 
     /// <summary>
