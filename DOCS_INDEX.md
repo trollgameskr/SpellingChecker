@@ -49,40 +49,47 @@ Complete guide to SpellingChecker documentation.
    - Testing checklist
    - CI/CD setup
 
-7. **[ARCHITECTURE.md](ARCHITECTURE.md)** - Technical architecture
+7. **[DEPLOYMENT.md](DEPLOYMENT.md)** - Deployment guide ⭐ NEW
+   - Creating releases locally
+   - GitHub Actions automation
+   - Release workflow
+   - Testing and distribution
+   - Troubleshooting
+
+8. **[ARCHITECTURE.md](ARCHITECTURE.md)** - Technical architecture
    - System design
    - Component architecture
    - Data flows
    - Security implementation
    - Performance considerations
 
-8. **[TONE_PRESET_QUICKREF.md](TONE_PRESET_QUICKREF.md)** - Tone Preset Quick Reference
+9. **[TONE_PRESET_QUICKREF.md](TONE_PRESET_QUICKREF.md)** - Tone Preset Quick Reference
    - Available tone presets
    - Usage guide
    - Examples
 
 ### Project Information
 
-9. **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
+10. **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
    - How to contribute
    - Coding standards
    - Pull request process
    - Development workflow
 
-10. **[CHANGELOG.md](CHANGELOG.md)** - Version history
+11. **[CHANGELOG.md](CHANGELOG.md)** - Version history
     - Release notes
     - Feature additions
     - Bug fixes
     - Future roadmap
 
-11. **[PROJECT_STATUS.md](PROJECT_STATUS.md)** - Implementation summary
+12. **[PROJECT_STATUS.md](PROJECT_STATUS.md)** - Implementation summary
     - Requirements completion
     - Technology stack
     - Implementation statistics
     - Testing status
     - Deployment readiness
 
-12. **[LICENSE](LICENSE)** - MIT License
+13. **[LICENSE](LICENSE)** - MIT License
     - Open source license
     - Usage rights
     - Liability disclaimer
@@ -132,6 +139,7 @@ Start here:
 
 ### Development
 - [BUILD.md](BUILD.md) - Building and testing
+- [DEPLOYMENT.md](DEPLOYMENT.md) - Creating releases
 - [ARCHITECTURE.md](ARCHITECTURE.md) - Technical design
 - [CONTRIBUTING.md](CONTRIBUTING.md) - Contributing code
 
@@ -141,13 +149,13 @@ Start here:
 
 ## 📊 Documentation Statistics
 
-- **Total Documentation**: 12 files
-- **Total Words**: ~40,000 words
-- **Total Pages**: ~90+ pages (if printed)
+- **Total Documentation**: 13 files
+- **Total Words**: ~50,000 words
+- **Total Pages**: ~100+ pages (if printed)
 
 ### By Document Type
 - User Guides: 5 documents
-- Developer Guides: 3 documents
+- Developer Guides: 4 documents
 - Reference Documentation: 2 documents
 - Project Information: 2 documents
 
@@ -195,6 +203,9 @@ Start here:
 
 ### Installation
 - [installer.iss](installer.iss) - Inno Setup installer script
+- [build-release.ps1](build-release.ps1) - PowerShell build script
+- [build-release.bat](build-release.bat) - Batch build script
+- [RELEASE_SCRIPTS_README.md](RELEASE_SCRIPTS_README.md) - Build scripts guide
 
 ### Project Files
 - [SpellingChecker.sln](SpellingChecker.sln) - Visual Studio solution
@@ -252,6 +263,6 @@ This documentation is maintained with the project. Check:
 
 **Last Updated**: 2025-10-15
 
-**Documentation Version**: 2.0.0
+**Documentation Version**: 2.1.0
 
-**Total Pages**: 12 documents, ~40,000 words
+**Total Pages**: 13 documents, ~50,000 words
