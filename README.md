@@ -137,9 +137,9 @@ dotnet run
 - **Frontend**: WPF (Windows Presentation Foundation)
 - **Backend**: C# / .NET 9.0
 - **AI API**: 
-  - OpenAI GPT (gpt-4o-mini, gpt-4o, gpt-3.5-turbo)
-  - Anthropic Claude (claude-3-5-sonnet, claude-3-5-haiku, claude-3-opus)
-  - Google Gemini (gemini-2.0-flash-exp, gemini-1.5-pro, gemini-1.5-flash)
+  - OpenAI GPT (gpt-4o-mini, gpt-4o, o1, o1-mini)
+  - Anthropic Claude (claude-sonnet-4-5, claude-3-5-sonnet-latest, claude-3-5-haiku-latest)
+  - Google Gemini (gemini-2.5-pro-latest, gemini-2.5-flash-latest, gemini-2.0-flash-exp)
 - **보안**: Windows Data Protection API를 사용한 API 키 암호화
 - **JSON**: Newtonsoft.Json
 

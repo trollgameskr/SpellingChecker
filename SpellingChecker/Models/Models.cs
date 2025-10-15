@@ -99,9 +99,9 @@ namespace SpellingChecker.Models
 
         public static Dictionary<string, string[]> ProviderModels = new Dictionary<string, string[]>
         {
-            { "OpenAI", new[] { "gpt-4o", "gpt-4o-mini", "gpt-3.5-turbo" } },
-            { "Anthropic", new[] { "claude-3-5-sonnet-20241022", "claude-3-5-haiku-20241022", "claude-3-opus-20240229" } },
-            { "Gemini", new[] { "gemini-2.0-flash-exp", "gemini-1.5-pro", "gemini-1.5-flash" } }
+            { "OpenAI", new[] { "gpt-4o", "gpt-4o-mini", "o1", "o1-mini" } },
+            { "Anthropic", new[] { "claude-sonnet-4-5", "claude-3-5-sonnet-latest", "claude-3-5-haiku-latest" } },
+            { "Gemini", new[] { "gemini-2.5-pro-latest", "gemini-2.5-flash-latest", "gemini-2.0-flash-exp" } }
         };
 
         public static Dictionary<string, string> ProviderEndpoints = new Dictionary<string, string>
@@ -126,9 +126,9 @@ namespace SpellingChecker.Models
             if (provider == "OpenAI")
                 return "gpt-4o-mini";
             else if (provider == "Anthropic")
-                return "claude-3-5-sonnet-20241022";
+                return "claude-sonnet-4-5";
             else if (provider == "Gemini")
-                return "gemini-2.0-flash-exp";
+                return "gemini-2.5-flash-latest";
             return "gpt-4o-mini";
         }
     }

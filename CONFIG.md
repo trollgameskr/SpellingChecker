@@ -69,19 +69,20 @@ The available models depend on your selected provider:
 **Default**: `gpt-4o-mini`
 - `gpt-4o-mini`: Fast, cost-effective, good quality (recommended)
 - `gpt-4o`: Slower, more expensive, highest quality
-- `gpt-3.5-turbo`: Faster, less expensive, lower quality
+- `o1`: Advanced reasoning model for complex problems
+- `o1-mini`: Faster, more affordable reasoning model
 
 #### Anthropic Models
-**Default**: `claude-3-5-sonnet-20241022`
-- `claude-3-5-sonnet-20241022`: Balanced performance and quality (recommended)
-- `claude-3-5-haiku-20241022`: Fast and efficient
-- `claude-3-opus-20240229`: Highest quality and capability
+**Default**: `claude-sonnet-4-5`
+- `claude-sonnet-4-5`: Best for coding and agents (recommended)
+- `claude-3-5-sonnet-latest`: Balanced performance and quality
+- `claude-3-5-haiku-latest`: Fast and efficient
 
 #### Gemini Models
-**Default**: `gemini-2.0-flash-exp`
-- `gemini-2.0-flash-exp`: Latest experimental model (recommended)
-- `gemini-1.5-pro`: High quality, larger context
-- `gemini-1.5-flash`: Fast and efficient
+**Default**: `gemini-2.5-flash-latest`
+- `gemini-2.5-pro-latest`: Complex reasoning and large dataset analysis
+- `gemini-2.5-flash-latest`: Fast with impressive performance (recommended)
+- `gemini-2.0-flash-exp`: Experimental fast model
 
 **Recommendation**: Use the default model for each provider for the best balance of speed, cost, and quality.
 
