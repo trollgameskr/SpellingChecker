@@ -276,9 +276,10 @@ namespace SpellingChecker.Views
                 // Show progress indicator
                 ShowProgressIndicator();
                 
-                // Request re-correction with the new tone using current text from Original TextBox
-                // (user may have edited it)
-                ToneChangeRequested?.Invoke(this, OriginalTextBox.Text);
+                // Request re-correction with the new tone using the original text
+                // Always use the stored original text, not the editable OriginalTextBox,
+                // to ensure tone changes are applied to the true original text
+                ToneChangeRequested?.Invoke(this, _originalText);
             }
         }
 
