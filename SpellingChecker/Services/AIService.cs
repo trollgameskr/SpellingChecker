@@ -181,6 +181,45 @@ namespace SpellingChecker.Services
             }
         }
 
+        public async Task<CommonQuestionResult> AnswerCommonQuestionAsync(string question)
+        {
+            if (string.IsNullOrWhiteSpace(question))
+            {
+                return new CommonQuestionResult { Question = question, Answer = string.Empty };
+            }
+
+            try
+            {
+                var prompt = $"다음 질문에 간결하고 정확하게 답변해주세요. 답변은 한국어로 작성하되, 필요시 영어 용어를 병기해주세요.\n\n질문: {question}";
+
+                var requestBody = new
+                {
+                    model = _settings.Model,
+                    messages = new[]
+                    {
+                        new { role = "system", content = "당신은 도움이 되는 AI 어시스턴트입니다. 사용자의 질문에 정확하고 유용한 답변을 제공합니다. 답변은 명확하고 이해하기 쉽게 작성하며, 필요한 경우 예시를 포함합니다." },
+                        new { role = "user", content = prompt }
+                    },
+                    temperature = 0.7,
+                    max_tokens = 1000
+                };
+
+                var response = await SendRequestAsync(requestBody);
+                var answer = ExtractContentFromResponse(response);
+                RecordUsageFromResponse(response, "CommonQuestion");
+
+                return new CommonQuestionResult
+                {
+                    Question = question,
+                    Answer = answer.Trim()
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Common question answering failed: {ex.Message}", ex);
+            }
+        }
+
         private async Task<string> SendRequestAsync(object requestBody)
         {
             _settings = _settingsService.LoadSettings(); // Reload settings for API key updates

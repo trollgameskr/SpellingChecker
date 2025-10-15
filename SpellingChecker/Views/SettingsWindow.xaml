@@ -112,13 +112,25 @@
         <StackPanel Grid.Row="6" Margin="0,0,0,15">
             <TextBlock Text="Hotkeys:" FontWeight="SemiBold" Margin="0,0,0,5"/>
             
+            <!-- Common Question Hotkey -->
+            <StackPanel Margin="0,0,0,10">
+                <TextBlock Text="Common Question Answer Hotkey:" FontSize="12" Margin="0,0,0,3"/>
+                <TextBox x:Name="CommonQuestionHotkeyTextBox" 
+                         Padding="5"
+                         Height="30"/>
+                <TextBlock Text="Example: Ctrl+Alt+1" 
+                           FontSize="10" 
+                           Foreground="Gray" 
+                           Margin="0,3,0,0"/>
+            </StackPanel>
+            
             <!-- Spelling Correction Hotkey -->
             <StackPanel Margin="0,0,0,10">
                 <TextBlock Text="Spelling Correction Hotkey:" FontSize="12" Margin="0,0,0,3"/>
                 <TextBox x:Name="SpellingHotkeyTextBox" 
                          Padding="5"
                          Height="30"/>
-                <TextBlock Text="Example: Ctrl+Shift+Alt+Y" 
+                <TextBlock Text="Example: Ctrl+Alt+2" 
                            FontSize="10" 
                            Foreground="Gray" 
                            Margin="0,3,0,0"/>
@@ -130,7 +142,7 @@
                 <TextBox x:Name="TranslationHotkeyTextBox" 
                          Padding="5"
                          Height="30"/>
-                <TextBlock Text="Example: Ctrl+Shift+Alt+T" 
+                <TextBlock Text="Example: Ctrl+Alt+3" 
                            FontSize="10" 
                            Foreground="Gray" 
                            Margin="0,3,0,0"/>
@@ -142,7 +154,7 @@
                 <TextBox x:Name="VariableNameSuggestionHotkeyTextBox" 
                          Padding="5"
                          Height="30"/>
-                <TextBlock Text="Example: Ctrl+Shift+Alt+V" 
+                <TextBlock Text="Example: Ctrl+Alt+4" 
                            FontSize="10" 
                            Foreground="Gray" 
                            Margin="0,3,0,0"/>

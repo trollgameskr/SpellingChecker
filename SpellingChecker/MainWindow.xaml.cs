@@ -63,7 +63,7 @@ namespace SpellingChecker
             
             var helper = new WindowInteropHelper(this);
             var settings = _settingsService.LoadSettings();
-            var success = _hotkeyService.RegisterHotkeys(helper.Handle, settings.SpellingCorrectionHotkey, settings.TranslationHotkey, settings.VariableNameSuggestionHotkey);
+            var success = _hotkeyService.RegisterHotkeys(helper.Handle, settings.CommonQuestionHotkey, settings.SpellingCorrectionHotkey, settings.TranslationHotkey, settings.VariableNameSuggestionHotkey);
 
             if (!success)
             {
@@ -75,11 +75,13 @@ namespace SpellingChecker
                 // Show startup notification with hotkey information
                 ShowNotification("프로그램 시작", 
                     $"프로그램이 시작되었습니다.\n" +
+                    $"보편 질문 답변: {settings.CommonQuestionHotkey}\n" +
                     $"맞춤법 교정: {settings.SpellingCorrectionHotkey}\n" +
                     $"번역: {settings.TranslationHotkey}\n" +
                     $"변수명 추천: {settings.VariableNameSuggestionHotkey}");
             }
 
+            _hotkeyService.CommonQuestionRequested += OnCommonQuestionRequested;
             _hotkeyService.SpellingCorrectionRequested += OnSpellingCorrectionRequested;
             _hotkeyService.TranslationRequested += OnTranslationRequested;
             _hotkeyService.VariableNameSuggestionRequested += OnVariableNameSuggestionRequested;
@@ -189,6 +191,49 @@ namespace SpellingChecker
                 
                 popup.Title = $"Translation ({result.SourceLanguage} → {result.TargetLanguage})";
                 popup.UpdateResult(result.TranslatedText);
+                popup.HideProgressIndicator();
+            }
+            catch (Exception ex)
+            {
+                popup?.HideProgressIndicator();
+                ShowNotification("Error", ex.Message);
+            }
+        }
+
+        private async void OnCommonQuestionRequested(object? sender, EventArgs e)
+        {
+            ResultPopupWindow? popup = null;
+            try
+            {
+                var selectedText = _clipboardService.GetSelectedText();
+                
+                if (string.IsNullOrWhiteSpace(selectedText))
+                {
+                    ShowNotification("No text selected", "Please select some text as a question.");
+                    return;
+                }
+
+                // Show debug notification when request is made
+                ShowNotification("질문 답변 요청", 
+                    $"'{selectedText}' 질문에 대한 답변을 요청했습니다.", true);
+
+                // Create and show popup immediately with progress indicator
+                popup = new ResultPopupWindow("", selectedText, "Common Question Answer - Ctrl+Enter to reconvert", false);
+                popup.ShowProgressIndicator();
+                popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(popup.GetResultText());
+                popup.ConvertRequested += async (s, text) => await ReprocessCommonQuestion(popup, text);
+                popup.Show();
+
+                // Show progress notification
+                ShowNotification("Processing...", "AI is answering your question. Please wait...", true);
+
+                var result = await _aiService.AnswerCommonQuestionAsync(selectedText);
+                
+                // Show debug notification with result
+                ShowNotification("질문 답변 완료", 
+                    $"질문에 대한 답변이 완료되었습니다.", true);
+                
+                popup.UpdateResult(result.Answer);
                 popup.HideProgressIndicator();
             }
             catch (Exception ex)
@@ -325,6 +370,35 @@ namespace SpellingChecker
                 var formattedSuggestions = string.Join("\n", result.SuggestedNames.Select((name, index) => $"{index + 1}. {name}"));
                 
                 popup.UpdateResult(formattedSuggestions);
+                popup.HideProgressIndicator();
+            }
+            catch (Exception ex)
+            {
+                popup.HideProgressIndicator();
+                ShowNotification("Error", ex.Message);
+            }
+        }
+
+        private async Task ReprocessCommonQuestion(ResultPopupWindow popup, string text)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(text))
+                {
+                    popup.HideProgressIndicator();
+                    ShowNotification("No text", "Please enter a question.");
+                    return;
+                }
+
+                popup.ShowProgressIndicator();
+                ShowNotification("Processing...", "AI is answering your question. Please wait...", true);
+
+                var result = await _aiService.AnswerCommonQuestionAsync(text);
+                
+                ShowNotification("질문 답변 완료", 
+                    $"질문에 대한 답변이 완료되었습니다.", true);
+                
+                popup.UpdateResult(result.Answer);
                 popup.HideProgressIndicator();
             }
             catch (Exception ex)
