@@ -42,7 +42,7 @@ namespace SpellingChecker.Services
             if (!HotkeyParser.TryParseHotkey(commonQuestionHotkey, out uint commonQuestionModifiers, out Key commonQuestionKey))
             {
                 // Fallback to default if parsing fails
-                commonQuestionModifiers = MOD_CONTROL | MOD_ALT;
+                commonQuestionModifiers = MOD_ALT;
                 commonQuestionKey = Key.D1;
             }
 
@@ -50,7 +50,7 @@ namespace SpellingChecker.Services
             if (!HotkeyParser.TryParseHotkey(spellingHotkey, out uint spellingModifiers, out Key spellingKey))
             {
                 // Fallback to default if parsing fails
-                spellingModifiers = MOD_CONTROL | MOD_ALT;
+                spellingModifiers = MOD_ALT;
                 spellingKey = Key.D2;
             }
 
@@ -58,7 +58,7 @@ namespace SpellingChecker.Services
             if (!HotkeyParser.TryParseHotkey(translationHotkey, out uint translationModifiers, out Key translationKey))
             {
                 // Fallback to default if parsing fails
-                translationModifiers = MOD_CONTROL | MOD_ALT;
+                translationModifiers = MOD_ALT;
                 translationKey = Key.D3;
             }
 
@@ -66,7 +66,7 @@ namespace SpellingChecker.Services
             if (!HotkeyParser.TryParseHotkey(variableNameSuggestionHotkey, out uint variableNameModifiers, out Key variableNameKey))
             {
                 // Fallback to default if parsing fails
-                variableNameModifiers = MOD_CONTROL | MOD_ALT;
+                variableNameModifiers = MOD_ALT;
                 variableNameKey = Key.D4;
             }
 
