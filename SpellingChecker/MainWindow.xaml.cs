@@ -102,6 +102,7 @@ namespace SpellingChecker
 
         private async void OnSpellingCorrectionRequested(object? sender, EventArgs e)
         {
+            ResultPopupWindow? popup = null;
             try
             {
                 var selectedText = _clipboardService.GetSelectedText();
@@ -118,7 +119,7 @@ namespace SpellingChecker
 
                 // Create and show popup immediately with progress indicator
                 var settings = _settingsService.LoadSettings();
-                var popup = new ResultPopupWindow("", selectedText, "Spelling Correction", false, settings);
+                popup = new ResultPopupWindow("", selectedText, "Spelling Correction", false, settings);
                 popup.ShowProgressIndicator();
                 popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(popup.GetResultText());
                 popup.ConvertRequested += async (s, text) => await ReprocessSpellingCorrection(popup, text);
@@ -142,12 +143,14 @@ namespace SpellingChecker
             }
             catch (Exception ex)
             {
+                popup?.HideProgressIndicator();
                 ShowNotification("Error", ex.Message);
             }
         }
 
         private async void OnTranslationRequested(object? sender, EventArgs e)
         {
+            ResultPopupWindow? popup = null;
             try
             {
                 var selectedText = _clipboardService.GetSelectedText();
@@ -163,7 +166,7 @@ namespace SpellingChecker
                     $"'{selectedText}' 문장의 번역을 요청했습니다.", true);
 
                 // Create and show popup immediately with progress indicator
-                var popup = new ResultPopupWindow("", selectedText, "Translation", true);
+                popup = new ResultPopupWindow("", selectedText, "Translation", true);
                 popup.ShowProgressIndicator();
                 popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(popup.GetResultText());
                 popup.ConvertRequested += async (s, text) => await ReprocessTranslation(popup, text);
@@ -185,6 +188,7 @@ namespace SpellingChecker
             }
             catch (Exception ex)
             {
+                popup?.HideProgressIndicator();
                 ShowNotification("Error", ex.Message);
             }
         }
@@ -249,6 +253,7 @@ namespace SpellingChecker
 
         private async void OnVariableNameSuggestionRequested(object? sender, EventArgs e)
         {
+            ResultPopupWindow? popup = null;
             try
             {
                 var selectedText = _clipboardService.GetSelectedText();
@@ -264,7 +269,7 @@ namespace SpellingChecker
                     $"'{selectedText}' 텍스트의 변수명을 추천합니다.", true);
 
                 // Create and show popup immediately with progress indicator
-                var popup = new ResultPopupWindow("", selectedText, "Variable Name Suggestions (C#) - Ctrl+Enter to reconvert", false);
+                popup = new ResultPopupWindow("", selectedText, "Variable Name Suggestions (C#) - Ctrl+Enter to reconvert", false);
                 popup.ShowProgressIndicator();
                 popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(popup.GetResultText());
                 popup.ConvertRequested += async (s, text) => await ReprocessVariableNameSuggestion(popup, text);
@@ -287,6 +292,7 @@ namespace SpellingChecker
             }
             catch (Exception ex)
             {
+                popup?.HideProgressIndicator();
                 ShowNotification("Error", ex.Message);
             }
         }
