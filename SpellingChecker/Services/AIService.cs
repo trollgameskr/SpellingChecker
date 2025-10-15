@@ -183,7 +183,8 @@ namespace SpellingChecker.Services
             
             if (string.IsNullOrWhiteSpace(_settings.ApiKey))
             {
-                throw new InvalidOperationException("API Key is not configured. Please set your API key in settings.");
+                var provider = _settings.Provider ?? "OpenAI";
+                throw new InvalidOperationException($"API Key is not configured for {provider}. Please set your {provider} API key in settings.");
             }
 
             string provider = _settings.Provider ?? "OpenAI";
