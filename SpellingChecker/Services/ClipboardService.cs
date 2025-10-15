@@ -39,9 +39,14 @@ namespace SpellingChecker.Services
         [DllImport("kernel32.dll")]
         private static extern uint GetCurrentThreadId();
 
+        [DllImport("user32.dll")]
+        private static extern short GetAsyncKeyState(int vKey);
+
         private const byte VK_CONTROL = 0x11;
         private const byte VK_C = 0x43;
         private const byte VK_V = 0x56;
+        private const byte VK_SHIFT = 0x10;
+        private const byte VK_MENU = 0x12; // Alt key
         private const uint KEYEVENTF_KEYUP = 0x0002;
 
         private const uint WM_GETTEXT = 0x000D;
@@ -144,6 +149,33 @@ namespace SpellingChecker.Services
         }
 
         /// <summary>
+        /// Waits for all modifier keys (Ctrl, Shift, Alt) to be released
+        /// </summary>
+        /// <param name="maxWaitMs">Maximum time to wait in milliseconds</param>
+        private void WaitForModifierKeysRelease(int maxWaitMs = 500)
+        {
+            var stopwatch = Stopwatch.StartNew();
+            
+            while (stopwatch.ElapsedMilliseconds < maxWaitMs)
+            {
+                // Check if any modifier keys are still pressed
+                // GetAsyncKeyState returns a short where the high-order bit indicates if the key is down
+                bool ctrlPressed = (GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0;
+                bool shiftPressed = (GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0;
+                bool altPressed = (GetAsyncKeyState(VK_MENU) & 0x8000) != 0;
+                
+                // If all modifier keys are released, we're done
+                if (!ctrlPressed && !shiftPressed && !altPressed)
+                {
+                    return;
+                }
+                
+                // Wait a bit before checking again
+                Thread.Sleep(10);
+            }
+        }
+
+        /// <summary>
         /// Copies selected text using keyboard simulation with clipboard change detection
         /// </summary>
         /// <param name="timeoutMs">Timeout in milliseconds to wait for clipboard change</param>
@@ -152,9 +184,9 @@ namespace SpellingChecker.Services
         {
             try
             {
-                // Wait for hotkey to be released before simulating Ctrl+C
+                // Wait for all hotkey modifier keys to be released before simulating Ctrl+C
                 // This prevents the hotkey modifiers from interfering with the copy operation
-                Thread.Sleep(200);
+                WaitForModifierKeysRelease();
                 
                 string previousClipboard = string.Empty;
                 
