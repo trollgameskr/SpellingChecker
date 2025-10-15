@@ -253,10 +253,24 @@ Absolutely! Works in Outlook, Gmail (browser), and other email clients. Perfect 
 
 ### Can I use a different AI provider?
 
-Version 1.0 only supports OpenAI. Future versions may support:
-- Azure OpenAI
+Yes! The application now supports multiple AI providers through a simple dropdown selection:
+- **OpenAI**: Standard OpenAI API service (default)
+- **Azure OpenAI**: Microsoft's Azure OpenAI service
+- **Custom**: Any OpenAI-compatible API endpoint
+
+To switch providers:
+1. Open Settings (double-click tray icon)
+2. Select your provider from the "AI Provider" dropdown
+3. The "AI Model" dropdown will automatically update with compatible models
+4. Update the API endpoint if needed (automatically suggested based on provider)
+5. Save
+
+**Note**: Azure OpenAI uses slightly different model names (e.g., `gpt-35-turbo` instead of `gpt-3.5-turbo`).
+
+Future versions may add support for:
 - Anthropic Claude
 - Local models (Llama, etc.)
+- Other AI providers
 
 ## Privacy & Security
 

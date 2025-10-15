@@ -198,15 +198,21 @@ For advanced users or organizations:
 2. Change "API Endpoint" to your custom URL
 3. Save
 
-### Different AI Models
+### Different AI Providers and Models
 
 For different quality/speed trade-offs:
 1. Open Settings
-2. Change "AI Model":
+2. Select your "AI Provider":
+   - `OpenAI`: Standard OpenAI service (recommended)
+   - `AzureOpenAI`: Microsoft Azure OpenAI
+   - `Custom`: Custom OpenAI-compatible endpoint
+3. Choose an "AI Model" from the dropdown:
    - `gpt-4o-mini`: Fast, balanced (default)
    - `gpt-4o`: Slower, highest quality
-   - `gpt-3.5-turbo`: Fastest, lower quality
-3. Save
+   - `gpt-3.5-turbo` (or `gpt-35-turbo` for Azure): Fastest, lower quality
+4. Save
+
+**Note**: The model dropdown automatically updates based on your selected provider, making it easy to choose compatible models.
 
 ## Cost Information
 

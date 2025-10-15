@@ -28,14 +28,32 @@ You can change this to:
 - Use a proxy server
 - Use a local API endpoint for testing
 
+### AI Provider
+
+**Default**: `OpenAI`
+
+Available providers:
+- `OpenAI`: Standard OpenAI API service
+- `AzureOpenAI`: Microsoft Azure OpenAI service
+- `Custom`: Custom OpenAI-compatible API endpoint
+
+You can select your preferred AI provider from the dropdown in the settings window.
+
 ### AI Model
 
 **Default**: `gpt-4o-mini`
 
-Available models:
+Available models (for OpenAI):
 - `gpt-4o-mini`: Fast, cost-effective, good quality (recommended)
 - `gpt-4o`: Slower, more expensive, highest quality
 - `gpt-3.5-turbo`: Faster, less expensive, lower quality
+
+For Azure OpenAI:
+- `gpt-4o-mini`: Fast, cost-effective, good quality (recommended)
+- `gpt-4o`: Slower, more expensive, highest quality
+- `gpt-35-turbo`: Faster, less expensive, lower quality
+
+**Note**: Models are now selectable from a dropdown menu in the settings window, making it easier to choose the right model for your needs. You can also enter custom model names if using a custom provider.
 
 **Recommendation**: Use `gpt-4o-mini` for the best balance of speed, cost, and quality.
 
