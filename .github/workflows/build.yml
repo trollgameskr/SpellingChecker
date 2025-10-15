@@ -24,11 +24,41 @@ jobs:
     - name: Build
       run: dotnet build SpellingChecker.sln --configuration Release --no-restore
     
-    - name: Publish
+    - name: Publish Application
       run: dotnet publish SpellingChecker/SpellingChecker.csproj -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -o ./publish
     
-    - name: Upload artifact
+    - name: Create Portable ZIP Distribution
+      run: |
+        $version = "1.0.0"
+        $distPath = "dist/SpellingChecker-portable"
+        New-Item -ItemType Directory -Force -Path $distPath | Out-Null
+        Copy-Item "./publish/SpellingChecker.exe" -Destination $distPath
+        Copy-Item "README.md" -Destination $distPath
+        Copy-Item "LICENSE" -Destination $distPath
+        Copy-Item "CONFIG.md" -Destination $distPath
+        Copy-Item "QUICKSTART.md" -Destination $distPath
+        $readmeContent = @"
+        # AI Spelling Checker - Portable Version
+        
+        ## Quick Start
+        1. Run SpellingChecker.exe
+        2. Configure your OpenAI API key in Settings
+        3. Use hotkeys: Ctrl+Shift+Alt+Y (spell check) or Ctrl+Shift+Alt+T (translate)
+        
+        See README.md for full documentation.
+        "@
+        $readmeContent | Out-File -FilePath "$distPath/PORTABLE-README.txt" -Encoding UTF8
+        Compress-Archive -Path $distPath -DestinationPath "SpellingChecker-v$version-portable-win-x64.zip" -CompressionLevel Optimal
+      shell: pwsh
+    
+    - name: Upload Standalone Executable
       uses: actions/upload-artifact@v4
       with:
-        name: SpellingChecker-win-x64
+        name: SpellingChecker-Standalone-win-x64
         path: ./publish/SpellingChecker.exe
+    
+    - name: Upload Portable ZIP
+      uses: actions/upload-artifact@v4
+      with:
+        name: SpellingChecker-Portable-win-x64
+        path: SpellingChecker-v*-portable-win-x64.zip

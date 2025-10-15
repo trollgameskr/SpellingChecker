@@ -71,45 +71,42 @@ SpellingChecker/bin/Release/net9.0-windows/win-x64/publish/SpellingChecker.exe
 - **Debug**: For development, includes debugging symbols
 - **Release**: Optimized for deployment
 
-## Creating an Installer
+## Creating Distribution Files
 
-### Using WiX Toolset (Recommended)
+### Option 1: Portable ZIP Distribution (Recommended)
 
-1. Install WiX Toolset from https://wixtoolset.org/
+**Perfect for users who prefer portable applications**.
 
-2. Create a WiX installer project:
-   - Create a new WiX project in Visual Studio
-   - Reference the SpellingChecker project
-   - Configure product information, shortcuts, registry keys for auto-start
+1. **Build using PowerShell script**:
+   ```powershell
+   .\build-portable.ps1
+   ```
 
-3. Build the installer
+2. **Output**: `dist\SpellingChecker-v1.0.0-portable-win-x64.zip`
 
-### Using Inno Setup
+**Benefits of portable version**:
+- No installation required
+- Can run from USB drive
+- No registry changes
+- Easy to delete (just remove folder)
+- Includes all documentation
 
-1. Download and install Inno Setup from https://jrsoftware.org/isinfo.php
+Users extract the ZIP and run `SpellingChecker.exe` directly.
 
-2. Create a script file (`installer.iss`):
-```iss
-[Setup]
-AppName=AI Spelling Checker
-AppVersion=1.0.0
-DefaultDirName={pf}\SpellingChecker
-DefaultGroupName=SpellingChecker
-OutputDir=installer
-OutputBaseFilename=SpellingCheckerSetup
+### Option 2: Standalone Executable (Simplest)
 
-[Files]
-Source: "SpellingChecker\bin\Release\net9.0-windows\win-x64\publish\*"; DestDir: "{app}"; Flags: recursesubdirs
+Just distribute the published executable:
 
-[Icons]
-Name: "{group}\AI Spelling Checker"; Filename: "{app}\SpellingChecker.exe"
-Name: "{userstartup}\AI Spelling Checker"; Filename: "{app}\SpellingChecker.exe"; Tasks: startupicon
-
-[Tasks]
-Name: startupicon; Description: "Start with Windows"
+```bash
+dotnet publish SpellingChecker/SpellingChecker.csproj -c Release -r win-x64 --self-contained -p:PublishSingleFile=true
 ```
 
-3. Compile the script with Inno Setup Compiler
+The executable is located at:
+```
+SpellingChecker\bin\Release\net9.0-windows\win-x64\publish\SpellingChecker.exe
+```
+
+Users can run this file directly without any installation.
 
 ## Testing
 
