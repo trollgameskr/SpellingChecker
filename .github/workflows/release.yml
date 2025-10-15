@@ -1,0 +1,126 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (e.g., 1.0.0)'
+        required: true
+        default: '1.0.0'
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+    
+    - name: Restore dependencies
+      run: dotnet restore SpellingChecker.sln
+    
+    - name: Build
+      run: dotnet build SpellingChecker.sln --configuration Release --no-restore
+    
+    - name: Publish
+      run: dotnet publish SpellingChecker/SpellingChecker.csproj -c Release -r win-x64 --self-contained -p:PublishSingleFile=true
+    
+    - name: Install Inno Setup
+      run: |
+        choco install innosetup -y
+        refreshenv
+    
+    - name: Compile Inno Setup Installer
+      run: |
+        & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer.iss
+      shell: pwsh
+    
+    - name: Get version
+      id: get_version
+      run: |
+        if ("${{ github.event_name }}" -eq "workflow_dispatch") {
+          echo "VERSION=${{ github.event.inputs.version }}" >> $env:GITHUB_OUTPUT
+          echo "TAG_NAME=v${{ github.event.inputs.version }}" >> $env:GITHUB_OUTPUT
+        } else {
+          $version = "${{ github.ref }}" -replace 'refs/tags/v', ''
+          echo "VERSION=$version" >> $env:GITHUB_OUTPUT
+          echo "TAG_NAME=${{ github.ref_name }}" >> $env:GITHUB_OUTPUT
+        }
+      shell: pwsh
+    
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.get_version.outputs.TAG_NAME }}
+        release_name: Release ${{ steps.get_version.outputs.TAG_NAME }}
+        body: |
+          ## AI Spelling Checker - Release ${{ steps.get_version.outputs.TAG_NAME }}
+          
+          ### 📦 Installation
+          
+          Download the installer below and run it:
+          - `SpellingCheckerSetup_v${{ steps.get_version.outputs.VERSION }}.exe` - Windows Installer
+          
+          Or download the standalone executable:
+          - `SpellingChecker.exe` - Portable version (no installation required)
+          
+          ### 🚀 Quick Start
+          
+          1. Run the installer or executable
+          2. Get an API key from [OpenAI](https://platform.openai.com/api-keys), [Anthropic](https://console.anthropic.com/), or [Google Gemini](https://makersuite.google.com/app/apikey)
+          3. Right-click the system tray icon and select "Settings"
+          4. Enter your API key and select your preferred model
+          5. Use Ctrl+Shift+C to correct text or Ctrl+Shift+T to translate
+          
+          ### 📖 Documentation
+          
+          - [Quick Start Guide](https://github.com/trollgameskr/SpellingChecker/blob/main/QUICKSTART.md)
+          - [Configuration Guide](https://github.com/trollgameskr/SpellingChecker/blob/main/CONFIG.md)
+          - [Full Documentation](https://github.com/trollgameskr/SpellingChecker/blob/main/README.md)
+          
+          ### 🐛 Known Issues
+          
+          Please report any issues on our [GitHub Issues](https://github.com/trollgameskr/SpellingChecker/issues) page.
+        draft: false
+        prerelease: false
+    
+    - name: Upload Installer to Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./installer/SpellingCheckerSetup_v1.0.0.exe
+        asset_name: SpellingCheckerSetup_v${{ steps.get_version.outputs.VERSION }}.exe
+        asset_content_type: application/octet-stream
+    
+    - name: Upload Standalone Executable to Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./SpellingChecker/bin/Release/net9.0-windows/win-x64/publish/SpellingChecker.exe
+        asset_name: SpellingChecker.exe
+        asset_content_type: application/octet-stream
+    
+    - name: Upload README to Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./README.md
+        asset_name: README.md
+        asset_content_type: text/markdown
