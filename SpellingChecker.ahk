@@ -254,28 +254,88 @@ MenuHandler_Exit(*) {
 ; ==============================================================================
 ; Hotkey Registration
 ; ==============================================================================
+IsValidHotkey(hotkeyStr) {
+    ; Check if a hotkey string is valid by attempting to parse it
+    ; Valid hotkeys should not have invalid sequences like "Ctrl++", "Ctrl+Shift+Shift+", etc.
+    
+    if (hotkeyStr == "") {
+        return false
+    }
+    
+    ; Check for invalid patterns
+    if (InStr(hotkeyStr, "++") || InStr(hotkeyStr, "Ctrl+Ctrl+") || InStr(hotkeyStr, "Shift+Shift+") || InStr(hotkeyStr, "Alt+Alt+") || InStr(hotkeyStr, "Win+Win+")) {
+        return false
+    }
+    
+    ; Try to validate by attempting to register it (without actually registering)
+    try {
+        ; Create a dummy function for testing
+        testFunc := (*) => ""
+        ; Attempt to set the hotkey
+        Hotkey(hotkeyStr, testFunc, "Off")
+        ; If successful, turn it off immediately
+        Hotkey(hotkeyStr, "Off")
+        return true
+    } catch {
+        return false
+    }
+}
+
 RegisterHotkeys() {
     global g_SpellingHotkey, g_TranslationHotkey, g_VariableNameHotkey
     
-    ; Register spelling correction hotkey
+    ; Validate and register spelling correction hotkey
+    if (!IsValidHotkey(g_SpellingHotkey)) {
+        MsgBox("유효하지 않은 맞춤법 교정 단축키입니다: " . g_SpellingHotkey . "`n`n기본값으로 재설정합니다: Ctrl+Shift+Alt+Y", "단축키 오류", 0x30)
+        g_SpellingHotkey := "^+!y"
+        SaveSettings()
+    }
+    
     try {
         Hotkey(g_SpellingHotkey, OnSpellingCorrectionRequested)
-    } catch {
-        MsgBox("Failed to register spelling correction hotkey: " . g_SpellingHotkey)
+    } catch as err {
+        MsgBox("맞춤법 교정 단축키 등록 실패: " . g_SpellingHotkey . "`n오류: " . err.Message . "`n`n기본값으로 재설정합니다.", "단축키 오류", 0x10)
+        g_SpellingHotkey := "^+!y"
+        SaveSettings()
+        try {
+            Hotkey(g_SpellingHotkey, OnSpellingCorrectionRequested)
+        }
     }
     
-    ; Register translation hotkey
+    ; Validate and register translation hotkey
+    if (!IsValidHotkey(g_TranslationHotkey)) {
+        MsgBox("유효하지 않은 번역 단축키입니다: " . g_TranslationHotkey . "`n`n기본값으로 재설정합니다: Ctrl+Shift+Alt+T", "단축키 오류", 0x30)
+        g_TranslationHotkey := "^+!t"
+        SaveSettings()
+    }
+    
     try {
         Hotkey(g_TranslationHotkey, OnTranslationRequested)
-    } catch {
-        MsgBox("Failed to register translation hotkey: " . g_TranslationHotkey)
+    } catch as err {
+        MsgBox("번역 단축키 등록 실패: " . g_TranslationHotkey . "`n오류: " . err.Message . "`n`n기본값으로 재설정합니다.", "단축키 오류", 0x10)
+        g_TranslationHotkey := "^+!t"
+        SaveSettings()
+        try {
+            Hotkey(g_TranslationHotkey, OnTranslationRequested)
+        }
     }
     
-    ; Register variable name suggestion hotkey
+    ; Validate and register variable name suggestion hotkey
+    if (!IsValidHotkey(g_VariableNameHotkey)) {
+        MsgBox("유효하지 않은 변수명 추천 단축키입니다: " . g_VariableNameHotkey . "`n`n기본값으로 재설정합니다: Ctrl+Shift+Alt+V", "단축키 오류", 0x30)
+        g_VariableNameHotkey := "^+!v"
+        SaveSettings()
+    }
+    
     try {
         Hotkey(g_VariableNameHotkey, OnVariableNameSuggestionRequested)
-    } catch {
-        MsgBox("Failed to register variable name suggestion hotkey: " . g_VariableNameHotkey)
+    } catch as err {
+        MsgBox("변수명 추천 단축키 등록 실패: " . g_VariableNameHotkey . "`n오류: " . err.Message . "`n`n기본값으로 재설정합니다.", "단축키 오류", 0x10)
+        g_VariableNameHotkey := "^+!v"
+        SaveSettings()
+        try {
+            Hotkey(g_VariableNameHotkey, OnVariableNameSuggestionRequested)
+        }
     }
 }
 
@@ -739,9 +799,46 @@ SaveSettingsFromGui(gui) {
     g_ShowProgressNotifications := saved.ShowProgress
     
     ; Convert hotkeys back to AHK format
-    g_SpellingHotkey := ConvertHotkeyFromDisplay(saved.SpellingHotkey)
-    g_TranslationHotkey := ConvertHotkeyFromDisplay(saved.TranslationHotkey)
-    g_VariableNameHotkey := ConvertHotkeyFromDisplay(saved.VariableNameHotkey)
+    newSpellingHotkey := ConvertHotkeyFromDisplay(saved.SpellingHotkey)
+    newTranslationHotkey := ConvertHotkeyFromDisplay(saved.TranslationHotkey)
+    newVariableNameHotkey := ConvertHotkeyFromDisplay(saved.VariableNameHotkey)
+    
+    ; Validate hotkeys before applying
+    invalidHotkeys := []
+    
+    if (!IsValidHotkey(newSpellingHotkey)) {
+        invalidHotkeys.Push("맞춤법 교정: " . saved.SpellingHotkey)
+    } else {
+        g_SpellingHotkey := newSpellingHotkey
+    }
+    
+    if (!IsValidHotkey(newTranslationHotkey)) {
+        invalidHotkeys.Push("번역: " . saved.TranslationHotkey)
+    } else {
+        g_TranslationHotkey := newTranslationHotkey
+    }
+    
+    if (!IsValidHotkey(newVariableNameHotkey)) {
+        invalidHotkeys.Push("변수명 추천: " . saved.VariableNameHotkey)
+    } else {
+        g_VariableNameHotkey := newVariableNameHotkey
+    }
+    
+    ; If there are invalid hotkeys, show error and don't save
+    if (invalidHotkeys.Length > 0) {
+        errorMsg := "다음 단축키가 유효하지 않습니다:`n`n"
+        for index, item in invalidHotkeys {
+            errorMsg .= "  • " . item . "`n"
+        }
+        errorMsg .= "`n유효한 단축키 형식:`n"
+        errorMsg .= "  • Ctrl+Shift+Alt+Y`n"
+        errorMsg .= "  • Ctrl+Alt+T`n"
+        errorMsg .= "  • Win+Shift+V`n"
+        errorMsg .= "`n최소 1개의 modifier(Ctrl, Shift, Alt, Win)와`n1개의 키가 필요합니다."
+        
+        MsgBox(errorMsg, "유효하지 않은 단축키", 0x30)
+        return
+    }
     
     ; Get selected tone preset ID
     selectedToneName := saved.SelectedTone
@@ -759,8 +856,9 @@ SaveSettingsFromGui(gui) {
         Hotkey(g_SpellingHotkey, OnSpellingCorrectionRequested)
         Hotkey(g_TranslationHotkey, OnTranslationRequested)
         Hotkey(g_VariableNameHotkey, OnVariableNameSuggestionRequested)
-    } catch {
-        MsgBox("Failed to register hotkeys. Please check your hotkey settings.")
+    } catch as err {
+        MsgBox("단축키 등록 중 오류 발생: " . err.Message . "`n`n설정을 확인해주세요.", "오류", 0x10)
+        return
     }
     
     TrayTip("Settings Saved", "Settings have been saved successfully!")
