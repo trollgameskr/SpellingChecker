@@ -191,41 +191,38 @@ namespace SpellingChecker.Services
                 string previousClipboard = string.Empty;
                 
                 // Save previous clipboard content
-                try
+                if (Clipboard.ContainsText())
                 {
-                    if (Clipboard.ContainsText())
-                    {
-                        previousClipboard = Clipboard.GetText();
-                    }
-                }
-                catch
-                {
-                    // Ignore clipboard access errors
+                    previousClipboard = Clipboard.GetText();
                 }
 
-                // Clear clipboard and wait for it to take effect
-                try
-                {
-                    Clipboard.Clear();
-                    Thread.Sleep(50); // Wait for clear to complete
-                }
-                catch
-                {
-                    // Ignore clipboard access errors
-                }
+                Clipboard.Clear();
 
                 // Simulate Ctrl+C using keybd_event (proven to work in ReplaceSelectedText)
                 keybd_event(VK_CONTROL, 0, 0, UIntPtr.Zero);
                 keybd_event(VK_C, 0, 0, UIntPtr.Zero);
+                Thread.Sleep(10);
                 keybd_event(VK_C, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
                 keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
 
                 // Give the system time to process the input and copy to clipboard
-                Thread.Sleep(150);
+                Thread.Sleep(10);
 
-                // Check if clipboard now has content
-                try
+                if (Clipboard.ContainsText())
                 {
+                    string current = Clipboard.GetText();
+                    if (!string.IsNullOrEmpty(current))
+                    {
+                        return current;
+                    }
+                }
+                
+                // If still no content, wait and poll for clipboard changes
+                var stopwatch = Stopwatch.StartNew();
+                while (stopwatch.ElapsedMilliseconds < timeoutMs)
+                {
+                    Thread.Sleep(50);
+                
                     if (Clipboard.ContainsText())
                     {
                         string current = Clipboard.GetText();
@@ -235,45 +232,10 @@ namespace SpellingChecker.Services
                         }
                     }
                 }
-                catch
-                {
-                    // Ignore clipboard access errors
-                }
 
-                // If still no content, wait and poll for clipboard changes
-                var stopwatch = Stopwatch.StartNew();
-                while (stopwatch.ElapsedMilliseconds < timeoutMs)
+                if (!string.IsNullOrEmpty(previousClipboard))
                 {
-                    Thread.Sleep(50);
-                    
-                    try
-                    {
-                        if (Clipboard.ContainsText())
-                        {
-                            string current = Clipboard.GetText();
-                            if (!string.IsNullOrEmpty(current))
-                            {
-                                return current;
-                            }
-                        }
-                    }
-                    catch
-                    {
-                        // Ignore clipboard access errors during polling
-                    }
-                }
-
-                // Timeout - restore previous clipboard if we have it
-                try
-                {
-                    if (!string.IsNullOrEmpty(previousClipboard))
-                    {
-                        Clipboard.SetText(previousClipboard);
-                    }
-                }
-                catch
-                {
-                    // Ignore clipboard access errors
+                    Clipboard.SetText(previousClipboard);
                 }
                 
                 return string.Empty;
