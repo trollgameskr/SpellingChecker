@@ -201,7 +201,7 @@ namespace SpellingChecker.Services
                 // Simulate Ctrl+C using keybd_event (proven to work in ReplaceSelectedText)
                 keybd_event(VK_CONTROL, 0, 0, UIntPtr.Zero);
                 keybd_event(VK_C, 0, 0, UIntPtr.Zero);
-                Thread.Sleep(10);
+                Thread.Sleep(50);
                 keybd_event(VK_C, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
                 keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
 
