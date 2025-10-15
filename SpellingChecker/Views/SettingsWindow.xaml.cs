@@ -171,7 +171,7 @@ namespace SpellingChecker.Views
                     ? AIProviderConfig.ProviderModels[_settings.Provider] 
                     : Array.Empty<string>();
                 
-                if (!defaultModels.Contains(modelName) && !string.IsNullOrWhiteSpace(modelName))
+                if (!string.IsNullOrWhiteSpace(modelName) && !defaultModels.Contains(modelName))
                 {
                     // Initialize CustomModels dictionary if needed
                     if (_settings.CustomModels == null)
