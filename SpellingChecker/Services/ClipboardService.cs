@@ -167,8 +167,16 @@ namespace SpellingChecker.Services
                     // Ignore clipboard access errors
                 }
 
-                // Don't clear clipboard - just track what was there before
-                // Clearing can interfere with the copy operation
+                // Clear clipboard and wait for it to take effect
+                try
+                {
+                    Clipboard.Clear();
+                    Thread.Sleep(50); // Wait for clear to complete
+                }
+                catch
+                {
+                    // Ignore clipboard access errors
+                }
 
                 // Simulate Ctrl+C using keybd_event (proven to work in ReplaceSelectedText)
                 keybd_event(VK_CONTROL, 0, 0, UIntPtr.Zero);
@@ -176,21 +184,38 @@ namespace SpellingChecker.Services
                 keybd_event(VK_C, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
                 keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
 
-                // Give the system more time to process the input
-                Thread.Sleep(100);
+                // Give the system time to process the input and copy to clipboard
+                Thread.Sleep(150);
 
-                // Wait for clipboard to change
+                // Check if clipboard now has content
+                try
+                {
+                    if (Clipboard.ContainsText())
+                    {
+                        string current = Clipboard.GetText();
+                        if (!string.IsNullOrEmpty(current))
+                        {
+                            return current;
+                        }
+                    }
+                }
+                catch
+                {
+                    // Ignore clipboard access errors
+                }
+
+                // If still no content, wait and poll for clipboard changes
                 var stopwatch = Stopwatch.StartNew();
                 while (stopwatch.ElapsedMilliseconds < timeoutMs)
                 {
-                    Thread.Sleep(10);
+                    Thread.Sleep(50);
                     
                     try
                     {
                         if (Clipboard.ContainsText())
                         {
                             string current = Clipboard.GetText();
-                            if (!string.IsNullOrEmpty(current) && current != previousClipboard)
+                            if (!string.IsNullOrEmpty(current))
                             {
                                 return current;
                             }
