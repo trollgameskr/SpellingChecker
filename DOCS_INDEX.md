@@ -45,15 +45,9 @@ Complete guide to SpellingChecker documentation.
 6. **[BUILD.md](BUILD.md)** - Build and development guide
    - Development environment setup
    - Building from source
-   - Creating distribution files
+   - Creating installers
    - Testing checklist
    - CI/CD setup
-
-6.1. **[DEPLOYMENT.md](DEPLOYMENT.md)** ⭐ - Complete deployment guide
-   - Portable ZIP distribution
-   - Standalone executable
-   - All using free tools only!
-   - Migration from Inno Setup
 
 7. **[ARCHITECTURE.md](ARCHITECTURE.md)** - Technical architecture
    - System design
@@ -200,9 +194,7 @@ Start here:
 - [GitHub Actions](.github/workflows/) - CI/CD workflows
 
 ### Installation
-- [build-portable.ps1](build-portable.ps1) - Portable ZIP build script
-- [build-portable.bat](build-portable.bat) - Portable ZIP build script (Batch)
-- [installer.iss.deprecated](installer.iss.deprecated) - Old Inno Setup script (deprecated - Inno Setup is now paid)
+- [installer.iss](installer.iss) - Inno Setup installer script
 
 ### Project Files
 - [SpellingChecker.sln](SpellingChecker.sln) - Visual Studio solution

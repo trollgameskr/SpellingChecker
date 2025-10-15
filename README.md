@@ -62,23 +62,6 @@ AI 기반 맞춤법 교정 및 한영/영한 번역을 제공하는 Windows 데�
 
 ## 설치 및 실행
 
-### 설치 파일 다운로드 (추천)
-
-배포된 설치 파일을 사용하여 간편하게 실행할 수 있습니다:
-
-1. **포터블 ZIP** (권장 - 설치 불필요)
-   - [Releases 페이지](https://github.com/shinepcs/SpellingChecker/releases)에서 `SpellingChecker-*-portable-win-x64.zip` 다운로드
-   - 원하는 폴더에 압축 해제
-   - `SpellingChecker.exe` 실행 - 설치 불필요!
-
-2. **독립 실행 파일**
-   - [Releases 페이지](https://github.com/shinepcs/SpellingChecker/releases)에서 `SpellingChecker.exe` 다운로드
-   - 원하는 폴더에 저장 후 실행
-
-> 💡 **참고**: 모든 배포 파일은 무료 오픈소스 도구(.NET SDK, PowerShell)로 빌드되었습니다.
-> 
-> 📖 **자세한 배포 정보**: [DEPLOYMENT.md](DEPLOYMENT.md) 참조
-
 ### 빌드 방법
 
 1. 저장소 클론:

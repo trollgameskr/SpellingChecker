@@ -121,10 +121,3 @@ ClientBin/
 *.publishsettings
 
 # Application specific
-# Installer build artifacts
-installer/
-dist/
-publish/
-obj/
-*.wixobj
-*.wixpdb
