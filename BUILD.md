@@ -249,6 +249,15 @@ jobs:
       run: dotnet publish -c Release -r win-x64 --self-contained -p:PublishSingleFile=true
 ```
 
+## Deployment
+
+For information about creating and publishing releases, see [DEPLOYMENT.md](DEPLOYMENT.md).
+
+Quick deployment options:
+- **Automated**: Push a git tag (e.g., `v1.0.0`) to trigger GitHub Actions
+- **Manual**: Use `build-release.ps1` or `build-release.bat` scripts
+- **GitHub UI**: Use workflow dispatch in GitHub Actions
+
 ## Contributing
 
 1. Fork the repository
