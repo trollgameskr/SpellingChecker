@@ -87,6 +87,11 @@ namespace SpellingChecker.Views
             ProgressOverlay.Visibility = Visibility.Collapsed;
         }
 
+        public void SetProgressText(string text)
+        {
+            ProgressText.Text = text;
+        }
+
         private void SetResultTextPlain(string text)
         {
             ResultRichTextBox.Document.Blocks.Clear();
@@ -273,7 +278,8 @@ namespace SpellingChecker.Views
                     _settings.SelectedTonePresetId = selectedPreset.Id;
                 }
                 
-                // Show progress indicator
+                // Show progress indicator with tone change message
+                SetProgressText("대화톤 변경 중...");
                 ShowProgressIndicator();
                 
                 // Request re-correction with the new tone using current text from Original TextBox
