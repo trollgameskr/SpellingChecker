@@ -1,0 +1,61 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+    
+    - name: Restore dependencies
+      run: dotnet restore SpellingChecker.sln
+    
+    - name: Build
+      run: dotnet build SpellingChecker.sln --configuration Release --no-restore
+    
+    - name: Publish
+      run: dotnet publish SpellingChecker/SpellingChecker.csproj -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -o ./publish
+    
+    - name: Create release ZIP
+      run: |
+        Compress-Archive -Path ./publish/SpellingChecker.exe, README.md, LICENSE, CONFIG.md, QUICKSTART.md -DestinationPath SpellingChecker-${{ github.ref_name }}-win-x64.zip
+      shell: pwsh
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          SpellingChecker-${{ github.ref_name }}-win-x64.zip
+        body: |
+          ## SpellingChecker ${{ github.ref_name }}
+          
+          AI-powered spelling correction and translation tool for Windows.
+          
+          ### Installation
+          1. Download `SpellingChecker-${{ github.ref_name }}-win-x64.zip`
+          2. Extract the ZIP file
+          3. Run `SpellingChecker.exe`
+          4. Configure your OpenAI API key in Settings
+          
+          ### Features
+          - AI-powered spelling and grammar correction
+          - Korean-English translation
+          - Global hotkeys (Ctrl+Shift+Alt+Y for correction, Ctrl+Shift+Alt+T for translation)
+          - System tray integration
+          - Usage statistics tracking
+          
+          See [CHANGELOG.md](https://github.com/trollgameskr/SpellingChecker/blob/main/CHANGELOG.md) for full release notes.
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

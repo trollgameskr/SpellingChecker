@@ -9,7 +9,7 @@
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <ApplicationIcon>app.ico</ApplicationIcon>
     <AssemblyName>SpellingChecker</AssemblyName>
-    <Version>1.0.0</Version>
+    <Version>0.9.0</Version>
     <Authors>SpellingChecker Team</Authors>
     <Company>SpellingChecker</Company>
     <Product>AI Spelling Checker and Translation</Product>

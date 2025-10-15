@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=AI Spelling Checker
-AppVersion=1.0.0
+AppVersion=0.9.0
 AppPublisher=SpellingChecker Team
 AppPublisherURL=https://github.com/shinepcs/SpellingChecker
 AppSupportURL=https://github.com/shinepcs/SpellingChecker/issues
@@ -13,7 +13,7 @@ DefaultGroupName=AI Spelling Checker
 AllowNoIcons=yes
 LicenseFile=LICENSE
 OutputDir=installer
-OutputBaseFilename=SpellingCheckerSetup_v1.0.0
+OutputBaseFilename=SpellingCheckerSetup_v0.9.0
 SetupIconFile=SpellingChecker\app.ico
 Compression=lzma
 SolidCompression=yes
