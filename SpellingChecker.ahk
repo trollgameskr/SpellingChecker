@@ -827,23 +827,32 @@ ConvertHotkeyToDisplay(ahkHotkey) {
     ; Convert AutoHotkey format to display format
     ; ^ = Ctrl, + = Shift, ! = Alt, # = Win
     displayHotkey := ahkHotkey
+    
+    ; Replace modifiers in specific order
+    ; Must handle Shift (+) specially since it can appear in other contexts
     displayHotkey := StrReplace(displayHotkey, "^", "Ctrl+")
-    displayHotkey := StrReplace(displayHotkey, "!", "Alt+")
     displayHotkey := StrReplace(displayHotkey, "#", "Win+")
-    ; Replace + with Shift+ only when it's a modifier (not part of Ctrl+, Alt+, Win+)
-    ; Do this by replacing standalone + that's not preceded by modifier text
-    displayHotkey := RegExReplace(displayHotkey, "\+([^+])", "Shift+$1")
+    displayHotkey := StrReplace(displayHotkey, "!", "Alt+")
+    
+    ; Now replace any remaining + with Shift+
+    ; This works because we've already converted ^, #, ! to their text equivalents
+    ; Any standalone + is a Shift modifier
+    displayHotkey := StrReplace(displayHotkey, "+", "Shift+")
+    
     return displayHotkey
 }
 
 ConvertHotkeyFromDisplay(displayHotkey) {
     ; Convert display format to AutoHotkey format
-    ; Must replace in specific order to avoid conflicts
+    ; Must replace in reverse order to avoid conflicts
     ahkHotkey := displayHotkey
+    
+    ; Replace in specific order to avoid conflicts
     ahkHotkey := StrReplace(ahkHotkey, "Ctrl+", "^")
-    ahkHotkey := StrReplace(ahkHotkey, "Shift+", "+")
-    ahkHotkey := StrReplace(ahkHotkey, "Alt+", "!")
     ahkHotkey := StrReplace(ahkHotkey, "Win+", "#")
+    ahkHotkey := StrReplace(ahkHotkey, "Alt+", "!")
+    ahkHotkey := StrReplace(ahkHotkey, "Shift+", "+")
+    
     return ahkHotkey
 }
 
