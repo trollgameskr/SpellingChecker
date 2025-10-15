@@ -2,6 +2,16 @@
 
 AI 기반 맞춤법 교정 및 한영/영한 번역을 제공하는 Windows 데스크탑 애플리케이션입니다.
 
+## 🆕 AutoHotkey 버전 출시!
+
+이제 두 가지 버전을 선택할 수 있습니다:
+
+- **C# WPF 버전** (기존): 보안성이 높고 풍부한 UI 제공
+- **AutoHotkey 버전** (신규): 설치가 간단하고 가벼운 스크립트 기반
+
+👉 **AutoHotkey 버전 빠른 시작**: [QUICKSTART_AUTOHOTKEY.md](QUICKSTART_AUTOHOTKEY.md)
+👉 **AutoHotkey 버전 자세한 설명**: [README_AUTOHOTKEY.md](README_AUTOHOTKEY.md)
+
 ## 주요 기능
 
 ### 1. 맞춤법 교정 (Ctrl+Shift+Alt+Y)
