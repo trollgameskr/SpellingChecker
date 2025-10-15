@@ -6,7 +6,10 @@ Get started with AI Spelling Checker in 5 minutes!
 
 - Windows 10 or later
 - .NET 9.0 Runtime (will be installed automatically with the installer)
-- OpenAI API Key ([Get one here](https://platform.openai.com/api-keys))
+- API Key from one of the supported providers:
+  - [OpenAI](https://platform.openai.com/api-keys)
+  - [Anthropic](https://console.anthropic.com/)
+  - [Google Gemini](https://makersuite.google.com/app/apikey)
 
 ## Installation
 
@@ -23,13 +26,29 @@ See [BUILD.md](BUILD.md) for detailed instructions.
 
 ## First-Time Setup
 
-### 1. Get an OpenAI API Key
+### 1. Get an API Key
 
+Choose one of the supported AI providers:
+
+#### OpenAI
 1. Visit https://platform.openai.com/
 2. Sign up or log in
 3. Go to **API Keys** section
 4. Click **Create new secret key**
 5. Copy the key (starts with `sk-...`)
+
+#### Anthropic
+1. Visit https://console.anthropic.com/
+2. Sign up or log in
+3. Go to **API Keys** section
+4. Click **Create Key**
+5. Copy the key (starts with `sk-ant-...`)
+
+#### Google Gemini
+1. Visit https://makersuite.google.com/app/apikey
+2. Sign up or log in with your Google account
+3. Click **Create API Key**
+4. Copy the key
 
 ### 2. Configure the Application
 
@@ -39,11 +58,20 @@ See [BUILD.md](BUILD.md) for detailed instructions.
    - Double-click the system tray icon, OR
    - Right-click the icon → **Settings**
 
-3. **Enter your API Key**:
-   - Paste your OpenAI API key
-   - The default settings are fine for most users
+3. **Select your AI Provider**:
+   - Choose from OpenAI, Anthropic, or Gemini
+   - The API endpoint will be set automatically
 
-4. **Click Save**
+4. **Enter your API Key**:
+   - Paste your API key for the selected provider
+   - Each provider's API key is saved separately
+   - You can switch between providers without re-entering keys
+
+5. **Select a Model** (optional):
+   - The default model is recommended for most users
+   - You can choose a different model based on your needs
+
+6. **Click Save**
 
 That's it! You're ready to use the app.
 
@@ -143,7 +171,7 @@ Right-click the system tray icon:
 
 ### "API Key is not configured"
 
-**Solution**: Open Settings and enter your OpenAI API key
+**Solution**: Open Settings and enter your API key for your selected provider (OpenAI, Anthropic, or Gemini)
 
 ### "No text selected"
 
@@ -154,7 +182,8 @@ Right-click the system tray icon:
 **Solutions**:
 - Check your internet connection
 - Verify your API key is valid
-- Check if you have OpenAI API credits
+- Check if you have API credits for your provider (OpenAI, Anthropic, or Gemini)
+- Ensure the selected model is available for your API key
 
 ### Hotkeys don't work
 
@@ -202,11 +231,15 @@ For advanced users or organizations:
 
 For different quality/speed trade-offs:
 1. Open Settings
-2. Change "AI Model":
-   - `gpt-4o-mini`: Fast, balanced (default)
-   - `gpt-4o`: Slower, highest quality
-   - `gpt-3.5-turbo`: Fastest, lower quality
-3. Save
+2. Select your preferred AI Provider (OpenAI, Anthropic, or Gemini)
+3. Choose a Model from the dropdown or type a custom model name:
+   - **OpenAI**: gpt-4o-mini (fast, recommended), gpt-4o (highest quality), o1 (advanced reasoning), o1-mini (fast reasoning)
+   - **Anthropic**: claude-sonnet-4-5 (best for coding, recommended), claude-3-5-sonnet-latest (balanced), claude-3-5-haiku-latest (fast)
+   - **Gemini**: gemini-2.5-flash-latest (fast, recommended), gemini-2.5-pro-latest (complex reasoning), gemini-2.0-flash-exp (experimental)
+   - **Custom**: Type any model name directly to use models not in the list
+4. Save
+
+**Tip**: You can type any custom model name into the Model field. It will be saved for future use.
 
 ## Cost Information
 

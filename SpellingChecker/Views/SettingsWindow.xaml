@@ -29,7 +29,7 @@
 
         <!-- API Key -->
         <StackPanel Grid.Row="1" Margin="0,0,0,15">
-            <TextBlock Text="OpenAI API Key:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+            <TextBlock Text="API Key:" FontWeight="SemiBold" Margin="0,0,0,5"/>
             <PasswordBox x:Name="ApiKeyTextBox" 
                          Padding="5"
                          Height="30"/>
@@ -45,26 +45,51 @@
             <TextBox x:Name="ApiEndpointTextBox" 
                      Padding="5"
                      Height="30"/>
-            <TextBlock Text="Default: https://api.openai.com/v1" 
+            <TextBlock Text="Automatically set based on provider selection" 
+                       FontSize="10" 
+                       Foreground="Gray" 
+                       Margin="0,3,0,0"/>
+        </StackPanel>
+
+        <!-- Provider Selection -->
+        <StackPanel Grid.Row="3" Margin="0,0,0,15">
+            <TextBlock Text="AI Provider:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+            <ComboBox x:Name="ProviderComboBox" 
+                      Padding="5"
+                      Height="35"
+                      SelectionChanged="ProviderComboBox_SelectionChanged"/>
+            <TextBlock Text="Select your AI provider (OpenAI, Anthropic, or Gemini)" 
                        FontSize="10" 
                        Foreground="Gray" 
                        Margin="0,3,0,0"/>
         </StackPanel>
 
         <!-- Model -->
-        <StackPanel Grid.Row="3" Margin="0,0,0,15">
-            <TextBlock Text="AI Model:" FontWeight="SemiBold" Margin="0,0,0,5"/>
-            <TextBox x:Name="ModelTextBox" 
-                     Padding="5"
-                     Height="30"/>
-            <TextBlock Text="Default: gpt-4o-mini (recommended for balance of speed and quality)" 
+        <StackPanel Grid.Row="4" Margin="0,0,0,15">
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock Text="AI Model:" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                <TextBlock Text=" (Editable)" 
+                           FontSize="11" 
+                           FontStyle="Italic"
+                           Foreground="#FF6B9BD1" 
+                           VerticalAlignment="Center"
+                           Margin="5,0,0,0"/>
+            </StackPanel>
+            <ComboBox x:Name="ModelComboBox" 
+                      Padding="5"
+                      Height="35"
+                      IsEditable="True"
+                      ToolTip="Select from the list or type a custom model name (e.g., gpt-5, claude-opus-4)"/>
+            <TextBlock x:Name="ModelDescriptionTextBlock"
+                       Text="💡 Tip: You can type any custom model name directly into this field" 
                        FontSize="10" 
-                       Foreground="Gray" 
+                       Foreground="#FF4A90E2" 
+                       FontWeight="Medium"
                        Margin="0,3,0,0"/>
         </StackPanel>
 
         <!-- Auto Start -->
-        <StackPanel Grid.Row="4" Margin="0,0,0,15">
+        <StackPanel Grid.Row="5" Margin="0,0,0,15">
             <CheckBox x:Name="AutoStartCheckBox" 
                       Content="Start with Windows" 
                       FontWeight="SemiBold"/>
@@ -84,7 +109,7 @@
         </StackPanel>
 
         <!-- Hotkeys Info -->
-        <StackPanel Grid.Row="5" Margin="0,0,0,15">
+        <StackPanel Grid.Row="6" Margin="0,0,0,15">
             <TextBlock Text="Hotkeys:" FontWeight="SemiBold" Margin="0,0,0,5"/>
             
             <!-- Spelling Correction Hotkey -->
@@ -125,7 +150,7 @@
         </StackPanel>
 
         <!-- Tone Preset Selection -->
-        <StackPanel Grid.Row="6" Margin="0,0,0,15">
+        <StackPanel Grid.Row="7" Margin="0,0,0,15">
             <TextBlock Text="문장 톤 프리셋:" FontWeight="SemiBold" Margin="0,0,0,5"/>
             <ComboBox x:Name="TonePresetComboBox" 
                       Padding="5"
@@ -176,7 +201,7 @@
         </StackPanel>
 
         <!-- Usage Statistics Button -->
-        <StackPanel Grid.Row="7" Margin="0,0,0,15">
+        <StackPanel Grid.Row="8" Margin="0,0,0,15">
             <Button Content="📊 View Usage Statistics" 
                     Click="ViewUsageStatisticsButton_Click"
                     Padding="15,10"
@@ -193,7 +218,7 @@
         </StackPanel>
 
         <!-- Buttons -->
-        <StackPanel Grid.Row="8" 
+        <StackPanel Grid.Row="9" 
                     Orientation="Horizontal" 
                     HorizontalAlignment="Right">
             <Button Content="Save" 

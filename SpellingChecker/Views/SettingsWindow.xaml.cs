@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -31,17 +32,92 @@ namespace SpellingChecker.Views
 
         private void LoadSettings()
         {
-            ApiKeyTextBox.Password = _settings.ApiKey;
+            // Load API key for current provider
+            string currentProvider = _settings.Provider ?? "OpenAI";
+            ApiKeyTextBox.Password = _settings.GetApiKeyForProvider(currentProvider);
+            
             ApiEndpointTextBox.Text = _settings.ApiEndpoint;
-            ModelTextBox.Text = _settings.Model;
             AutoStartCheckBox.IsChecked = _settings.AutoStartWithWindows;
             ShowProgressNotificationsCheckBox.IsChecked = _settings.ShowProgressNotifications;
             SpellingHotkeyTextBox.Text = _settings.SpellingCorrectionHotkey;
             TranslationHotkeyTextBox.Text = _settings.TranslationHotkey;
             VariableNameSuggestionHotkeyTextBox.Text = _settings.VariableNameSuggestionHotkey;
             
+            // Load provider options
+            LoadProviderOptions();
+            
             // Load tone presets
             LoadTonePresets();
+        }
+
+        private void LoadProviderOptions()
+        {
+            // Populate provider combobox
+            ProviderComboBox.ItemsSource = AIProviderConfig.Providers;
+            
+            // Set selected provider
+            string selectedProvider = _settings.Provider ?? "OpenAI";
+            ProviderComboBox.SelectedItem = selectedProvider;
+            
+            // Load models for the selected provider
+            LoadModelsForProvider(selectedProvider);
+        }
+
+        private void LoadModelsForProvider(string provider)
+        {
+            var models = AIProviderConfig.GetModelsForProvider(provider, _settings.CustomModels);
+            ModelComboBox.ItemsSource = models;
+            
+            // Select current model if it exists in the list, otherwise just set the text
+            if (models.Contains(_settings.Model))
+            {
+                ModelComboBox.SelectedItem = _settings.Model;
+            }
+            else
+            {
+                // If model not in list, set it as text (custom model)
+                ModelComboBox.Text = _settings.Model;
+            }
+            
+            // Update description based on provider
+            UpdateModelDescription(provider);
+        }
+
+        private void UpdateModelDescription(string provider)
+        {
+            if (provider == "OpenAI")
+            {
+                ModelDescriptionTextBlock.Text = "💡 Tip: Type custom model names like 'gpt-5' or select from: gpt-4o-mini (recommended), gpt-4o, o1, o1-mini";
+            }
+            else if (provider == "Anthropic")
+            {
+                ModelDescriptionTextBlock.Text = "💡 Tip: Type custom model names like 'claude-opus-4' or select from: claude-sonnet-4-5 (recommended), claude-3-5-sonnet-latest, claude-3-5-haiku-latest";
+            }
+            else if (provider == "Gemini")
+            {
+                ModelDescriptionTextBlock.Text = "💡 Tip: Type custom model names like 'gemini-ultra-2.0' or select from: gemini-2.5-flash-latest (recommended), gemini-2.5-pro-latest, gemini-2.0-flash-exp";
+            }
+        }
+
+        private void ProviderComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (ProviderComboBox.SelectedItem is string selectedProvider)
+            {
+                // Save current provider's API key before switching
+                if (e.RemovedItems.Count > 0 && e.RemovedItems[0] is string previousProvider)
+                {
+                    _settings.SetApiKeyForProvider(previousProvider, ApiKeyTextBox.Password);
+                }
+                
+                // Load API key for the new provider
+                ApiKeyTextBox.Password = _settings.GetApiKeyForProvider(selectedProvider);
+                
+                // Update API endpoint based on provider
+                ApiEndpointTextBox.Text = AIProviderConfig.GetDefaultEndpoint(selectedProvider);
+                
+                // Load models for the new provider
+                LoadModelsForProvider(selectedProvider);
+            }
         }
 
         private void LoadTonePresets()
@@ -91,9 +167,46 @@ namespace SpellingChecker.Views
                     return;
                 }
 
-                _settings.ApiKey = ApiKeyTextBox.Password;
+                // Save provider-specific API key
+                string selectedProvider = ProviderComboBox.SelectedItem?.ToString() ?? "OpenAI";
+                _settings.SetApiKeyForProvider(selectedProvider, ApiKeyTextBox.Password);
+                
                 _settings.ApiEndpoint = ApiEndpointTextBox.Text;
-                _settings.Model = ModelTextBox.Text;
+                _settings.Provider = selectedProvider;
+                
+                // Get model from ComboBox (can be selected item or typed text)
+                string modelName = string.IsNullOrWhiteSpace(ModelComboBox.Text) 
+                    ? (ModelComboBox.SelectedItem?.ToString() ?? AIProviderConfig.GetDefaultModel(_settings.Provider))
+                    : ModelComboBox.Text.Trim();
+                
+                _settings.Model = modelName;
+                
+                // Save custom model if it's not in the default list
+                var defaultModels = AIProviderConfig.ProviderModels.ContainsKey(_settings.Provider) 
+                    ? AIProviderConfig.ProviderModels[_settings.Provider] 
+                    : Array.Empty<string>();
+                
+                if (!string.IsNullOrWhiteSpace(modelName) && !defaultModels.Contains(modelName))
+                {
+                    // Initialize CustomModels dictionary if needed
+                    if (_settings.CustomModels == null)
+                    {
+                        _settings.CustomModels = new Dictionary<string, List<string>>();
+                    }
+                    
+                    // Initialize provider list if needed
+                    if (!_settings.CustomModels.ContainsKey(_settings.Provider))
+                    {
+                        _settings.CustomModels[_settings.Provider] = new List<string>();
+                    }
+                    
+                    // Add custom model if not already present
+                    if (!_settings.CustomModels[_settings.Provider].Contains(modelName))
+                    {
+                        _settings.CustomModels[_settings.Provider].Add(modelName);
+                    }
+                }
+                
                 _settings.AutoStartWithWindows = AutoStartCheckBox.IsChecked ?? false;
                 _settings.ShowProgressNotifications = ShowProgressNotificationsCheckBox.IsChecked ?? false;
                 _settings.SpellingCorrectionHotkey = SpellingHotkeyTextBox.Text;
