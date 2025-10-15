@@ -33,15 +33,77 @@ namespace SpellingChecker.Views
         {
             ApiKeyTextBox.Password = _settings.ApiKey;
             ApiEndpointTextBox.Text = _settings.ApiEndpoint;
-            ModelTextBox.Text = _settings.Model;
             AutoStartCheckBox.IsChecked = _settings.AutoStartWithWindows;
             ShowProgressNotificationsCheckBox.IsChecked = _settings.ShowProgressNotifications;
             SpellingHotkeyTextBox.Text = _settings.SpellingCorrectionHotkey;
             TranslationHotkeyTextBox.Text = _settings.TranslationHotkey;
             VariableNameSuggestionHotkeyTextBox.Text = _settings.VariableNameSuggestionHotkey;
             
+            // Load provider options
+            LoadProviderOptions();
+            
             // Load tone presets
             LoadTonePresets();
+        }
+
+        private void LoadProviderOptions()
+        {
+            // Populate provider combobox
+            ProviderComboBox.ItemsSource = AIProviderConfig.Providers;
+            
+            // Set selected provider
+            string selectedProvider = _settings.Provider ?? "OpenAI";
+            ProviderComboBox.SelectedItem = selectedProvider;
+            
+            // Load models for the selected provider
+            LoadModelsForProvider(selectedProvider);
+        }
+
+        private void LoadModelsForProvider(string provider)
+        {
+            var models = AIProviderConfig.GetModelsForProvider(provider);
+            ModelComboBox.ItemsSource = models;
+            
+            // Select current model if it exists in the list, otherwise select the first one
+            if (models.Contains(_settings.Model))
+            {
+                ModelComboBox.SelectedItem = _settings.Model;
+            }
+            else
+            {
+                ModelComboBox.SelectedIndex = 0;
+            }
+            
+            // Update description based on provider
+            UpdateModelDescription(provider);
+        }
+
+        private void UpdateModelDescription(string provider)
+        {
+            if (provider == "OpenAI")
+            {
+                ModelDescriptionTextBlock.Text = "gpt-4o-mini: Fast, cost-effective, good quality (recommended)\ngpt-4o: Slower, more expensive, highest quality\ngpt-3.5-turbo: Faster, less expensive, lower quality";
+            }
+            else if (provider == "Anthropic")
+            {
+                ModelDescriptionTextBlock.Text = "claude-3-5-sonnet: Balanced performance and quality (recommended)\nclaude-3-5-haiku: Fast and efficient\nclaude-3-opus: Highest quality and capability";
+            }
+            else if (provider == "Gemini")
+            {
+                ModelDescriptionTextBlock.Text = "gemini-2.0-flash-exp: Latest experimental model (recommended)\ngemini-1.5-pro: High quality, larger context\ngemini-1.5-flash: Fast and efficient";
+            }
+        }
+
+        private void ProviderComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (ProviderComboBox.SelectedItem is string selectedProvider)
+            {
+                // Update API endpoint based on provider
+                ApiEndpointTextBox.Text = AIProviderConfig.GetDefaultEndpoint(selectedProvider);
+                
+                // Load models for the new provider
+                LoadModelsForProvider(selectedProvider);
+            }
         }
 
         private void LoadTonePresets()
@@ -93,7 +155,8 @@ namespace SpellingChecker.Views
 
                 _settings.ApiKey = ApiKeyTextBox.Password;
                 _settings.ApiEndpoint = ApiEndpointTextBox.Text;
-                _settings.Model = ModelTextBox.Text;
+                _settings.Provider = ProviderComboBox.SelectedItem?.ToString() ?? "OpenAI";
+                _settings.Model = ModelComboBox.SelectedItem?.ToString() ?? AIProviderConfig.GetDefaultModel(_settings.Provider);
                 _settings.AutoStartWithWindows = AutoStartCheckBox.IsChecked ?? false;
                 _settings.ShowProgressNotifications = ShowProgressNotificationsCheckBox.IsChecked ?? false;
                 _settings.SpellingCorrectionHotkey = SpellingHotkeyTextBox.Text;

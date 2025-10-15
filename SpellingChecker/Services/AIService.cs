@@ -183,9 +183,31 @@ namespace SpellingChecker.Services
             
             if (string.IsNullOrWhiteSpace(_settings.ApiKey))
             {
-                throw new InvalidOperationException("API Key is not configured. Please set your OpenAI API key in settings.");
+                throw new InvalidOperationException("API Key is not configured. Please set your API key in settings.");
             }
 
+            string provider = _settings.Provider ?? "OpenAI";
+            
+            if (provider == "OpenAI")
+            {
+                return await SendOpenAIRequestAsync(requestBody);
+            }
+            else if (provider == "Anthropic")
+            {
+                return await SendAnthropicRequestAsync(requestBody);
+            }
+            else if (provider == "Gemini")
+            {
+                return await SendGeminiRequestAsync(requestBody);
+            }
+            else
+            {
+                throw new InvalidOperationException($"Unsupported provider: {provider}");
+            }
+        }
+
+        private async Task<string> SendOpenAIRequestAsync(object requestBody)
+        {
             var request = new HttpRequestMessage(HttpMethod.Post, $"{_settings.ApiEndpoint}/chat/completions");
             request.Headers.Add("Authorization", $"Bearer {_settings.ApiKey}");
             request.Content = new StringContent(
@@ -203,6 +225,185 @@ namespace SpellingChecker.Services
             }
 
             return responseContent;
+        }
+
+        private async Task<string> SendAnthropicRequestAsync(object requestBody)
+        {
+            // Convert OpenAI format to Anthropic format
+            var openAIBody = JObject.FromObject(requestBody);
+            var messages = openAIBody["messages"] as JArray;
+            
+            // Extract system message if present
+            string systemMessage = "";
+            var userMessages = new JArray();
+            
+            if (messages != null)
+            {
+                foreach (var msg in messages)
+                {
+                    var role = msg["role"]?.ToString();
+                    if (role == "system")
+                    {
+                        systemMessage = msg["content"]?.ToString() ?? "";
+                    }
+                    else
+                    {
+                        userMessages.Add(msg);
+                    }
+                }
+            }
+
+            var anthropicBody = new
+            {
+                model = _settings.Model,
+                max_tokens = openAIBody["max_tokens"]?.Value<int>() ?? 2000,
+                messages = userMessages,
+                system = systemMessage,
+                temperature = openAIBody["temperature"]?.Value<double>() ?? 0.3
+            };
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"{_settings.ApiEndpoint}/messages");
+            request.Headers.Add("x-api-key", _settings.ApiKey);
+            request.Headers.Add("anthropic-version", "2023-06-01");
+            request.Content = new StringContent(
+                JsonConvert.SerializeObject(anthropicBody),
+                Encoding.UTF8,
+                "application/json"
+            );
+
+            var response = await _httpClient.SendAsync(request);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new HttpRequestException($"API request failed: {response.StatusCode} - {responseContent}");
+            }
+
+            // Convert Anthropic response to OpenAI format for compatibility
+            var anthropicResponse = JObject.Parse(responseContent);
+            var content = anthropicResponse["content"]?[0]?["text"]?.ToString() ?? "";
+            
+            var openAIResponse = new JObject
+            {
+                ["choices"] = new JArray
+                {
+                    new JObject
+                    {
+                        ["message"] = new JObject
+                        {
+                            ["content"] = content
+                        }
+                    }
+                },
+                ["usage"] = new JObject
+                {
+                    ["prompt_tokens"] = anthropicResponse["usage"]?["input_tokens"] ?? 0,
+                    ["completion_tokens"] = anthropicResponse["usage"]?["output_tokens"] ?? 0,
+                    ["total_tokens"] = (anthropicResponse["usage"]?["input_tokens"]?.Value<int>() ?? 0) + 
+                                      (anthropicResponse["usage"]?["output_tokens"]?.Value<int>() ?? 0)
+                }
+            };
+
+            return openAIResponse.ToString();
+        }
+
+        private async Task<string> SendGeminiRequestAsync(object requestBody)
+        {
+            // Convert OpenAI format to Gemini format
+            var openAIBody = JObject.FromObject(requestBody);
+            var messages = openAIBody["messages"] as JArray;
+            
+            // Build contents array for Gemini
+            var contents = new JArray();
+            string systemInstruction = "";
+            
+            if (messages != null)
+            {
+                foreach (var msg in messages)
+                {
+                    var role = msg["role"]?.ToString();
+                    var messageContent = msg["content"]?.ToString();
+                    
+                    if (role == "system")
+                    {
+                        systemInstruction = messageContent ?? "";
+                    }
+                    else
+                    {
+                        contents.Add(new JObject
+                        {
+                            ["role"] = role == "assistant" ? "model" : "user",
+                            ["parts"] = new JArray
+                            {
+                                new JObject { ["text"] = messageContent }
+                            }
+                        });
+                    }
+                }
+            }
+
+            var geminiBody = new JObject
+            {
+                ["contents"] = contents,
+                ["generationConfig"] = new JObject
+                {
+                    ["temperature"] = openAIBody["temperature"]?.Value<double>() ?? 0.3,
+                    ["maxOutputTokens"] = openAIBody["max_tokens"]?.Value<int>() ?? 2000
+                }
+            };
+
+            if (!string.IsNullOrEmpty(systemInstruction))
+            {
+                geminiBody["systemInstruction"] = new JObject
+                {
+                    ["parts"] = new JArray { new JObject { ["text"] = systemInstruction } }
+                };
+            }
+
+            var request = new HttpRequestMessage(HttpMethod.Post, 
+                $"{_settings.ApiEndpoint}/models/{_settings.Model}:generateContent?key={_settings.ApiKey}");
+            request.Content = new StringContent(
+                geminiBody.ToString(),
+                Encoding.UTF8,
+                "application/json"
+            );
+
+            var response = await _httpClient.SendAsync(request);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new HttpRequestException($"API request failed: {response.StatusCode} - {responseContent}");
+            }
+
+            // Convert Gemini response to OpenAI format for compatibility
+            var geminiResponse = JObject.Parse(responseContent);
+            var responseText = geminiResponse["candidates"]?[0]?["content"]?["parts"]?[0]?["text"]?.ToString() ?? "";
+            
+            var promptTokens = geminiResponse["usageMetadata"]?["promptTokenCount"]?.Value<int>() ?? 0;
+            var completionTokens = geminiResponse["usageMetadata"]?["candidatesTokenCount"]?.Value<int>() ?? 0;
+            
+            var openAIResponse = new JObject
+            {
+                ["choices"] = new JArray
+                {
+                    new JObject
+                    {
+                        ["message"] = new JObject
+                        {
+                            ["content"] = responseText
+                        }
+                    }
+                },
+                ["usage"] = new JObject
+                {
+                    ["prompt_tokens"] = promptTokens,
+                    ["completion_tokens"] = completionTokens,
+                    ["total_tokens"] = promptTokens + completionTokens
+                }
+            };
+
+            return openAIResponse.ToString();
         }
 
         private string ExtractContentFromResponse(string response)

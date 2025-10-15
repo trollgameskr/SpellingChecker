@@ -60,6 +60,7 @@ namespace SpellingChecker.Models
         public List<TonePreset> TonePresets { get; set; } = new List<TonePreset>();
         public string SelectedTonePresetId { get; set; } = string.Empty;
         public bool ShowProgressNotifications { get; set; } = false;
+        public string Provider { get; set; } = "OpenAI";
     }
 
     /// <summary>
@@ -87,5 +88,48 @@ namespace SpellingChecker.Models
         public int TotalCompletionTokens { get; set; }
         public int TotalTokens { get; set; }
         public decimal TotalCost { get; set; }
+    }
+
+    /// <summary>
+    /// AI Provider configuration helper
+    /// </summary>
+    public static class AIProviderConfig
+    {
+        public static readonly string[] Providers = { "OpenAI", "Anthropic", "Gemini" };
+
+        public static Dictionary<string, string[]> ProviderModels = new Dictionary<string, string[]>
+        {
+            { "OpenAI", new[] { "gpt-4o", "gpt-4o-mini", "gpt-3.5-turbo" } },
+            { "Anthropic", new[] { "claude-3-5-sonnet-20241022", "claude-3-5-haiku-20241022", "claude-3-opus-20240229" } },
+            { "Gemini", new[] { "gemini-2.0-flash-exp", "gemini-1.5-pro", "gemini-1.5-flash" } }
+        };
+
+        public static Dictionary<string, string> ProviderEndpoints = new Dictionary<string, string>
+        {
+            { "OpenAI", "https://api.openai.com/v1" },
+            { "Anthropic", "https://api.anthropic.com/v1" },
+            { "Gemini", "https://generativelanguage.googleapis.com/v1beta" }
+        };
+
+        public static string[] GetModelsForProvider(string provider)
+        {
+            return ProviderModels.ContainsKey(provider) ? ProviderModels[provider] : new[] { "gpt-4o-mini" };
+        }
+
+        public static string GetDefaultEndpoint(string provider)
+        {
+            return ProviderEndpoints.ContainsKey(provider) ? ProviderEndpoints[provider] : "https://api.openai.com/v1";
+        }
+
+        public static string GetDefaultModel(string provider)
+        {
+            if (provider == "OpenAI")
+                return "gpt-4o-mini";
+            else if (provider == "Anthropic")
+                return "claude-3-5-sonnet-20241022";
+            else if (provider == "Gemini")
+                return "gemini-2.0-flash-exp";
+            return "gpt-4o-mini";
+        }
     }
 }
