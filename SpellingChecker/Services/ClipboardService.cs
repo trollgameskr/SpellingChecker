@@ -55,19 +55,15 @@ namespace SpellingChecker.Services
 
         private const int INPUT_KEYBOARD = 1;
 
-        [StructLayout(LayoutKind.Sequential)]
+        [StructLayout(LayoutKind.Explicit)]
         private struct INPUT
         {
+            [FieldOffset(0)]
             public int type;
-            public InputUnion U;
-            public static int Size => Marshal.SizeOf(typeof(INPUT));
-        }
-
-        [StructLayout(LayoutKind.Explicit)]
-        private struct InputUnion
-        {
-            [FieldOffset(0)] public MOUSEINPUT mi;
-            [FieldOffset(0)] public KEYBDINPUT ki;
+            [FieldOffset(8)] 
+            public MOUSEINPUT mi;
+            [FieldOffset(8)]
+            public KEYBDINPUT ki;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -213,24 +209,49 @@ namespace SpellingChecker.Services
                 INPUT[] inputs = new INPUT[4];
 
                 // Ctrl Down
+                inputs[0] = new INPUT();
                 inputs[0].type = INPUT_KEYBOARD;
-                inputs[0].U.ki.wVk = VK_CONTROL;
+                inputs[0].ki = new KEYBDINPUT();
+                inputs[0].ki.wVk = VK_CONTROL;
+                inputs[0].ki.wScan = 0;
+                inputs[0].ki.dwFlags = 0;
+                inputs[0].ki.time = 0;
+                inputs[0].ki.dwExtraInfo = IntPtr.Zero;
 
                 // C Down
+                inputs[1] = new INPUT();
                 inputs[1].type = INPUT_KEYBOARD;
-                inputs[1].U.ki.wVk = VK_C;
+                inputs[1].ki = new KEYBDINPUT();
+                inputs[1].ki.wVk = VK_C;
+                inputs[1].ki.wScan = 0;
+                inputs[1].ki.dwFlags = 0;
+                inputs[1].ki.time = 0;
+                inputs[1].ki.dwExtraInfo = IntPtr.Zero;
 
                 // C Up
+                inputs[2] = new INPUT();
                 inputs[2].type = INPUT_KEYBOARD;
-                inputs[2].U.ki.wVk = VK_C;
-                inputs[2].U.ki.dwFlags = KEYEVENTF_KEYUP;
+                inputs[2].ki = new KEYBDINPUT();
+                inputs[2].ki.wVk = VK_C;
+                inputs[2].ki.wScan = 0;
+                inputs[2].ki.dwFlags = KEYEVENTF_KEYUP;
+                inputs[2].ki.time = 0;
+                inputs[2].ki.dwExtraInfo = IntPtr.Zero;
 
                 // Ctrl Up
+                inputs[3] = new INPUT();
                 inputs[3].type = INPUT_KEYBOARD;
-                inputs[3].U.ki.wVk = VK_CONTROL;
-                inputs[3].U.ki.dwFlags = KEYEVENTF_KEYUP;
+                inputs[3].ki = new KEYBDINPUT();
+                inputs[3].ki.wVk = VK_CONTROL;
+                inputs[3].ki.wScan = 0;
+                inputs[3].ki.dwFlags = KEYEVENTF_KEYUP;
+                inputs[3].ki.time = 0;
+                inputs[3].ki.dwExtraInfo = IntPtr.Zero;
 
                 SendInput(4, inputs, Marshal.SizeOf(typeof(INPUT)));
+
+                // Give the system time to process the input
+                Thread.Sleep(50);
 
                 // Wait for clipboard to change
                 var stopwatch = Stopwatch.StartNew();
