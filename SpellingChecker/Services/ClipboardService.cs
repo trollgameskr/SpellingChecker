@@ -73,8 +73,11 @@ namespace SpellingChecker.Services
 
                 return selectedText;
             }
-            catch
+            catch (Exception ex)
             {
+                // Return empty string if all methods fail
+                // Could add logging here in future: System.Diagnostics.Debug.WriteLine($"Failed to get selected text: {ex.Message}");
+                _ = ex; // Suppress warning about unused variable
                 return string.Empty;
             }
         }
@@ -134,8 +137,11 @@ namespace SpellingChecker.Services
 
                 return string.Empty;
             }
-            catch
+            catch (Exception ex)
             {
+                // Return empty if SendMessage API fails (may not be an edit control)
+                // Could add logging here in future: System.Diagnostics.Debug.WriteLine($"SendMessage failed: {ex.Message}");
+                _ = ex; // Suppress warning about unused variable
                 return string.Empty;
             }
         }
@@ -240,8 +246,11 @@ namespace SpellingChecker.Services
                 
                 return string.Empty;
             }
-            catch
+            catch (Exception ex)
             {
+                // Return empty if clipboard operations fail
+                // Could add logging here in future: System.Diagnostics.Debug.WriteLine($"Clipboard copy failed: {ex.Message}");
+                _ = ex; // Suppress warning about unused variable
                 return string.Empty;
             }
         }
@@ -276,9 +285,11 @@ namespace SpellingChecker.Services
                 keybd_event(VK_V, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
                 keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
             }
-            catch
+            catch (Exception ex)
             {
-                // Fallback: just copy to clipboard
+                // Fallback: just copy to clipboard if paste simulation fails
+                // Could add logging here in future: System.Diagnostics.Debug.WriteLine($"Failed to replace text: {ex.Message}");
+                _ = ex; // Suppress warning about unused variable
                 SetClipboard(text);
             }
         }
