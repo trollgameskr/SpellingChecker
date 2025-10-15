@@ -36,6 +36,15 @@ namespace SpellingChecker.Models
     }
 
     /// <summary>
+    /// Represents the result of a common question answering operation
+    /// </summary>
+    public class CommonQuestionResult
+    {
+        public string Question { get; set; } = string.Empty;
+        public string Answer { get; set; } = string.Empty;
+    }
+
+    /// <summary>
     /// Represents a tone preset for spelling correction
     /// </summary>
     public class TonePreset
@@ -53,9 +62,10 @@ namespace SpellingChecker.Models
     {
         public string ApiKey { get; set; } = string.Empty; // Kept for backward compatibility
         public string ApiEndpoint { get; set; } = "https://api.openai.com/v1";
-        public string SpellingCorrectionHotkey { get; set; } = "Ctrl+Shift+Alt+Y";
-        public string TranslationHotkey { get; set; } = "Ctrl+Shift+Alt+T";
-        public string VariableNameSuggestionHotkey { get; set; } = "Ctrl+Shift+Alt+V";
+        public string CommonQuestionHotkey { get; set; } = "Ctrl+Alt+D1";
+        public string SpellingCorrectionHotkey { get; set; } = "Ctrl+Alt+D2";
+        public string TranslationHotkey { get; set; } = "Ctrl+Alt+D3";
+        public string VariableNameSuggestionHotkey { get; set; } = "Ctrl+Alt+D4";
         public bool AutoStartWithWindows { get; set; } = true;
         public string Model { get; set; } = "gpt-4o-mini";
         public List<TonePreset> TonePresets { get; set; } = new List<TonePreset>();

@@ -39,6 +39,7 @@ namespace SpellingChecker.Views
             ApiEndpointTextBox.Text = _settings.ApiEndpoint;
             AutoStartCheckBox.IsChecked = _settings.AutoStartWithWindows;
             ShowProgressNotificationsCheckBox.IsChecked = _settings.ShowProgressNotifications;
+            CommonQuestionHotkeyTextBox.Text = _settings.CommonQuestionHotkey;
             SpellingHotkeyTextBox.Text = _settings.SpellingCorrectionHotkey;
             TranslationHotkeyTextBox.Text = _settings.TranslationHotkey;
             VariableNameSuggestionHotkeyTextBox.Text = _settings.VariableNameSuggestionHotkey;
@@ -146,23 +147,30 @@ namespace SpellingChecker.Views
             try
             {
                 // Validate hotkeys before saving
+                if (!HotkeyParser.IsValidHotkey(CommonQuestionHotkeyTextBox.Text))
+                {
+                    MessageBox.Show("Invalid common question hotkey format. Please use format like 'Ctrl+Alt+1'", "Error", 
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
                 if (!HotkeyParser.IsValidHotkey(SpellingHotkeyTextBox.Text))
                 {
-                    MessageBox.Show("Invalid spelling correction hotkey format. Please use format like 'Ctrl+Shift+Alt+Y'", "Error", 
+                    MessageBox.Show("Invalid spelling correction hotkey format. Please use format like 'Ctrl+Alt+2'", "Error", 
                         MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
                 if (!HotkeyParser.IsValidHotkey(TranslationHotkeyTextBox.Text))
                 {
-                    MessageBox.Show("Invalid translation hotkey format. Please use format like 'Ctrl+Shift+Alt+T'", "Error", 
+                    MessageBox.Show("Invalid translation hotkey format. Please use format like 'Ctrl+Alt+3'", "Error", 
                         MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
                 if (!HotkeyParser.IsValidHotkey(VariableNameSuggestionHotkeyTextBox.Text))
                 {
-                    MessageBox.Show("Invalid variable name suggestion hotkey format. Please use format like 'Ctrl+Shift+Alt+V'", "Error", 
+                    MessageBox.Show("Invalid variable name suggestion hotkey format. Please use format like 'Ctrl+Alt+4'", "Error", 
                         MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
@@ -209,6 +217,7 @@ namespace SpellingChecker.Views
                 
                 _settings.AutoStartWithWindows = AutoStartCheckBox.IsChecked ?? false;
                 _settings.ShowProgressNotifications = ShowProgressNotificationsCheckBox.IsChecked ?? false;
+                _settings.CommonQuestionHotkey = CommonQuestionHotkeyTextBox.Text;
                 _settings.SpellingCorrectionHotkey = SpellingHotkeyTextBox.Text;
                 _settings.TranslationHotkey = TranslationHotkeyTextBox.Text;
                 _settings.VariableNameSuggestionHotkey = VariableNameSuggestionHotkeyTextBox.Text;
