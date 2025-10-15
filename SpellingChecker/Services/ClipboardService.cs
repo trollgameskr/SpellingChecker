@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -139,12 +140,81 @@ namespace SpellingChecker.Services
         /// </summary>
         private string GetSelectedTextViaClipboard()
         {
+            return CopySelectedTextWithRetry();
+        }
+
+        /// <summary>
+        /// Copies selected text using keyboard simulation with clipboard change detection
+        /// </summary>
+        /// <param name="timeoutMs">Timeout in milliseconds to wait for clipboard change</param>
+        /// <returns>The copied text, or empty string if timeout or error occurred</returns>
+        private string CopySelectedTextWithRetry(int timeoutMs = 1000)
+        {
             try
             {
-                if (Clipboard.ContainsText())
+                string previousClipboard = string.Empty;
+                
+                // Save previous clipboard content
+                try
                 {
-                    return Clipboard.GetText();
+                    if (Clipboard.ContainsText())
+                    {
+                        previousClipboard = Clipboard.GetText();
+                    }
                 }
+                catch
+                {
+                    // Ignore clipboard access errors
+                }
+
+                // Don't clear clipboard - just track what was there before
+                // Clearing can interfere with the copy operation
+
+                // Simulate Ctrl+C using keybd_event (proven to work in ReplaceSelectedText)
+                keybd_event(VK_CONTROL, 0, 0, UIntPtr.Zero);
+                keybd_event(VK_C, 0, 0, UIntPtr.Zero);
+                keybd_event(VK_C, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
+                keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
+
+                // Give the system more time to process the input
+                Thread.Sleep(100);
+
+                // Wait for clipboard to change
+                var stopwatch = Stopwatch.StartNew();
+                while (stopwatch.ElapsedMilliseconds < timeoutMs)
+                {
+                    Thread.Sleep(10);
+                    
+                    try
+                    {
+                        if (Clipboard.ContainsText())
+                        {
+                            string current = Clipboard.GetText();
+                            if (!string.IsNullOrEmpty(current) && current != previousClipboard)
+                            {
+                                return current;
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // Ignore clipboard access errors during polling
+                    }
+                }
+
+                // Timeout - restore previous clipboard if we have it
+                try
+                {
+                    if (!string.IsNullOrEmpty(previousClipboard))
+                    {
+                        Clipboard.SetText(previousClipboard);
+                    }
+                }
+                catch
+                {
+                    // Ignore clipboard access errors
+                }
+                
                 return string.Empty;
             }
             catch
