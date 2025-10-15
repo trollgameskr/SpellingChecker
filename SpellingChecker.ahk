@@ -283,68 +283,86 @@ RegisterHotkeys() {
 ; Hotkey Handlers
 ; ==============================================================================
 OnSpellingCorrectionRequested(*) {
-    selectedText := GetSelectedText()
-    
-    if (selectedText == "") {
-        ShowNotification("No text selected", "Please select some text to correct.")
-        return
-    }
-    
-    ShowNotification("맞춤법 교정 요청", "'" . selectedText . "' 문장의 맞춤법 교정을 요청했습니다.", true)
-    ShowNotification("Processing...", "AI is correcting your text. Please wait...", true)
-    
-    correctedText := CorrectSpellingAsync(selectedText)
-    
-    if (correctedText != "") {
-        ShowNotification("맞춤법 교정 완료", "교정 결과는 '" . correctedText . "' 입니다.", true)
-        ShowResultPopup(correctedText, selectedText, "Spelling Correction", false)
+    try {
+        selectedText := GetSelectedText()
+        
+        if (selectedText == "") {
+            MsgBox("텍스트를 선택하지 않았습니다.`n`n맞춤법 교정할 텍스트를 먼저 선택한 후 단축키를 눌러주세요.", "텍스트 미선택", 0x40)
+            return
+        }
+        
+        ShowNotification("맞춤법 교정 요청", "'" . selectedText . "' 문장의 맞춤법 교정을 요청했습니다.", true)
+        ShowNotification("Processing...", "AI is correcting your text. Please wait...", true)
+        
+        correctedText := CorrectSpellingAsync(selectedText)
+        
+        if (correctedText != "") {
+            ShowNotification("맞춤법 교정 완료", "교정 결과는 '" . correctedText . "' 입니다.", true)
+            ShowResultPopup(correctedText, selectedText, "Spelling Correction", false)
+        } else {
+            MsgBox("맞춤법 교정에 실패했습니다.`n`nAPI 키가 설정되어 있는지, 인터넷 연결이 정상인지 확인해주세요.", "오류", 0x10)
+        }
+    } catch as err {
+        MsgBox("오류가 발생했습니다: " . err.Message, "오류", 0x10)
     }
 }
 
 OnTranslationRequested(*) {
-    selectedText := GetSelectedText()
-    
-    if (selectedText == "") {
-        ShowNotification("No text selected", "Please select some text to translate.")
-        return
-    }
-    
-    ShowNotification("번역 요청", "'" . selectedText . "' 문장의 번역을 요청했습니다.", true)
-    ShowNotification("Processing...", "AI is translating your text. Please wait...", true)
-    
-    result := TranslateAsync(selectedText)
-    
-    if (result.translatedText != "") {
-        ShowNotification("번역 완료", 
-            "번역 결과는 '" . result.translatedText . "' 입니다.`n" .
-            "언어: " . result.sourceLanguage . " → " . result.targetLanguage, true)
-        ShowResultPopup(result.translatedText, selectedText, 
-            "Translation (" . result.sourceLanguage . " → " . result.targetLanguage . ")", true)
+    try {
+        selectedText := GetSelectedText()
+        
+        if (selectedText == "") {
+            MsgBox("텍스트를 선택하지 않았습니다.`n`n번역할 텍스트를 먼저 선택한 후 단축키를 눌러주세요.", "텍스트 미선택", 0x40)
+            return
+        }
+        
+        ShowNotification("번역 요청", "'" . selectedText . "' 문장의 번역을 요청했습니다.", true)
+        ShowNotification("Processing...", "AI is translating your text. Please wait...", true)
+        
+        result := TranslateAsync(selectedText)
+        
+        if (result.translatedText != "") {
+            ShowNotification("번역 완료", 
+                "번역 결과는 '" . result.translatedText . "' 입니다.`n" .
+                "언어: " . result.sourceLanguage . " → " . result.targetLanguage, true)
+            ShowResultPopup(result.translatedText, selectedText, 
+                "Translation (" . result.sourceLanguage . " → " . result.targetLanguage . ")", true)
+        } else {
+            MsgBox("번역에 실패했습니다.`n`nAPI 키가 설정되어 있는지, 인터넷 연결이 정상인지 확인해주세요.", "오류", 0x10)
+        }
+    } catch as err {
+        MsgBox("오류가 발생했습니다: " . err.Message, "오류", 0x10)
     }
 }
 
 OnVariableNameSuggestionRequested(*) {
-    selectedText := GetSelectedText()
-    
-    if (selectedText == "") {
-        ShowNotification("No text selected", "Please select some text to suggest variable names.")
-        return
-    }
-    
-    ShowNotification("변수명 추천 요청", "'" . selectedText . "' 텍스트의 변수명을 추천합니다.", true)
-    ShowNotification("Processing...", "AI is suggesting variable names. Please wait...", true)
-    
-    suggestions := SuggestVariableNamesAsync(selectedText)
-    
-    if (suggestions.Length > 0) {
-        formattedSuggestions := ""
-        for index, name in suggestions {
-            formattedSuggestions .= index . ". " . name . "`n"
+    try {
+        selectedText := GetSelectedText()
+        
+        if (selectedText == "") {
+            MsgBox("텍스트를 선택하지 않았습니다.`n`n변수명으로 변환할 텍스트를 먼저 선택한 후 단축키를 눌러주세요.", "텍스트 미선택", 0x40)
+            return
         }
         
-        ShowNotification("변수명 추천 완료", "추천된 변수명: " . StrJoin(suggestions, ", "), true)
-        ShowResultPopup(formattedSuggestions, selectedText, 
-            "Variable Name Suggestions (C#)", false)
+        ShowNotification("변수명 추천 요청", "'" . selectedText . "' 텍스트의 변수명을 추천합니다.", true)
+        ShowNotification("Processing...", "AI is suggesting variable names. Please wait...", true)
+        
+        suggestions := SuggestVariableNamesAsync(selectedText)
+        
+        if (suggestions.Length > 0) {
+            formattedSuggestions := ""
+            for index, name in suggestions {
+                formattedSuggestions .= index . ". " . name . "`n"
+            }
+            
+            ShowNotification("변수명 추천 완료", "추천된 변수명: " . StrJoin(suggestions, ", "), true)
+            ShowResultPopup(formattedSuggestions, selectedText, 
+                "Variable Name Suggestions (C#)", false)
+        } else {
+            MsgBox("변수명 추천에 실패했습니다.`n`nAPI 키가 설정되어 있는지, 인터넷 연결이 정상인지 확인해주세요.", "오류", 0x10)
+        }
+    } catch as err {
+        MsgBox("오류가 발생했습니다: " . err.Message, "오류", 0x10)
     }
 }
 
@@ -359,8 +377,8 @@ GetSelectedText() {
     ; Send Ctrl+C to copy selected text
     Send("^c")
     
-    ; Wait for clipboard to contain data
-    if !ClipWait(0.5) {
+    ; Wait for clipboard to contain data (increased timeout)
+    if !ClipWait(1) {
         A_Clipboard := clipboardBackup
         return ""
     }
@@ -384,7 +402,7 @@ CorrectSpellingAsync(text) {
     global g_ApiKey, g_ApiEndpoint, g_Model, g_SelectedTonePresetId, g_TonePresets
     
     if (g_ApiKey == "") {
-        MsgBox("API Key is not configured. Please set your OpenAI API key in settings.")
+        MsgBox("API 키가 설정되지 않았습니다.`n`n시스템 트레이 아이콘을 우클릭하여 Settings를 열고`nOpenAI API 키를 입력해주세요.", "API 키 미설정", 0x30)
         return ""
     }
     
@@ -421,7 +439,7 @@ TranslateAsync(text) {
     global g_ApiKey, g_ApiEndpoint, g_Model
     
     if (g_ApiKey == "") {
-        MsgBox("API Key is not configured. Please set your OpenAI API key in settings.")
+        MsgBox("API 키가 설정되지 않았습니다.`n`n시스템 트레이 아이콘을 우클릭하여 Settings를 열고`nOpenAI API 키를 입력해주세요.", "API 키 미설정", 0x30)
         return {translatedText: "", sourceLanguage: "", targetLanguage: ""}
     }
     
@@ -456,7 +474,7 @@ SuggestVariableNamesAsync(text) {
     global g_ApiKey, g_ApiEndpoint, g_Model
     
     if (g_ApiKey == "") {
-        MsgBox("API Key is not configured. Please set your OpenAI API key in settings.")
+        MsgBox("API 키가 설정되지 않았습니다.`n`n시스템 트레이 아이콘을 우클릭하여 Settings를 열고`nOpenAI API 키를 입력해주세요.", "API 키 미설정", 0x30)
         return []
     }
     
@@ -503,11 +521,26 @@ SendOpenAIRequest(requestBody) {
         if (http.Status == 200) {
             return http.ResponseText
         } else {
-            MsgBox("API request failed: " . http.Status . " - " . http.ResponseText)
+            errorMsg := "API 요청 실패`n`n"
+            errorMsg .= "상태 코드: " . http.Status . "`n"
+            errorMsg .= "응답: " . http.ResponseText . "`n`n"
+            
+            if (http.Status == 401) {
+                errorMsg .= "API 키가 올바르지 않습니다. Settings에서 API 키를 확인해주세요."
+            } else if (http.Status == 429) {
+                errorMsg .= "API 사용량 한도를 초과했습니다. 잠시 후 다시 시도해주세요."
+            } else if (http.Status >= 500) {
+                errorMsg .= "OpenAI 서버 오류입니다. 잠시 후 다시 시도해주세요."
+            }
+            
+            MsgBox(errorMsg, "API 오류", 0x10)
             return ""
         }
     } catch as err {
-        MsgBox("Error sending API request: " . err.Message)
+        errorMsg := "API 요청 중 오류 발생`n`n"
+        errorMsg .= "오류 메시지: " . err.Message . "`n`n"
+        errorMsg .= "인터넷 연결을 확인하고 방화벽 설정을 확인해주세요."
+        MsgBox(errorMsg, "연결 오류", 0x10)
         return ""
     }
 }
