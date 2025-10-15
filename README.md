@@ -62,7 +62,16 @@ AI 기반 맞춤법 교정 및 한영/영한 번역을 제공하는 Windows 데�
 
 ## 설치 및 실행
 
+### 설치 프로그램 다운로드 (권장)
+
+1. [GitHub Releases](https://github.com/trollgameskr/SpellingChecker/releases)에서 최신 버전 다운로드
+2. `SpellingCheckerSetup_vX.X.X.exe` 실행
+3. 설치 마법사를 따라 설치 진행
+4. 설치 완료 후 자동 실행 또는 시작 메뉴에서 실행
+
 ### 빌드 방법
+
+개발자이거나 소스에서 직접 빌드하려면:
 
 1. 저장소 클론:
 ```bash
@@ -82,6 +91,13 @@ dotnet run
 ```
 
 또는 Visual Studio에서 `SpellingChecker.sln` 파일을 열고 빌드/실행합니다.
+
+릴리스 빌드를 만들려면:
+```powershell
+.\build-release.ps1 -Version "1.0.0"
+```
+
+자세한 내용은 [DEPLOYMENT.md](DEPLOYMENT.md)를 참조하세요.
 
 ### 초기 설정
 
