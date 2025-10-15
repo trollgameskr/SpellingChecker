@@ -123,7 +123,7 @@ namespace SpellingChecker.Models
             }
             
             // Merge custom models with defaults (custom models first, then defaults that aren't duplicates)
-            var allModels = new List<string>(customModels[provider]);
+            var allModels = new List<string>(customModels[provider] ?? new List<string>());
             foreach (var model in defaultModels)
             {
                 if (!allModels.Contains(model))
