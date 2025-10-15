@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
+using System.Collections.Generic;
 using SpellingChecker.Models;
 using SpellingChecker.Services;
 
@@ -14,6 +15,39 @@ namespace SpellingChecker.Views
     {
         private readonly SettingsService _settingsService;
         private AppSettings _settings;
+
+        // Model definitions for different providers
+        private static readonly Dictionary<AIProvider, List<ModelInfo>> ProviderModels = new()
+        {
+            {
+                AIProvider.OpenAI, new List<ModelInfo>
+                {
+                    new ModelInfo { Name = "gpt-4o-mini", Description = "Fast, cost-effective, good quality (recommended)" },
+                    new ModelInfo { Name = "gpt-4o", Description = "Slower, more expensive, highest quality" },
+                    new ModelInfo { Name = "gpt-3.5-turbo", Description = "Faster, less expensive, lower quality" }
+                }
+            },
+            {
+                AIProvider.AzureOpenAI, new List<ModelInfo>
+                {
+                    new ModelInfo { Name = "gpt-4o-mini", Description = "Fast, cost-effective, good quality (recommended)" },
+                    new ModelInfo { Name = "gpt-4o", Description = "Slower, more expensive, highest quality" },
+                    new ModelInfo { Name = "gpt-35-turbo", Description = "Faster, less expensive, lower quality" }
+                }
+            },
+            {
+                AIProvider.Custom, new List<ModelInfo>
+                {
+                    new ModelInfo { Name = "gpt-4o-mini", Description = "Enter custom model name" }
+                }
+            }
+        };
+
+        private class ModelInfo
+        {
+            public string Name { get; set; } = string.Empty;
+            public string Description { get; set; } = string.Empty;
+        }
 
         public SettingsWindow()
         {
@@ -33,15 +67,70 @@ namespace SpellingChecker.Views
         {
             ApiKeyTextBox.Password = _settings.ApiKey;
             ApiEndpointTextBox.Text = _settings.ApiEndpoint;
-            ModelTextBox.Text = _settings.Model;
             AutoStartCheckBox.IsChecked = _settings.AutoStartWithWindows;
             ShowProgressNotificationsCheckBox.IsChecked = _settings.ShowProgressNotifications;
             SpellingHotkeyTextBox.Text = _settings.SpellingCorrectionHotkey;
             TranslationHotkeyTextBox.Text = _settings.TranslationHotkey;
             VariableNameSuggestionHotkeyTextBox.Text = _settings.VariableNameSuggestionHotkey;
             
+            // Load providers
+            ProviderComboBox.ItemsSource = Enum.GetValues(typeof(AIProvider));
+            ProviderComboBox.SelectedItem = _settings.Provider;
+            
+            // Load models for the selected provider
+            LoadModelsForProvider(_settings.Provider);
+            ModelComboBox.Text = _settings.Model;
+            
             // Load tone presets
             LoadTonePresets();
+        }
+
+        private void LoadModelsForProvider(AIProvider provider)
+        {
+            if (ProviderModels.TryGetValue(provider, out var models))
+            {
+                ModelComboBox.ItemsSource = models.Select(m => m.Name).ToList();
+                
+                // Update the description when a model is selected
+                if (ModelComboBox.SelectedItem != null)
+                {
+                    var selectedModel = models.FirstOrDefault(m => m.Name == ModelComboBox.SelectedItem.ToString());
+                    if (selectedModel != null)
+                    {
+                        ModelDescriptionTextBlock.Text = selectedModel.Description;
+                    }
+                }
+            }
+        }
+
+        private void ProviderComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (ProviderComboBox.SelectedItem is AIProvider selectedProvider)
+            {
+                LoadModelsForProvider(selectedProvider);
+                
+                // Update default endpoint based on provider
+                switch (selectedProvider)
+                {
+                    case AIProvider.OpenAI:
+                        if (ApiEndpointTextBox.Text == "https://your-resource.openai.azure.com/" || 
+                            string.IsNullOrWhiteSpace(ApiEndpointTextBox.Text))
+                        {
+                            ApiEndpointTextBox.Text = "https://api.openai.com/v1";
+                        }
+                        break;
+                    case AIProvider.AzureOpenAI:
+                        if (ApiEndpointTextBox.Text == "https://api.openai.com/v1" || 
+                            string.IsNullOrWhiteSpace(ApiEndpointTextBox.Text))
+                        {
+                            ApiEndpointTextBox.Text = "https://your-resource.openai.azure.com/";
+                        }
+                        break;
+                    case AIProvider.Custom:
+                        // Don't change endpoint for custom provider
+                        break;
+                }
+            }
         }
 
         private void LoadTonePresets()
@@ -93,7 +182,8 @@ namespace SpellingChecker.Views
 
                 _settings.ApiKey = ApiKeyTextBox.Password;
                 _settings.ApiEndpoint = ApiEndpointTextBox.Text;
-                _settings.Model = ModelTextBox.Text;
+                _settings.Model = ModelComboBox.Text;
+                _settings.Provider = (AIProvider)(ProviderComboBox.SelectedItem ?? AIProvider.OpenAI);
                 _settings.AutoStartWithWindows = AutoStartCheckBox.IsChecked ?? false;
                 _settings.ShowProgressNotifications = ShowProgressNotificationsCheckBox.IsChecked ?? false;
                 _settings.SpellingCorrectionHotkey = SpellingHotkeyTextBox.Text;

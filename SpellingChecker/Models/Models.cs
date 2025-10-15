@@ -35,6 +35,16 @@ namespace SpellingChecker.Models
     }
 
     /// <summary>
+    /// AI Provider types
+    /// </summary>
+    public enum AIProvider
+    {
+        OpenAI,
+        AzureOpenAI,
+        Custom
+    }
+
+    /// <summary>
     /// Represents a tone preset for spelling correction
     /// </summary>
     public class TonePreset
@@ -57,6 +67,7 @@ namespace SpellingChecker.Models
         public string VariableNameSuggestionHotkey { get; set; } = "Ctrl+Shift+Alt+V";
         public bool AutoStartWithWindows { get; set; } = true;
         public string Model { get; set; } = "gpt-4o-mini";
+        public AIProvider Provider { get; set; } = AIProvider.OpenAI;
         public List<TonePreset> TonePresets { get; set; } = new List<TonePreset>();
         public string SelectedTonePresetId { get; set; } = string.Empty;
         public bool ShowProgressNotifications { get; set; } = false;

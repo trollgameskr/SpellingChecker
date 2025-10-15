@@ -18,6 +18,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- Title -->
@@ -51,20 +52,35 @@
                        Margin="0,3,0,0"/>
         </StackPanel>
 
-        <!-- Model -->
+        <!-- AI Provider -->
         <StackPanel Grid.Row="3" Margin="0,0,0,15">
+            <TextBlock Text="AI Provider:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+            <ComboBox x:Name="ProviderComboBox" 
+                      Padding="5"
+                      Height="30"
+                      SelectionChanged="ProviderComboBox_SelectionChanged"/>
+            <TextBlock Text="Select your AI service provider" 
+                       FontSize="10" 
+                       Foreground="Gray" 
+                       Margin="0,3,0,0"/>
+        </StackPanel>
+
+        <!-- Model -->
+        <StackPanel Grid.Row="4" Margin="0,0,0,15">
             <TextBlock Text="AI Model:" FontWeight="SemiBold" Margin="0,0,0,5"/>
-            <TextBox x:Name="ModelTextBox" 
-                     Padding="5"
-                     Height="30"/>
-            <TextBlock Text="Default: gpt-4o-mini (recommended for balance of speed and quality)" 
+            <ComboBox x:Name="ModelComboBox" 
+                      Padding="5"
+                      Height="30"
+                      IsEditable="True"/>
+            <TextBlock x:Name="ModelDescriptionTextBlock"
+                       Text="Default: gpt-4o-mini (recommended for balance of speed and quality)" 
                        FontSize="10" 
                        Foreground="Gray" 
                        Margin="0,3,0,0"/>
         </StackPanel>
 
         <!-- Auto Start -->
-        <StackPanel Grid.Row="4" Margin="0,0,0,15">
+        <StackPanel Grid.Row="5" Margin="0,0,0,15">
             <CheckBox x:Name="AutoStartCheckBox" 
                       Content="Start with Windows" 
                       FontWeight="SemiBold"/>
@@ -84,7 +100,7 @@
         </StackPanel>
 
         <!-- Hotkeys Info -->
-        <StackPanel Grid.Row="5" Margin="0,0,0,15">
+        <StackPanel Grid.Row="6" Margin="0,0,0,15">
             <TextBlock Text="Hotkeys:" FontWeight="SemiBold" Margin="0,0,0,5"/>
             
             <!-- Spelling Correction Hotkey -->
@@ -125,7 +141,7 @@
         </StackPanel>
 
         <!-- Tone Preset Selection -->
-        <StackPanel Grid.Row="6" Margin="0,0,0,15">
+        <StackPanel Grid.Row="7" Margin="0,0,0,15">
             <TextBlock Text="문장 톤 프리셋:" FontWeight="SemiBold" Margin="0,0,0,5"/>
             <ComboBox x:Name="TonePresetComboBox" 
                       Padding="5"
@@ -176,7 +192,7 @@
         </StackPanel>
 
         <!-- Usage Statistics Button -->
-        <StackPanel Grid.Row="7" Margin="0,0,0,15">
+        <StackPanel Grid.Row="8" Margin="0,0,0,15">
             <Button Content="📊 View Usage Statistics" 
                     Click="ViewUsageStatisticsButton_Click"
                     Padding="15,10"
@@ -193,7 +209,7 @@
         </StackPanel>
 
         <!-- Buttons -->
-        <StackPanel Grid.Row="8" 
+        <StackPanel Grid.Row="9" 
                     Orientation="Horizontal" 
                     HorizontalAlignment="Right">
             <Button Content="Save" 
