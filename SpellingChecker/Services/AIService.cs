@@ -213,8 +213,11 @@ namespace SpellingChecker.Services
                 var content = json["choices"]?[0]?["message"]?["content"]?.ToString();
                 return content ?? string.Empty;
             }
-            catch
+            catch (Exception ex)
             {
+                // Return empty string if response format is unexpected
+                // Could add logging here in future: System.Diagnostics.Debug.WriteLine($"Failed to extract content: {ex.Message}");
+                _ = ex; // Suppress warning about unused variable
                 return string.Empty;
             }
         }
@@ -245,9 +248,12 @@ namespace SpellingChecker.Services
                     _usageService.RecordUsage(operationType, _settings.Model, promptTokens, completionTokens);
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 // Silently fail - don't interrupt user operations
+                // Usage tracking is non-critical feature
+                // Could add logging here in future: System.Diagnostics.Debug.WriteLine($"Failed to record usage: {ex.Message}");
+                _ = ex; // Suppress warning about unused variable
             }
         }
     }

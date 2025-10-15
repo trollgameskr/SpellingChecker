@@ -72,9 +72,11 @@ namespace SpellingChecker.Services
                 var json = JsonConvert.SerializeObject(records, Formatting.Indented);
                 File.WriteAllText(UsageFilePath, json);
             }
-            catch
+            catch (Exception ex)
             {
                 // Silently fail - don't interrupt user operations
+                // Could add logging here in future: System.Diagnostics.Debug.WriteLine($"Failed to save usage record: {ex.Message}");
+                _ = ex; // Suppress warning about unused variable
             }
         }
 
@@ -90,8 +92,11 @@ namespace SpellingChecker.Services
                 var json = File.ReadAllText(UsageFilePath);
                 return JsonConvert.DeserializeObject<List<UsageRecord>>(json) ?? new List<UsageRecord>();
             }
-            catch
+            catch (Exception ex)
             {
+                // Return empty list if file is corrupted or unreadable
+                // Could add logging here in future: System.Diagnostics.Debug.WriteLine($"Failed to load usage records: {ex.Message}");
+                _ = ex; // Suppress warning about unused variable
                 return new List<UsageRecord>();
             }
         }
@@ -130,9 +135,11 @@ namespace SpellingChecker.Services
                     File.Delete(UsageFilePath);
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // Silently fail
+                // Silently fail - file may be locked or inaccessible
+                // Could add logging here in future: System.Diagnostics.Debug.WriteLine($"Failed to clear history: {ex.Message}");
+                _ = ex; // Suppress warning about unused variable
             }
         }
     }
