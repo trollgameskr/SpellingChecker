@@ -62,10 +62,10 @@ namespace SpellingChecker.Models
     {
         public string ApiKey { get; set; } = string.Empty; // Kept for backward compatibility
         public string ApiEndpoint { get; set; } = "https://api.openai.com/v1";
-        public string CommonQuestionHotkey { get; set; } = "Ctrl+Alt+D1";
-        public string SpellingCorrectionHotkey { get; set; } = "Ctrl+Alt+D2";
-        public string TranslationHotkey { get; set; } = "Ctrl+Alt+D3";
-        public string VariableNameSuggestionHotkey { get; set; } = "Ctrl+Alt+D4";
+        public string CommonQuestionHotkey { get; set; } = "Alt+D1";
+        public string SpellingCorrectionHotkey { get; set; } = "Alt+D2";
+        public string TranslationHotkey { get; set; } = "Alt+D3";
+        public string VariableNameSuggestionHotkey { get; set; } = "Alt+D4";
         public bool AutoStartWithWindows { get; set; } = true;
         public string Model { get; set; } = "gpt-4o-mini";
         public List<TonePreset> TonePresets { get; set; } = new List<TonePreset>();
