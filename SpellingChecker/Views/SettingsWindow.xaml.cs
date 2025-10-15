@@ -39,6 +39,7 @@ namespace SpellingChecker.Views
             ApiEndpointTextBox.Text = _settings.ApiEndpoint;
             AutoStartCheckBox.IsChecked = _settings.AutoStartWithWindows;
             ShowProgressNotificationsCheckBox.IsChecked = _settings.ShowProgressNotifications;
+            ClipboardCopyDelayTextBox.Text = _settings.ClipboardCopyDelayMs.ToString();
             CommonQuestionHotkeyTextBox.Text = _settings.CommonQuestionHotkey;
             SpellingHotkeyTextBox.Text = _settings.SpellingCorrectionHotkey;
             TranslationHotkeyTextBox.Text = _settings.TranslationHotkey;
@@ -217,6 +218,24 @@ namespace SpellingChecker.Views
                 
                 _settings.AutoStartWithWindows = AutoStartCheckBox.IsChecked ?? false;
                 _settings.ShowProgressNotifications = ShowProgressNotificationsCheckBox.IsChecked ?? false;
+                
+                // Parse and validate clipboard copy delay
+                if (int.TryParse(ClipboardCopyDelayTextBox.Text, out int clipboardDelay))
+                {
+                    // Ensure delay is within reasonable bounds (10ms to 1000ms)
+                    if (clipboardDelay < 10)
+                        clipboardDelay = 10;
+                    else if (clipboardDelay > 1000)
+                        clipboardDelay = 1000;
+                    
+                    _settings.ClipboardCopyDelayMs = clipboardDelay;
+                }
+                else
+                {
+                    // If parsing fails, reset to default
+                    _settings.ClipboardCopyDelayMs = 100;
+                }
+                
                 _settings.CommonQuestionHotkey = CommonQuestionHotkeyTextBox.Text;
                 _settings.SpellingCorrectionHotkey = SpellingHotkeyTextBox.Text;
                 _settings.TranslationHotkey = TranslationHotkeyTextBox.Text;

@@ -106,6 +106,19 @@
                        FontSize="10" 
                        Foreground="Gray" 
                        Margin="20,3,0,0"/>
+            
+            <!-- Clipboard Copy Delay -->
+            <StackPanel Margin="0,15,0,0">
+                <TextBlock Text="클립보드 복사 대기 시간 (ms):" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <TextBox x:Name="ClipboardCopyDelayTextBox" 
+                         Padding="5"
+                         Height="30"/>
+                <TextBlock Text="Ctrl+C 시뮬레이션 시 필요한 대기 시간. 컴퓨터 사양에 따라 조정 가능 (기본값: 100ms)" 
+                           FontSize="10" 
+                           Foreground="Gray" 
+                           Margin="0,3,0,0"
+                           TextWrapping="Wrap"/>
+            </StackPanel>
         </StackPanel>
 
         <!-- Hotkeys Info -->
