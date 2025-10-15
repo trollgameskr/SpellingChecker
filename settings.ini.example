@@ -1,0 +1,52 @@
+; SpellingChecker Settings Example
+; Copy this file to %APPDATA%\SpellingChecker\settings.ini and edit
+
+[API]
+; Your OpenAI API key (required)
+ApiKey=sk-your-api-key-here
+
+; API endpoint (default: https://api.openai.com/v1)
+ApiEndpoint=https://api.openai.com/v1
+
+; AI model to use (default: gpt-4o-mini)
+; Options: gpt-4o-mini, gpt-4o, gpt-4-turbo, gpt-3.5-turbo
+Model=gpt-4o-mini
+
+[Hotkeys]
+; Spelling correction hotkey (default: ^+!y = Ctrl+Shift+Alt+Y)
+; Format: ^ = Ctrl, + = Shift, ! = Alt, # = Win
+SpellingCorrection=^+!y
+
+; Translation hotkey (default: ^+!t = Ctrl+Shift+Alt+T)
+Translation=^+!t
+
+; Variable name suggestion hotkey (default: ^+!v = Ctrl+Shift+Alt+V)
+VariableName=^+!v
+
+[General]
+; Selected tone preset ID (default: default-none)
+; Available IDs:
+;   - default-none (원문 톤 유지)
+;   - default-serious-manager (근엄한 팀장님)
+;   - default-eager-newbie (싹싹한 신입 사원)
+;   - default-mz (MZ세대)
+;   - default-indifferent-parttime (심드렁한 알바생)
+;   - default-polite-guard (예의 바른 경비원)
+;   - default-enthusiastic-host (홈쇼핑 쇼호스트)
+;   - default-trendy-entertainer (예능인)
+;   - default-old-grandma (100년 된 할머니)
+;   - default-drama-chaebol (재벌 2세)
+;   - default-foreign-learner (외국인 학습자)
+SelectedTonePresetId=default-none
+
+; Show progress notifications (0 = disabled, 1 = enabled)
+ShowProgressNotifications=0
+
+[TonePresets]
+; Number of custom tone presets
+Count=0
+
+; Example custom tone preset:
+; [TonePreset-custom-1]
+; Name=공식 보고서 톤
+; Description=격식 있고 전문적이며 객관적인 말투
