@@ -306,7 +306,8 @@ namespace SpellingChecker.Views
                 }
                 
                 // Update the applied tone name for the upcoming conversion
-                _appliedToneName = selectedPreset.Name;
+                // Don't show indicator for "톤 없음" (default-none)
+                _appliedToneName = (selectedPreset.Id != "default-none") ? selectedPreset.Name : null;
                 
                 // Show progress indicator with tone change message
                 SetProgressText("대화톤 변경 중...");

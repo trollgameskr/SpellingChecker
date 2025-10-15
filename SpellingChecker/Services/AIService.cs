@@ -79,7 +79,7 @@ namespace SpellingChecker.Services
                     OriginalText = text,
                     CorrectedText = correctedText.Trim(),
                     Changes = Array.Empty<string>(), // Could be enhanced to show specific changes
-                    AppliedToneName = tonePreset?.Name
+                    AppliedToneName = (tonePreset != null && tonePreset.Id != "default-none") ? tonePreset.Name : null
                 };
             }
             catch (Exception ex)
