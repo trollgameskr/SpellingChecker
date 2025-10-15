@@ -73,42 +73,7 @@ SpellingChecker/bin/Release/net9.0-windows/win-x64/publish/SpellingChecker.exe
 
 ## Creating Distribution Files
 
-### Option 1: WiX Toolset MSI Installer (Recommended)
-
-**WiX Toolset is free and open-source**. It creates professional MSI installers.
-
-1. **Install WiX Toolset v3.11 or later**
-   - Download from https://wixtoolset.org/releases/
-   - Free and open-source under MS-PL license
-
-2. **Build the installer using PowerShell script**:
-   ```powershell
-   .\build-installer.ps1
-   ```
-   
-   Or manually:
-   ```bash
-   # Build the application first
-   dotnet publish SpellingChecker/SpellingChecker.csproj -c Release -r win-x64 --self-contained -p:PublishSingleFile=true
-   
-   # Compile WiX source
-   candle.exe -arch x64 -out obj\Product.wixobj Product.wxs -ext WixUIExtension -ext WixUtilExtension
-   
-   # Link to create MSI
-   light.exe -out installer\SpellingCheckerSetup.msi obj\Product.wixobj -ext WixUIExtension -ext WixUtilExtension
-   ```
-
-3. **Output**: `installer\SpellingCheckerSetup_v1.0.0.msi`
-
-**Benefits of MSI installer**:
-- Professional Windows installer format
-- Add/Remove Programs integration
-- Automatic uninstall support
-- Start menu shortcuts
-- Optional desktop and startup shortcuts
-- Clean uninstallation
-
-### Option 2: Portable ZIP Distribution (No Installation Required)
+### Option 1: Portable ZIP Distribution (Recommended)
 
 **Perfect for users who prefer portable applications**.
 
@@ -128,7 +93,7 @@ SpellingChecker/bin/Release/net9.0-windows/win-x64/publish/SpellingChecker.exe
 
 Users extract the ZIP and run `SpellingChecker.exe` directly.
 
-### Option 3: Standalone Executable (Simplest)
+### Option 2: Standalone Executable (Simplest)
 
 Just distribute the published executable:
 

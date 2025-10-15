@@ -4,11 +4,10 @@ This guide explains how to create distribution files for SpellingChecker using *
 
 ## Overview
 
-SpellingChecker offers three deployment options:
+SpellingChecker offers two deployment options:
 
-1. **MSI Installer** - Professional Windows installer (using free WiX Toolset)
-2. **Portable ZIP** - No-installation-required package
-3. **Standalone Executable** - Single EXE file
+1. **Portable ZIP** - No-installation-required package
+2. **Standalone Executable** - Single EXE file
 
 All options are built using free tools and don't require any paid software.
 
@@ -19,42 +18,33 @@ All options are built using free tools and don't require any paid software.
 - Windows 10 or later
 - .NET 9.0 SDK
 - PowerShell 5.1 or later (included in Windows)
-- For MSI installer: WiX Toolset (free, open-source)
 
 ---
 
-## Option 1: MSI Installer (Recommended)
+## Option 1: Portable ZIP (Recommended)
 
-Creates a professional Windows installer (`.msi` file) with full installation features.
+Creates a ZIP file that users can extract and run anywhere.
 
-### Why MSI?
+### Why Portable?
 
-- ✅ Integrates with Windows Add/Remove Programs
-- ✅ Creates Start Menu shortcuts
-- ✅ Optional desktop and startup shortcuts
-- ✅ Professional installation wizard
-- ✅ Clean uninstallation
-- ✅ Free and open-source (WiX Toolset)
-
-### Prerequisites
-
-Install WiX Toolset v3.11 or later:
-
-```powershell
-# Option A: Download from official site
-# Visit: https://wixtoolset.org/releases/
-# Download and run WiX311.exe (or later version)
-
-# Option B: Using Chocolatey (if installed)
-choco install wixtoolset -y
-```
+- ✅ No installation required
+- ✅ Run from USB drive
+- ✅ No registry changes
+- ✅ Easy to delete (just remove folder)
+- ✅ Perfect for testing or temporary use
 
 ### Build Steps
 
 **Using the automated script (easiest)**:
 
 ```powershell
-.\build-installer.ps1
+.\build-portable.ps1
+```
+
+Or using batch file:
+
+```cmd
+build-portable.bat
 ```
 
 **Manual build**:
@@ -67,47 +57,64 @@ dotnet publish SpellingChecker/SpellingChecker.csproj `
     --self-contained `
     -p:PublishSingleFile=true
 
-# Step 2: Compile WiX source
-& "$env:WIX\bin\candle.exe" -arch x64 -out obj\Product.wixobj Product.wxs -ext WixUIExtension -ext WixUtilExtension
+# Step 2: Create distribution folder
+$distPath = "dist\SpellingChecker-portable"
+New-Item -ItemType Directory -Force -Path $distPath | Out-Null
 
-# Step 3: Link to create MSI
-New-Item -ItemType Directory -Force -Path installer | Out-Null
-& "$env:WIX\bin\light.exe" -out installer\SpellingCheckerSetup_v1.0.0.msi obj\Product.wixobj -ext WixUIExtension -ext WixUtilExtension
+# Step 3: Copy files
+Copy-Item "SpellingChecker\bin\Release\net9.0-windows\win-x64\publish\SpellingChecker.exe" -Destination $distPath
+Copy-Item "README.md" -Destination $distPath
+Copy-Item "LICENSE" -Destination $distPath
+Copy-Item "CONFIG.md" -Destination $distPath
+Copy-Item "QUICKSTART.md" -Destination $distPath
+
+# Step 4: Create portable README
+$readme = @"
+# AI Spelling Checker - Portable Version
+
+## Quick Start
+1. Run SpellingChecker.exe
+2. Configure your OpenAI API key in Settings (system tray icon)
+3. Use hotkeys:
+   - Ctrl+Shift+Alt+Y: Spell check
+   - Ctrl+Shift+Alt+T: Translate
+
+See README.md for full documentation.
+"@
+$readme | Out-File -FilePath "$distPath\PORTABLE-README.txt" -Encoding UTF8
+
+# Step 5: Create ZIP
+Compress-Archive -Path $distPath -DestinationPath "dist\SpellingChecker-v1.0.0-portable-win-x64.zip" -CompressionLevel Optimal
 ```
 
 ### Output
 
-The MSI installer will be created at:
+The portable ZIP will be created at:
 ```
-installer\SpellingCheckerSetup_v1.0.0.msi
+dist\SpellingChecker-v1.0.0-portable-win-x64.zip
 ```
 
 Size: ~15-20 MB (self-contained)
 
 ### What Users Get
 
-When users run the MSI installer:
+When users extract the ZIP:
 
-1. Installation wizard guides them through setup
-2. Choose installation directory (default: `%LocalAppData%\SpellingChecker`)
-3. Optional shortcuts:
-   - Start Menu (always created)
-   - Desktop (optional)
-   - Startup (optional - auto-start with Windows)
-4. Launch application after installation (optional)
+```
+SpellingChecker-portable/
+├── SpellingChecker.exe    (Main application)
+├── PORTABLE-README.txt    (Quick start guide)
+├── README.md             (Full documentation)
+├── CONFIG.md             (Configuration guide)
+├── QUICKSTART.md         (Quick start guide)
+└── LICENSE               (MIT License)
+```
 
-Uninstallation is available through Windows Settings → Apps.
+Users simply run `SpellingChecker.exe` - no installation needed!
 
 ---
 
-## Option 2: Portable ZIP (No Installation)
-
-Creates a ZIP file that users can extract and run anywhere.
-
-### Why Portable?
-
-- ✅ No installation required
-- ✅ Run from USB drive
+## Option 2: Standalone Executable
 - ✅ No registry changes
 - ✅ Easy to delete (just remove folder)
 - ✅ Perfect for testing or temporary use
@@ -229,18 +236,14 @@ Just a single `SpellingChecker.exe` file that runs on any Windows 10+ system.
 
 ## Comparison
 
-| Feature | MSI Installer | Portable ZIP | Standalone EXE |
-|---------|--------------|--------------|----------------|
-| Installation | Required | Not required | Not required |
-| File count | Multiple | Multiple | Single |
-| Start Menu shortcut | ✅ Auto | ❌ Manual | ❌ Manual |
-| Desktop shortcut | ✅ Optional | ❌ Manual | ❌ Manual |
-| Auto-start | ✅ Optional | ❌ Manual | ❌ Manual |
-| Uninstall | ✅ Built-in | ❌ Delete folder | ❌ Delete file |
-| Size | 15-20 MB | 15-20 MB | 15-20 MB |
-| Professionalism | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐ |
-| Convenience | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ |
-| Portability | ⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| Feature | Portable ZIP | Standalone EXE |
+|---------|--------------|----------------|
+| Installation | Not required | Not required |
+| File count | Multiple | Single |
+| Documentation included | ✅ Yes | ❌ No |
+| Size | 15-20 MB | 15-20 MB |
+| Convenience | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
+| Portability | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
 
 ---
 
@@ -252,7 +255,6 @@ Artifacts are available in the Actions tab:
 
 - `SpellingChecker-Standalone-win-x64` - Standalone executable
 - `SpellingChecker-Portable-win-x64` - Portable ZIP
-- `SpellingChecker-MSI-Installer` - MSI installer (on releases only)
 
 ---
 
@@ -298,16 +300,6 @@ Before releasing:
 
 ## Troubleshooting
 
-### WiX Toolset Not Found
-
-**Error**: "WiX Toolset not found!"
-
-**Solution**:
-1. Download WiX from https://wixtoolset.org/releases/
-2. Install WiX311.exe (or later)
-3. Restart PowerShell
-4. Verify: `$env:WIX` should point to WiX installation directory
-
 ### Build Fails - .NET SDK Not Found
 
 **Error**: "The specified .NET SDK version is not installed"
@@ -330,22 +322,23 @@ Before releasing:
 
 ## Migration from Inno Setup
 
-If you were using Inno Setup (now paid software), migrate to WiX:
+If you were using Inno Setup (now paid software), use the portable deployment approach:
 
-1. **Features comparison**:
-   - Both create Windows installers
-   - WiX creates MSI, Inno Setup creates EXE
-   - WiX is free and open-source
-   - MSI integrates better with enterprise deployment
+1. **Why portable instead of installer?**:
+   - No installation required - easier for users
+   - No administrative rights needed
+   - Runs from anywhere (USB, network drive, etc.)
+   - Completely free - no paid tools required
 
 2. **Migration steps**:
-   - Use `Product.wxs` instead of `installer.iss`
-   - Run `build-installer.ps1` instead of Inno Setup Compiler
-   - Output is MSI instead of EXE (both work the same for users)
+   - Remove `installer.iss` (deprecated)
+   - Use `build-portable.ps1` or `build-portable.bat`
+   - Distribute ZIP file instead of EXE installer
 
 3. **What's different**:
-   - MSI uses standard Windows installation dialog
-   - Uninstall is in Windows Settings (not separate uninstaller)
+   - Users extract ZIP and run executable directly
+   - No Start Menu shortcuts (users can create manually if desired)
+   - No uninstaller needed (just delete the folder)
    - No custom graphics/themes (uses Windows standard)
 
 ---
@@ -361,7 +354,6 @@ For questions or issues:
 
 **Free Tools Used**:
 - .NET SDK - Free (Microsoft)
-- WiX Toolset - Free and open-source (MS-PL license)
 - PowerShell - Free (included in Windows)
 
 **No paid tools required!** 🎉

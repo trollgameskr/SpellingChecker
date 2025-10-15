@@ -64,24 +64,18 @@ AI 기반 맞춤법 교정 및 한영/영한 번역을 제공하는 Windows 데�
 
 ### 설치 파일 다운로드 (추천)
 
-배포된 설치 파일을 사용하여 간편하게 설치할 수 있습니다:
+배포된 설치 파일을 사용하여 간편하게 실행할 수 있습니다:
 
-1. **MSI 인스톨러** (권장 - 전문적인 Windows 설치 프로그램)
-   - [Releases 페이지](https://github.com/shinepcs/SpellingChecker/releases)에서 `SpellingCheckerSetup_v*.msi` 다운로드
-   - MSI 파일을 실행하고 설치 마법사의 안내를 따릅니다
-   - 시작 메뉴 바로가기 자동 생성
-   - 선택적으로 바탕화면 및 시작프로그램 바로가기 생성 가능
-
-2. **포터블 ZIP** (설치 불필요)
+1. **포터블 ZIP** (권장 - 설치 불필요)
    - [Releases 페이지](https://github.com/shinepcs/SpellingChecker/releases)에서 `SpellingChecker-*-portable-win-x64.zip` 다운로드
    - 원하는 폴더에 압축 해제
    - `SpellingChecker.exe` 실행 - 설치 불필요!
 
-3. **독립 실행 파일**
+2. **독립 실행 파일**
    - [Releases 페이지](https://github.com/shinepcs/SpellingChecker/releases)에서 `SpellingChecker.exe` 다운로드
    - 원하는 폴더에 저장 후 실행
 
-> 💡 **참고**: 모든 배포 파일은 무료 오픈소스 도구(WiX Toolset, .NET SDK)로 빌드되었습니다.
+> 💡 **참고**: 모든 배포 파일은 무료 오픈소스 도구(.NET SDK, PowerShell)로 빌드되었습니다.
 > 
 > 📖 **자세한 배포 정보**: [DEPLOYMENT.md](DEPLOYMENT.md) 참조
 

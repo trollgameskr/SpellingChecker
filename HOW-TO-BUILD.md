@@ -10,22 +10,7 @@ This repository uses **only free and open-source tools** to create deployment fi
 
 ### 📦 사용 가능한 배포 옵션
 
-#### 1. MSI 인스톨러 (추천)
-전문적인 Windows 설치 프로그램
-
-```powershell
-# PowerShell 사용
-.\build-installer.ps1
-
-# 또는 배치 파일 사용
-build-installer.bat
-```
-
-**결과물**: `installer\SpellingCheckerSetup_v1.0.0.msi`
-
-**필요한 것**: WiX Toolset (무료) - https://wixtoolset.org/releases/
-
-#### 2. 포터블 ZIP (간편)
+#### 1. 포터블 ZIP (추천)
 설치 불필요, 압축 해제 후 바로 사용
 
 ```powershell
@@ -40,7 +25,7 @@ build-portable.bat
 
 **필요한 것**: 없음 (PowerShell만 있으면 됨)
 
-#### 3. 단독 실행 파일
+#### 2. 단독 실행 파일
 가장 간단한 방법
 
 ```bash
@@ -59,7 +44,7 @@ dotnet publish SpellingChecker/SpellingChecker.csproj -c Release -r win-x64 --se
 
 **이전**: Inno Setup 사용 → 2025년 10월부터 유료 💰
 
-**현재**: WiX Toolset + PowerShell → 완전 무료! ✅
+**현재**: PowerShell (무료) → 완전 무료! ✅
 
 ---
 
@@ -67,22 +52,7 @@ dotnet publish SpellingChecker/SpellingChecker.csproj -c Release -r win-x64 --se
 
 ### 📦 Available Deployment Options
 
-#### 1. MSI Installer (Recommended)
-Professional Windows installer
-
-```powershell
-# Using PowerShell
-.\build-installer.ps1
-
-# Or using batch file
-build-installer.bat
-```
-
-**Output**: `installer\SpellingCheckerSetup_v1.0.0.msi`
-
-**Requires**: WiX Toolset (free) - https://wixtoolset.org/releases/
-
-#### 2. Portable ZIP (Easy)
+#### 1. Portable ZIP (Recommended)
 No installation required
 
 ```powershell
@@ -97,7 +67,7 @@ build-portable.bat
 
 **Requires**: Nothing (PowerShell is built into Windows)
 
-#### 3. Standalone Executable
+#### 2. Standalone Executable
 Simplest method
 
 ```bash
@@ -116,7 +86,7 @@ dotnet publish SpellingChecker/SpellingChecker.csproj -c Release -r win-x64 --se
 
 **Before**: Inno Setup → Became paid software in October 2025 💰
 
-**Now**: WiX Toolset + PowerShell → Completely free! ✅
+**Now**: PowerShell (free) → Completely free! ✅
 
 ---
 
@@ -125,16 +95,12 @@ dotnet publish SpellingChecker/SpellingChecker.csproj -c Release -r win-x64 --se
 ### Prerequisites
 - Windows 10 or later
 - .NET 9.0 SDK
-- For MSI: WiX Toolset (optional, free)
 
-### Build Everything at Once
+### Build Portable ZIP
 
 ```powershell
 # Build portable ZIP (easiest)
 .\build-portable.ps1
-
-# Build MSI installer (requires WiX)
-.\build-installer.ps1
 ```
 
 ### Automated Builds
@@ -150,7 +116,6 @@ Download from: **Actions** tab → Select workflow run → **Artifacts**
 | Tool | License | Purpose |
 |------|---------|---------|
 | .NET SDK | Free (Microsoft) | Build application |
-| WiX Toolset | Free (MS-PL) | Create MSI installer |
 | PowerShell | Built into Windows | Build scripts |
 
 **No paid tools required!** 🎉

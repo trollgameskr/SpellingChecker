@@ -5,8 +5,6 @@ on:
     branches: [ main, develop ]
   pull_request:
     branches: [ main ]
-  release:
-    types: [ created ]
 
 jobs:
   build:
@@ -64,32 +62,3 @@ jobs:
       with:
         name: SpellingChecker-Portable-win-x64
         path: SpellingChecker-v*-portable-win-x64.zip
-    
-    # Optional: Build MSI installer if WiX is available
-    - name: Setup WiX Toolset
-      if: github.event_name == 'release'
-      run: |
-        choco install wixtoolset -y
-      continue-on-error: true
-    
-    - name: Build MSI Installer
-      if: github.event_name == 'release'
-      run: |
-        if (Test-Path "$env:WIX\bin\candle.exe") {
-          Write-Host "Building MSI installer..."
-          & "$env:WIX\bin\candle.exe" -arch x64 -out obj/Product.wixobj Product.wxs -ext WixUIExtension -ext WixUtilExtension
-          New-Item -ItemType Directory -Force -Path installer | Out-Null
-          & "$env:WIX\bin\light.exe" -out installer/SpellingCheckerSetup.msi obj/Product.wixobj -ext WixUIExtension -ext WixUtilExtension -cultures:en-us
-        } else {
-          Write-Host "WiX not available, skipping MSI build"
-        }
-      shell: pwsh
-      continue-on-error: true
-    
-    - name: Upload MSI Installer
-      if: github.event_name == 'release'
-      uses: actions/upload-artifact@v4
-      with:
-        name: SpellingChecker-MSI-Installer
-        path: installer/*.msi
-      continue-on-error: true

@@ -50,7 +50,6 @@ Complete guide to SpellingChecker documentation.
    - CI/CD setup
 
 6.1. **[DEPLOYMENT.md](DEPLOYMENT.md)** ⭐ - Complete deployment guide
-   - MSI installer creation (WiX Toolset - free)
    - Portable ZIP distribution
    - Standalone executable
    - All using free tools only!
@@ -201,9 +200,8 @@ Start here:
 - [GitHub Actions](.github/workflows/) - CI/CD workflows
 
 ### Installation
-- [Product.wxs](Product.wxs) - WiX Toolset installer configuration (free, open-source)
-- [build-installer.ps1](build-installer.ps1) - MSI installer build script
 - [build-portable.ps1](build-portable.ps1) - Portable ZIP build script
+- [build-portable.bat](build-portable.bat) - Portable ZIP build script (Batch)
 - [installer.iss.deprecated](installer.iss.deprecated) - Old Inno Setup script (deprecated - Inno Setup is now paid)
 
 ### Project Files
