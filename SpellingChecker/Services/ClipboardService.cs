@@ -39,9 +39,6 @@ namespace SpellingChecker.Services
         [DllImport("kernel32.dll")]
         private static extern uint GetCurrentThreadId();
 
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);
-
         private const byte VK_CONTROL = 0x11;
         private const byte VK_C = 0x43;
         private const byte VK_V = 0x56;
@@ -52,40 +49,6 @@ namespace SpellingChecker.Services
         private const uint EM_GETSEL = 0x00B0;
         private const uint EM_GETSELTEXT = 0x00B1;
         private const uint EM_EXGETSEL = 0x0434;
-
-        private const int INPUT_KEYBOARD = 1;
-
-        [StructLayout(LayoutKind.Explicit)]
-        private struct INPUT
-        {
-            [FieldOffset(0)]
-            public int type;
-            [FieldOffset(8)] 
-            public MOUSEINPUT mi;
-            [FieldOffset(8)]
-            public KEYBDINPUT ki;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct MOUSEINPUT
-        {
-            public int dx;
-            public int dy;
-            public uint mouseData;
-            public uint dwFlags;
-            public uint time;
-            public IntPtr dwExtraInfo;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct KEYBDINPUT
-        {
-            public ushort wVk;
-            public ushort wScan;
-            public uint dwFlags;
-            public uint time;
-            public IntPtr dwExtraInfo;
-        }
 
         /// <summary>
         /// Gets the currently selected text using SendMessage API
@@ -181,10 +144,10 @@ namespace SpellingChecker.Services
         }
 
         /// <summary>
-        /// Copies selected text using SendInput API with clipboard change detection
+        /// Copies selected text using keyboard simulation with clipboard change detection
         /// </summary>
         /// <param name="timeoutMs">Timeout in milliseconds to wait for clipboard change</param>
-        /// <returns>The copied text, or null if timeout or error occurred</returns>
+        /// <returns>The copied text, or empty string if timeout or error occurred</returns>
         private string CopySelectedTextWithRetry(int timeoutMs = 500)
         {
             try
@@ -206,49 +169,11 @@ namespace SpellingChecker.Services
 
                 Clipboard.Clear();
 
-                INPUT[] inputs = new INPUT[4];
-
-                // Ctrl Down
-                inputs[0] = new INPUT();
-                inputs[0].type = INPUT_KEYBOARD;
-                inputs[0].ki = new KEYBDINPUT();
-                inputs[0].ki.wVk = VK_CONTROL;
-                inputs[0].ki.wScan = 0;
-                inputs[0].ki.dwFlags = 0;
-                inputs[0].ki.time = 0;
-                inputs[0].ki.dwExtraInfo = IntPtr.Zero;
-
-                // C Down
-                inputs[1] = new INPUT();
-                inputs[1].type = INPUT_KEYBOARD;
-                inputs[1].ki = new KEYBDINPUT();
-                inputs[1].ki.wVk = VK_C;
-                inputs[1].ki.wScan = 0;
-                inputs[1].ki.dwFlags = 0;
-                inputs[1].ki.time = 0;
-                inputs[1].ki.dwExtraInfo = IntPtr.Zero;
-
-                // C Up
-                inputs[2] = new INPUT();
-                inputs[2].type = INPUT_KEYBOARD;
-                inputs[2].ki = new KEYBDINPUT();
-                inputs[2].ki.wVk = VK_C;
-                inputs[2].ki.wScan = 0;
-                inputs[2].ki.dwFlags = KEYEVENTF_KEYUP;
-                inputs[2].ki.time = 0;
-                inputs[2].ki.dwExtraInfo = IntPtr.Zero;
-
-                // Ctrl Up
-                inputs[3] = new INPUT();
-                inputs[3].type = INPUT_KEYBOARD;
-                inputs[3].ki = new KEYBDINPUT();
-                inputs[3].ki.wVk = VK_CONTROL;
-                inputs[3].ki.wScan = 0;
-                inputs[3].ki.dwFlags = KEYEVENTF_KEYUP;
-                inputs[3].ki.time = 0;
-                inputs[3].ki.dwExtraInfo = IntPtr.Zero;
-
-                SendInput(4, inputs, Marshal.SizeOf(typeof(INPUT)));
+                // Simulate Ctrl+C using keybd_event (proven to work in ReplaceSelectedText)
+                keybd_event(VK_CONTROL, 0, 0, UIntPtr.Zero);
+                keybd_event(VK_C, 0, 0, UIntPtr.Zero);
+                keybd_event(VK_C, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
+                keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
 
                 // Give the system time to process the input
                 Thread.Sleep(50);
