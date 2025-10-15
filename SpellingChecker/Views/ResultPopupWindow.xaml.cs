@@ -20,6 +20,7 @@ namespace SpellingChecker.Views
         private readonly Models.AppSettings? _settings;
         private readonly string _originalText;
         private bool _isInitializing = true;
+        private string? _appliedToneName = null;
 
         public ResultPopupWindow(string result, string original, string title, bool isTranslationMode = false, Models.AppSettings? settings = null)
         {
@@ -75,6 +76,13 @@ namespace SpellingChecker.Views
             {
                 SetResultTextPlain(newResult);
             }
+        }
+
+        public void UpdateResultWithTone(string newResult, string? appliedToneName)
+        {
+            _appliedToneName = appliedToneName;
+            UpdateResult(newResult);
+            UpdateAppliedToneDisplay();
         }
 
         public void ShowProgressIndicator()
@@ -260,6 +268,25 @@ namespace SpellingChecker.Views
             
             // Initialization complete
             _isInitializing = false;
+            
+            // Update the applied tone display
+            UpdateAppliedToneDisplay();
+        }
+
+        private void UpdateAppliedToneDisplay()
+        {
+            if (AppliedToneTextBlock == null)
+                return;
+
+            if (!string.IsNullOrEmpty(_appliedToneName))
+            {
+                AppliedToneTextBlock.Text = $"적용된 톤: {_appliedToneName}";
+                AppliedToneTextBlock.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                AppliedToneTextBlock.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void TonePresetComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -277,6 +304,9 @@ namespace SpellingChecker.Views
                 {
                     _settings.SelectedTonePresetId = selectedPreset.Id;
                 }
+                
+                // Update the applied tone name for the upcoming conversion
+                _appliedToneName = selectedPreset.Name;
                 
                 // Show progress indicator with tone change message
                 SetProgressText("대화톤 변경 중...");

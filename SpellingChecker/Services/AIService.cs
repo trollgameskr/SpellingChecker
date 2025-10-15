@@ -78,7 +78,8 @@ namespace SpellingChecker.Services
                 {
                     OriginalText = text,
                     CorrectedText = correctedText.Trim(),
-                    Changes = Array.Empty<string>() // Could be enhanced to show specific changes
+                    Changes = Array.Empty<string>(), // Could be enhanced to show specific changes
+                    AppliedToneName = tonePreset?.Name
                 };
             }
             catch (Exception ex)

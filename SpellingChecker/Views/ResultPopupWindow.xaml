@@ -34,7 +34,25 @@
         <TextBlock Grid.Row="2" Text="Result:" FontWeight="Bold" Margin="0,0,0,5"/>
         <Border Grid.Row="3" BorderBrush="LightBlue" BorderThickness="2" Margin="0,0,0,10">
             <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                
+                <!-- Applied Tone Indicator -->
+                <TextBlock x:Name="AppliedToneTextBlock" 
+                           Grid.Row="0"
+                           Visibility="Collapsed"
+                           Margin="5,5,5,5"
+                           Padding="8,4"
+                           Background="#E3F2FD"
+                           FontSize="11"
+                           FontWeight="SemiBold"
+                           Foreground="#1976D2"
+                           TextAlignment="Center"/>
+                
                 <RichTextBox x:Name="ResultRichTextBox" 
+                             Grid.Row="1"
                              IsReadOnly="True" 
                              VerticalScrollBarVisibility="Auto"
                              Background="#F0F8FF"
@@ -43,7 +61,7 @@
                              BorderThickness="0"/>
                 
                 <!-- Progress Indicator Overlay -->
-                <Grid x:Name="ProgressOverlay" Background="#B0FFFFFF" Visibility="Collapsed">
+                <Grid x:Name="ProgressOverlay" Grid.Row="0" Grid.RowSpan="2" Background="#B0FFFFFF" Visibility="Collapsed">
                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                         <ProgressBar IsIndeterminate="True" Width="200" Height="20" Margin="0,0,0,10"/>
                         <TextBlock x:Name="ProgressText" Text="처리 중..." FontWeight="SemiBold" HorizontalAlignment="Center"/>
