@@ -37,6 +37,9 @@ namespace SpellingChecker.Services
 
             try
             {
+                // Reload settings to get the latest tone preset selection
+                _settings = _settingsService.LoadSettings();
+                
                 // Get the selected tone preset
                 var tonePreset = TonePresetService.GetSelectedTonePreset(_settings);
                 
