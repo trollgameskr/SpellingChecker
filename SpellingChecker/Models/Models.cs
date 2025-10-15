@@ -74,7 +74,6 @@ namespace SpellingChecker.Models
         public string Provider { get; set; } = "OpenAI";
         public Dictionary<string, List<string>> CustomModels { get; set; } = new Dictionary<string, List<string>>();
         public Dictionary<string, string> ProviderApiKeys { get; set; } = new Dictionary<string, string>();
-        public int ClipboardCopyDelayMs { get; set; } = 100;
 
         /// <summary>
         /// Get the API key for the specified provider

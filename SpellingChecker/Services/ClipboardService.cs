@@ -211,9 +211,8 @@ namespace SpellingChecker.Services
 
                 Clipboard.Clear();
 
-                // Get the clipboard copy delay from settings
-                var settings = _settingsService.LoadSettings();
-                int delayMs = settings.ClipboardCopyDelayMs;
+                // Use a fixed delay for Ctrl+C simulation
+                const int delayMs = 100;
 
                 // Simulate Ctrl+C using keybd_event (proven to work in ReplaceSelectedText)
                 keybd_event(VK_CONTROL, 0, 0, UIntPtr.Zero);
