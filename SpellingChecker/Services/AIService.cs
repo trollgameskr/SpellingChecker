@@ -225,10 +225,6 @@ namespace SpellingChecker.Services
         {
             _settings = _settingsService.LoadSettings(); // Reload settings for API key updates
             
-            // Update timeout if settings changed
-            var timeoutSeconds = _settings.RequestTimeoutSeconds > 0 ? _settings.RequestTimeoutSeconds : 60;
-            _httpClient.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
-            
             string provider = _settings.Provider ?? "OpenAI";
             string apiKey = _settings.GetApiKeyForProvider(provider);
             
@@ -258,6 +254,7 @@ namespace SpellingChecker.Services
             }
             catch (TaskCanceledException ex)
             {
+                var timeoutSeconds = _settings.RequestTimeoutSeconds > 0 ? _settings.RequestTimeoutSeconds : 60;
                 throw new TimeoutException($"Request timed out after {timeoutSeconds} seconds. The AI service did not respond in time.", ex);
             }
             catch (HttpRequestException ex)
