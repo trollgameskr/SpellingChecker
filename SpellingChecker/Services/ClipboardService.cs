@@ -211,11 +211,25 @@ namespace SpellingChecker.Services
 
                 Clipboard.Clear();
 
-                // Get the clipboard copy delay from settings
-                var settings = _settingsService.LoadSettings();
-                int delayMs = settings.ClipboardCopyDelayMs;
+                // Simulate Ctrl+C using keybd_event (proven to work in ReplaceSelectedText)
+                keybd_event(VK_CONTROL, 0, 0, UIntPtr.Zero);
+                keybd_event(VK_C, 0, 0, UIntPtr.Zero);
+                keybd_event(VK_C, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
+                keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
 
-                // Retry Ctrl+C simulation until timeout
+                // Give the system time to process the input and copy to clipboard
+                Thread.Sleep(10);
+
+                if (Clipboard.ContainsText())
+                {
+                    string current = Clipboard.GetText();
+                    if (!string.IsNullOrEmpty(current))
+                    {
+                        return current;
+                    }
+                }
+                
+                // If still no content, wait and poll for clipboard changes
                 var stopwatch = Stopwatch.StartNew();
                 int retryInterval = 200; // Retry every 200ms
                 
@@ -224,7 +238,6 @@ namespace SpellingChecker.Services
                     // Simulate Ctrl+C using keybd_event (proven to work in ReplaceSelectedText)
                     keybd_event(VK_CONTROL, 0, 0, UIntPtr.Zero);
                     keybd_event(VK_C, 0, 0, UIntPtr.Zero);
-                    Thread.Sleep(delayMs);
                     keybd_event(VK_C, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
                     keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
 

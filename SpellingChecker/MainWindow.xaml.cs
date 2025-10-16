@@ -148,6 +148,11 @@ namespace SpellingChecker
                 // Save settings after processing completes to persist tone selection
                 _settingsService.SaveSettings(settings);
             }
+            catch (TimeoutException ex)
+            {
+                popup?.HideProgressIndicator();
+                ShowNotification("Request Timeout", "The AI service did not respond in time. Please check your network connection and try again.");
+            }
             catch (Exception ex)
             {
                 popup?.HideProgressIndicator();
@@ -193,6 +198,11 @@ namespace SpellingChecker
                 popup.UpdateResult(result.TranslatedText);
                 popup.HideProgressIndicator();
             }
+            catch (TimeoutException ex)
+            {
+                popup?.HideProgressIndicator();
+                ShowNotification("Request Timeout", "The AI service did not respond in time. Please check your network connection and try again.");
+            }
             catch (Exception ex)
             {
                 popup?.HideProgressIndicator();
@@ -236,6 +246,11 @@ namespace SpellingChecker
                 popup.UpdateResult(result.Answer);
                 popup.HideProgressIndicator();
             }
+            catch (TimeoutException ex)
+            {
+                popup?.HideProgressIndicator();
+                ShowNotification("Request Timeout", "The AI service did not respond in time. Please check your network connection and try again.");
+            }
             catch (Exception ex)
             {
                 popup?.HideProgressIndicator();
@@ -263,6 +278,11 @@ namespace SpellingChecker
                 
                 popup.UpdateResultWithTone(result.CorrectedText, result.AppliedToneName);
                 popup.HideProgressIndicator();
+            }
+            catch (TimeoutException ex)
+            {
+                popup.HideProgressIndicator();
+                ShowNotification("Request Timeout", "The AI service did not respond in time. Please check your network connection and try again.");
             }
             catch (Exception ex)
             {
@@ -293,6 +313,11 @@ namespace SpellingChecker
                 
                 popup.UpdateResult(result.TranslatedText);
                 popup.HideProgressIndicator();
+            }
+            catch (TimeoutException ex)
+            {
+                popup.HideProgressIndicator();
+                ShowNotification("Request Timeout", "The AI service did not respond in time. Please check your network connection and try again.");
             }
             catch (Exception ex)
             {
@@ -340,6 +365,11 @@ namespace SpellingChecker
                 popup.UpdateResult(formattedSuggestions);
                 popup.HideProgressIndicator();
             }
+            catch (TimeoutException ex)
+            {
+                popup?.HideProgressIndicator();
+                ShowNotification("Request Timeout", "The AI service did not respond in time. Please check your network connection and try again.");
+            }
             catch (Exception ex)
             {
                 popup?.HideProgressIndicator();
@@ -372,6 +402,11 @@ namespace SpellingChecker
                 popup.UpdateResult(formattedSuggestions);
                 popup.HideProgressIndicator();
             }
+            catch (TimeoutException ex)
+            {
+                popup.HideProgressIndicator();
+                ShowNotification("Request Timeout", "The AI service did not respond in time. Please check your network connection and try again.");
+            }
             catch (Exception ex)
             {
                 popup.HideProgressIndicator();
@@ -400,6 +435,11 @@ namespace SpellingChecker
                 
                 popup.UpdateResult(result.Answer);
                 popup.HideProgressIndicator();
+            }
+            catch (TimeoutException ex)
+            {
+                popup.HideProgressIndicator();
+                ShowNotification("Request Timeout", "The AI service did not respond in time. Please check your network connection and try again.");
             }
             catch (Exception ex)
             {

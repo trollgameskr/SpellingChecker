@@ -62,10 +62,10 @@ namespace SpellingChecker.Models
     {
         public string ApiKey { get; set; } = string.Empty; // Kept for backward compatibility
         public string ApiEndpoint { get; set; } = "https://api.openai.com/v1";
-        public string CommonQuestionHotkey { get; set; } = "Ctrl+Alt+D1";
-        public string SpellingCorrectionHotkey { get; set; } = "Ctrl+Alt+D2";
-        public string TranslationHotkey { get; set; } = "Ctrl+Alt+D3";
-        public string VariableNameSuggestionHotkey { get; set; } = "Ctrl+Alt+D4";
+        public string CommonQuestionHotkey { get; set; } = "Alt+D1";
+        public string SpellingCorrectionHotkey { get; set; } = "Alt+D2";
+        public string TranslationHotkey { get; set; } = "Alt+D3";
+        public string VariableNameSuggestionHotkey { get; set; } = "Alt+D4";
         public bool AutoStartWithWindows { get; set; } = true;
         public string Model { get; set; } = "gpt-4o-mini";
         public List<TonePreset> TonePresets { get; set; } = new List<TonePreset>();
@@ -74,7 +74,7 @@ namespace SpellingChecker.Models
         public string Provider { get; set; } = "OpenAI";
         public Dictionary<string, List<string>> CustomModels { get; set; } = new Dictionary<string, List<string>>();
         public Dictionary<string, string> ProviderApiKeys { get; set; } = new Dictionary<string, string>();
-        public int ClipboardCopyDelayMs { get; set; } = 100;
+        public int RequestTimeoutSeconds { get; set; } = 60; // Default timeout of 60 seconds
 
         /// <summary>
         /// Get the API key for the specified provider
@@ -163,10 +163,12 @@ namespace SpellingChecker.Models
         {
             var defaultModels = ProviderModels.ContainsKey(provider) ? ProviderModels[provider] : new[] { "gpt-4o-mini" };
             
-            // If no custom models, return defaults
+            // If no custom models, return defaults with "직접입력" option
             if (customModels == null || !customModels.ContainsKey(provider) || customModels[provider] == null || customModels[provider].Count == 0)
             {
-                return defaultModels;
+                var modelsWithDirectInput = new List<string>(defaultModels);
+                modelsWithDirectInput.Add("직접입력");
+                return modelsWithDirectInput.ToArray();
             }
             
             // Merge custom models with defaults (custom models first, then defaults that aren't duplicates)
@@ -178,6 +180,9 @@ namespace SpellingChecker.Models
                     allModels.Add(model);
                 }
             }
+            
+            // Add "직접입력" at the end
+            allModels.Add("직접입력");
             
             return allModels.ToArray();
         }
