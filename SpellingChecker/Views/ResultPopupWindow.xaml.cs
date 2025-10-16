@@ -17,23 +17,25 @@ namespace SpellingChecker.Views
         public event EventHandler<string>? ToneChangeRequested;
 
         private readonly bool _isTranslationMode;
+        private readonly bool _enableHighlighting;
         private readonly Models.AppSettings? _settings;
         private readonly string _originalText;
         private bool _isInitializing = true;
         private string? _appliedToneName = null;
 
-        public ResultPopupWindow(string result, string original, string title, bool isTranslationMode = false, Models.AppSettings? settings = null)
+        public ResultPopupWindow(string result, string original, string title, bool isTranslationMode = false, Models.AppSettings? settings = null, bool enableHighlighting = false)
         {
             InitializeComponent();
             
             Title = title;
             OriginalTextBox.Text = original;
             _isTranslationMode = isTranslationMode;
+            _enableHighlighting = enableHighlighting;
             _settings = settings;
             _originalText = original;
 
-            // Set result text with highlighting if in spelling correction mode
-            if (!isTranslationMode)
+            // Set result text with highlighting if highlighting is enabled
+            if (_enableHighlighting)
             {
                 SetResultWithHighlighting(result, original);
                 
@@ -68,7 +70,7 @@ namespace SpellingChecker.Views
 
         public void UpdateResult(string newResult)
         {
-            if (!_isTranslationMode)
+            if (_enableHighlighting)
             {
                 SetResultWithHighlighting(newResult, OriginalTextBox.Text);
             }

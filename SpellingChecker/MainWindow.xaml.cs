@@ -121,7 +121,7 @@ namespace SpellingChecker
 
                 // Create and show popup immediately with progress indicator
                 var settings = _settingsService.LoadSettings();
-                popup = new ResultPopupWindow("", selectedText, "Spelling Correction", false, settings);
+                popup = new ResultPopupWindow("", selectedText, "Spelling Correction", false, settings, enableHighlighting: true);
                 popup.ShowProgressIndicator();
                 popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(popup.GetResultText());
                 popup.ConvertRequested += async (s, text) => await ReprocessSpellingCorrection(popup, text);
@@ -178,7 +178,7 @@ namespace SpellingChecker
                     $"'{selectedText}' 문장의 번역을 요청했습니다.", true);
 
                 // Create and show popup immediately with progress indicator
-                popup = new ResultPopupWindow("", selectedText, "Translation", true);
+                popup = new ResultPopupWindow("", selectedText, "Translation", true, enableHighlighting: false);
                 popup.ShowProgressIndicator();
                 popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(popup.GetResultText());
                 popup.ConvertRequested += async (s, text) => await ReprocessTranslation(popup, text);
@@ -228,7 +228,7 @@ namespace SpellingChecker
                     $"'{selectedText}' 질문에 대한 답변을 요청했습니다.", true);
 
                 // Create and show popup immediately with progress indicator
-                popup = new ResultPopupWindow("", selectedText, "Common Question Answer - Ctrl+Enter to reconvert", false);
+                popup = new ResultPopupWindow("", selectedText, "Common Question Answer - Ctrl+Enter to reconvert", false, enableHighlighting: false);
                 popup.ShowProgressIndicator();
                 popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(popup.GetResultText());
                 popup.ConvertRequested += async (s, text) => await ReprocessCommonQuestion(popup, text);
@@ -344,7 +344,7 @@ namespace SpellingChecker
                     $"'{selectedText}' 텍스트의 변수명을 추천합니다.", true);
 
                 // Create and show popup immediately with progress indicator
-                popup = new ResultPopupWindow("", selectedText, "Variable Name Suggestions (C#) - Ctrl+Enter to reconvert", false);
+                popup = new ResultPopupWindow("", selectedText, "Variable Name Suggestions (C#) - Ctrl+Enter to reconvert", false, enableHighlighting: false);
                 popup.ShowProgressIndicator();
                 popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(popup.GetResultText());
                 popup.ConvertRequested += async (s, text) => await ReprocessVariableNameSuggestion(popup, text);
