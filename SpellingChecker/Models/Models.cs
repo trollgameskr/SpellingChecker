@@ -74,6 +74,7 @@ namespace SpellingChecker.Models
         public string Provider { get; set; } = "OpenAI";
         public Dictionary<string, List<string>> CustomModels { get; set; } = new Dictionary<string, List<string>>();
         public Dictionary<string, string> ProviderApiKeys { get; set; } = new Dictionary<string, string>();
+        public int RequestTimeoutSeconds { get; set; } = 60; // Default timeout of 60 seconds
 
         /// <summary>
         /// Get the API key for the specified provider
