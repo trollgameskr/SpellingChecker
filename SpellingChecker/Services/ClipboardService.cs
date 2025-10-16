@@ -89,38 +89,40 @@ namespace SpellingChecker.Services
         }
 
         /// <summary>
-        /// Adjusts the index from EM_GETSEL to account for \r characters in line breaks.
-        /// Some controls count line breaks as single characters in EM_GETSEL (\n), but store them as \r\n.
-        /// This function maps logical indices to actual string indices.
+        /// Adjusts the index from EM_GETSEL to account for multi-byte characters and line breaks.
+        /// Some controls return byte offsets in EM_GETSEL rather than character indices.
+        /// This function converts byte offsets to character indices.
         /// </summary>
         /// <param name="text">The text retrieved from WM_GETTEXT</param>
-        /// <param name="logicalIndex">The index from EM_GETSEL (may count \r\n as single position)</param>
-        /// <returns>The adjusted index for the actual string with \r\n</returns>
-        private int GetAdjustedIndex(string text, int logicalIndex)
+        /// <param name="offset">The offset from EM_GETSEL (may be byte offset or character index)</param>
+        /// <returns>The character index in the string</returns>
+        private int GetAdjustedIndex(string text, int offset)
         {
-            // EM_GETSEL may count positions as: \n(0) a(1) b(2) \n(3) c(4)
-            // But actual text is: \r\n a b \r\n c (with \r characters)
-            // So logical position 4 maps to actual position 6
+            // EM_GETSEL may return byte offsets for multi-byte characters (e.g., UTF-8 bytes)
+            // We need to convert byte offset to character index
             
-            int actualIndex = 0;
-            int logicalPos = 0;
+            int byteCount = 0;
+            int charIndex = 0;
             
-            for (int i = 0; i < text.Length && logicalPos < logicalIndex; i++)
+            // Use UTF-8 encoding as it's commonly used for multi-byte text
+            var encoding = Encoding.UTF8;
+            
+            for (int i = 0; i < text.Length; i++)
             {
-                if (text[i] == '\r')
+                // Check if we've reached the target offset
+                if (byteCount >= offset)
                 {
-                    // Skip \r characters - they don't count in logical position
-                    actualIndex++;
+                    return charIndex;
                 }
-                else
-                {
-                    // This character counts in logical position
-                    logicalPos++;
-                    actualIndex++;
-                }
+                
+                // Count bytes for this character
+                // For \r, we may need to skip it in byte counting depending on the control
+                byteCount += encoding.GetByteCount(new char[] { text[i] });
+                charIndex++;
             }
             
-            return actualIndex;
+            // If we've gone through all text, return the length
+            return charIndex;
         }
 
         /// <summary>
