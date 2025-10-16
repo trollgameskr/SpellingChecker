@@ -68,17 +68,17 @@ namespace SpellingChecker.Services
         {
             try
             {
-                // SendMessage method is unreliable with multi-byte characters and different control types
-                // Use clipboard method which is more reliable
-                return GetSelectedTextViaClipboard();
+                // Try using SendMessage to get selected text directly
+                // EM_GETSEL returns UTF-16 character indices which match .NET string indexing
+                var selectedText = GetSelectedTextViaSendMessage();
                 
-                // Original approach (disabled due to reliability issues):
-                // var selectedText = GetSelectedTextViaSendMessage();
-                // if (string.IsNullOrEmpty(selectedText))
-                // {
-                //     selectedText = GetSelectedTextViaClipboard();
-                // }
-                // return selectedText;
+                // If SendMessage fails, fallback to clipboard method
+                if (string.IsNullOrEmpty(selectedText))
+                {
+                    selectedText = GetSelectedTextViaClipboard();
+                }
+
+                return selectedText;
             }
             catch (Exception ex)
             {
