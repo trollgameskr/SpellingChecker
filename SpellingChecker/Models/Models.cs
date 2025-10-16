@@ -162,10 +162,12 @@ namespace SpellingChecker.Models
         {
             var defaultModels = ProviderModels.ContainsKey(provider) ? ProviderModels[provider] : new[] { "gpt-4o-mini" };
             
-            // If no custom models, return defaults
+            // If no custom models, return defaults with "직접입력" option
             if (customModels == null || !customModels.ContainsKey(provider) || customModels[provider] == null || customModels[provider].Count == 0)
             {
-                return defaultModels;
+                var modelsWithDirectInput = new List<string>(defaultModels);
+                modelsWithDirectInput.Add("직접입력");
+                return modelsWithDirectInput.ToArray();
             }
             
             // Merge custom models with defaults (custom models first, then defaults that aren't duplicates)
@@ -177,6 +179,9 @@ namespace SpellingChecker.Models
                     allModels.Add(model);
                 }
             }
+            
+            // Add "직접입력" at the end
+            allModels.Add("직접입력");
             
             return allModels.ToArray();
         }

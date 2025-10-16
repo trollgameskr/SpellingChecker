@@ -187,6 +187,14 @@ namespace SpellingChecker.Views
                     ? (ModelComboBox.SelectedItem?.ToString() ?? AIProviderConfig.GetDefaultModel(_settings.Provider))
                     : ModelComboBox.Text.Trim();
                 
+                // If "직접입력" is selected, validate that user has entered a custom model
+                if (modelName == "직접입력")
+                {
+                    MessageBox.Show("모델 이름을 직접 입력해주세요.", "Error", 
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                
                 _settings.Model = modelName;
                 
                 // Save custom model if it's not in the default list
@@ -194,7 +202,7 @@ namespace SpellingChecker.Views
                     ? AIProviderConfig.ProviderModels[_settings.Provider] 
                     : Array.Empty<string>();
                 
-                if (!string.IsNullOrWhiteSpace(modelName) && !defaultModels.Contains(modelName))
+                if (!string.IsNullOrWhiteSpace(modelName) && !defaultModels.Contains(modelName) && modelName != "직접입력")
                 {
                     // Initialize CustomModels dictionary if needed
                     if (_settings.CustomModels == null)
