@@ -162,12 +162,24 @@ namespace SpellingChecker.Services
         }
 
         /// <summary>
-        /// Waits for all modifier keys (Ctrl, Shift, Alt) to be released
+        /// Ensures all modifier keys (Ctrl, Shift, Alt) are released by actively sending key-up events
         /// </summary>
-        /// <param name="maxWaitMs">Maximum time to wait in milliseconds</param>
-        private void WaitForModifierKeysRelease(int maxWaitMs = 500)
+        private void EnsureModifierKeysReleased()
         {
+            // Actively send key-up events for all modifier keys to ensure they are released
+            // This is critical because if the user is still holding the hotkey (Ctrl+Shift+Alt+Y/T/V),
+            // we need to force-release these keys before simulating Ctrl+C
+            keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
+            keybd_event(VK_SHIFT, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
+            keybd_event(VK_MENU, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
+            
+            // Give the system time to process the key-up events
+            Thread.Sleep(50);
+            
+            // Wait for the key states to actually update in the system
+            // Check repeatedly with a timeout to ensure keys are truly released
             var stopwatch = Stopwatch.StartNew();
+            int maxWaitMs = 200;
             
             while (stopwatch.ElapsedMilliseconds < maxWaitMs)
             {
@@ -197,15 +209,12 @@ namespace SpellingChecker.Services
         {
             try
             {
-                // Wait for all hotkey modifier keys to be released before simulating Ctrl+C
-                // This prevents the hotkey modifiers from interfering with the copy operation
-                WaitForModifierKeysRelease();
+                // Actively release all hotkey modifier keys to prevent interference
+                // This is critical: if user is still holding Ctrl+Shift+Alt from the hotkey,
+                // we must force-release them before simulating Ctrl+C
+                EnsureModifierKeysReleased();
                 
-                // Additional delay after modifier keys are released to ensure:
-                // 1. The foreground window regains proper focus
-                // 2. The application is ready to process keyboard input
-                // 3. Any pending key events are fully processed
-                // This prevents issues where apps select all text or fail to copy
+                // Additional delay to ensure the foreground window is ready
                 Thread.Sleep(50);
                 
                 string previousClipboard = string.Empty;
