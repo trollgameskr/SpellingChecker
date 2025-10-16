@@ -59,7 +59,6 @@ namespace SpellingChecker.Services
         private const uint WM_GETTEXT = 0x000D;
         private const uint WM_GETTEXTLENGTH = 0x000E;
         private const uint EM_GETSEL = 0x00B0;
-        private const uint EM_GETSELTEXT = 0x00B1;
         private const uint EM_EXGETSEL = 0x0434;
 
         /// <summary>
@@ -121,7 +120,7 @@ namespace SpellingChecker.Services
                 if (focusedControl == IntPtr.Zero)
                     focusedControl = foregroundWindow;
 
-                // Try to get selection using EM_GETSEL and EM_GETSELTEXT for edit controls
+                // Try to get selection using EM_GETSEL and WM_GETTEXT for edit controls
                 IntPtr selStart = IntPtr.Zero;
                 IntPtr selEnd = IntPtr.Zero;
                 
@@ -134,11 +133,26 @@ namespace SpellingChecker.Services
                     
                     if (selectionLength > 0 && selectionLength < 100000) // Sanity check
                     {
-                        var buffer = new StringBuilder(selectionLength + 1);
-                        SendMessage(focusedControl, EM_GETSELTEXT, IntPtr.Zero, buffer);
+                        // Get the entire text first
+                        var textLength = (int)SendMessage(focusedControl, WM_GETTEXTLENGTH, IntPtr.Zero, IntPtr.Zero);
                         
-                        if (buffer.Length > 0)
-                            return buffer.ToString();
+                        if (textLength > 0 && selEnd.ToInt32() <= textLength)
+                        {
+                            var buffer = new StringBuilder(textLength + 1);
+                            SendMessage(focusedControl, WM_GETTEXT, new IntPtr(buffer.Capacity), buffer);
+                            
+                            if (buffer.Length > 0)
+                            {
+                                // Extract the selected portion
+                                var startIndex = selStart.ToInt32();
+                                var endIndex = selEnd.ToInt32();
+                                
+                                if (startIndex >= 0 && endIndex <= buffer.Length && startIndex < endIndex)
+                                {
+                                    return buffer.ToString(startIndex, endIndex - startIndex);
+                                }
+                            }
+                        }
                     }
                 }
 
