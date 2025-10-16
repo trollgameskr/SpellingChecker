@@ -165,7 +165,7 @@ namespace SpellingChecker.Services
         /// Waits for all modifier keys (Ctrl, Shift, Alt) to be released
         /// </summary>
         /// <param name="maxWaitMs">Maximum time to wait in milliseconds</param>
-        private void WaitForModifierKeysRelease(int maxWaitMs = 500)
+        private void WaitForModifierKeysRelease(int maxWaitMs = 1000)
         {
             var stopwatch = Stopwatch.StartNew();
             
@@ -200,6 +200,11 @@ namespace SpellingChecker.Services
                 // Wait for all hotkey modifier keys to be released before simulating Ctrl+C
                 // This prevents the hotkey modifiers from interfering with the copy operation
                 WaitForModifierKeysRelease();
+                
+                // Add additional delay after modifier keys are released to ensure the system
+                // has fully processed the key release events before we simulate Ctrl+C
+                // This prevents race conditions where Ctrl might still be detected as pressed
+                Thread.Sleep(50);
                 
                 string previousClipboard = string.Empty;
                 
