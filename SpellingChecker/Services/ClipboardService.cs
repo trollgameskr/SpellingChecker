@@ -89,6 +89,66 @@ namespace SpellingChecker.Services
         }
 
         /// <summary>
+        /// Adjusts the index from EM_GETSEL to account for line breaks.
+        /// EM_GETSEL counts \r\n as 2 characters, but WM_GETTEXT might return text with \r removed.
+        /// This function maps control indices to actual string indices.
+        /// </summary>
+        /// <param name="text">The text retrieved from WM_GETTEXT</param>
+        /// <param name="controlIndex">The index from EM_GETSEL</param>
+        /// <returns>The adjusted index for use with string operations</returns>
+        private int GetAdjustedIndex(string text, int controlIndex)
+        {
+            // In Windows edit controls, line breaks are typically \r\n (CRLF)
+            // EM_GETSEL returns indices counting each character including both \r and \n
+            // However, some controls or WM_GETTEXT implementations might return text with only \n (LF)
+            // In such cases, we need to adjust the index by subtracting the number of \r characters
+            // that were counted in the control index but don't exist in the retrieved text
+            
+            // Check if the text contains \r\n or just \n
+            bool hasCarriageReturn = text.Contains('\r');
+            
+            if (hasCarriageReturn)
+            {
+                // Text has \r\n, so EM_GETSEL indices should work directly
+                return Math.Min(controlIndex, text.Length);
+            }
+            else
+            {
+                // Text has only \n, but EM_GETSEL counted \r\n as 2 chars
+                // We need to subtract the number of \n characters before the controlIndex
+                // because each \n was counted as 2 chars (\r\n) in the control
+                
+                int adjustedIndex = 0;
+                int controlPos = 0;
+                
+                for (int i = 0; i < text.Length && controlPos < controlIndex; i++)
+                {
+                    if (text[i] == '\n')
+                    {
+                        // This \n was counted as \r\n (2 chars) in the control
+                        controlPos += 2;
+                        adjustedIndex++;
+                    }
+                    else
+                    {
+                        // Regular character
+                        controlPos++;
+                        adjustedIndex++;
+                    }
+                }
+                
+                // If we haven't reached the controlIndex yet, we're past the end of the text
+                // This can happen if the text is shorter than expected
+                if (controlPos < controlIndex)
+                {
+                    return text.Length;
+                }
+                
+                return adjustedIndex;
+            }
+        }
+
+        /// <summary>
         /// Gets selected text using Windows SendMessage API
         /// </summary>
         private string GetSelectedTextViaSendMessage()
@@ -147,9 +207,19 @@ namespace SpellingChecker.Services
                                 var startIndex = selStart.ToInt32();
                                 var endIndex = selEnd.ToInt32();
                                 
-                                if (startIndex >= 0 && endIndex <= buffer.Length && startIndex < endIndex)
+                                // EM_GETSEL returns indices that count \r\n as 2 characters
+                                // But in the actual string, we need to map these indices correctly
+                                // Count the number of \r characters before startIndex and endIndex
+                                // to adjust for the difference between control indices and string indices
+                                var text = buffer.ToString();
+                                
+                                // Adjust indices by counting line breaks before each position
+                                var adjustedStart = GetAdjustedIndex(text, startIndex);
+                                var adjustedEnd = GetAdjustedIndex(text, endIndex);
+                                
+                                if (adjustedStart >= 0 && adjustedEnd <= text.Length && adjustedStart < adjustedEnd)
                                 {
-                                    return buffer.ToString(startIndex, endIndex - startIndex);
+                                    return text.Substring(adjustedStart, adjustedEnd - adjustedStart);
                                 }
                             }
                         }
