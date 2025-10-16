@@ -89,63 +89,38 @@ namespace SpellingChecker.Services
         }
 
         /// <summary>
-        /// Adjusts the index from EM_GETSEL to account for line breaks.
-        /// EM_GETSEL counts \r\n as 2 characters, but WM_GETTEXT might return text with \r removed.
-        /// This function maps control indices to actual string indices.
+        /// Adjusts the index from EM_GETSEL to account for \r characters in line breaks.
+        /// Some controls count line breaks as single characters in EM_GETSEL (\n), but store them as \r\n.
+        /// This function maps logical indices to actual string indices.
         /// </summary>
         /// <param name="text">The text retrieved from WM_GETTEXT</param>
-        /// <param name="controlIndex">The index from EM_GETSEL</param>
-        /// <returns>The adjusted index for use with string operations</returns>
-        private int GetAdjustedIndex(string text, int controlIndex)
+        /// <param name="logicalIndex">The index from EM_GETSEL (may count \r\n as single position)</param>
+        /// <returns>The adjusted index for the actual string with \r\n</returns>
+        private int GetAdjustedIndex(string text, int logicalIndex)
         {
-            // In Windows edit controls, line breaks are typically \r\n (CRLF)
-            // EM_GETSEL returns indices counting each character including both \r and \n
-            // However, some controls or WM_GETTEXT implementations might return text with only \n (LF)
-            // In such cases, we need to adjust the index by subtracting the number of \r characters
-            // that were counted in the control index but don't exist in the retrieved text
+            // EM_GETSEL may count positions as: \n(0) a(1) b(2) \n(3) c(4)
+            // But actual text is: \r\n a b \r\n c (with \r characters)
+            // So logical position 4 maps to actual position 6
             
-            // Check if the text contains \r\n or just \n
-            bool hasCarriageReturn = text.Contains('\r');
+            int actualIndex = 0;
+            int logicalPos = 0;
             
-            if (hasCarriageReturn)
+            for (int i = 0; i < text.Length && logicalPos < logicalIndex; i++)
             {
-                // Text has \r\n, so EM_GETSEL indices should work directly
-                return Math.Min(controlIndex, text.Length);
-            }
-            else
-            {
-                // Text has only \n, but EM_GETSEL counted \r\n as 2 chars
-                // We need to subtract the number of \n characters before the controlIndex
-                // because each \n was counted as 2 chars (\r\n) in the control
-                
-                int adjustedIndex = 0;
-                int controlPos = 0;
-                
-                for (int i = 0; i < text.Length && controlPos < controlIndex; i++)
+                if (text[i] == '\r')
                 {
-                    if (text[i] == '\n')
-                    {
-                        // This \n was counted as \r\n (2 chars) in the control
-                        controlPos += 2;
-                        adjustedIndex++;
-                    }
-                    else
-                    {
-                        // Regular character
-                        controlPos++;
-                        adjustedIndex++;
-                    }
+                    // Skip \r characters - they don't count in logical position
+                    actualIndex++;
                 }
-                
-                // If we haven't reached the controlIndex yet, we're past the end of the text
-                // This can happen if the text is shorter than expected
-                if (controlPos < controlIndex)
+                else
                 {
-                    return text.Length;
+                    // This character counts in logical position
+                    logicalPos++;
+                    actualIndex++;
                 }
-                
-                return adjustedIndex;
             }
+            
+            return actualIndex;
         }
 
         /// <summary>
