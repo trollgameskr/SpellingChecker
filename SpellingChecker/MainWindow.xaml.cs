@@ -108,6 +108,7 @@ namespace SpellingChecker
             try
             {
                 var selectedText = _clipboardService.GetSelectedText();
+                bool usedSendMessage = _clipboardService.UsedSendMessageMethod;
                 
                 if (string.IsNullOrWhiteSpace(selectedText))
                 {
@@ -121,7 +122,7 @@ namespace SpellingChecker
 
                 // Create and show popup immediately with progress indicator
                 var settings = _settingsService.LoadSettings();
-                popup = new ResultPopupWindow("", selectedText, "Spelling Correction", false, settings, enableHighlighting: true);
+                popup = new ResultPopupWindow("", selectedText, "Spelling Correction", false, settings, enableHighlighting: true, usedSendMessageMethod: usedSendMessage);
                 popup.ShowProgressIndicator();
                 popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(popup.GetResultText());
                 popup.ConvertRequested += async (s, text) => await ReprocessSpellingCorrection(popup, text);
@@ -166,6 +167,7 @@ namespace SpellingChecker
             try
             {
                 var selectedText = _clipboardService.GetSelectedText();
+                bool usedSendMessage = _clipboardService.UsedSendMessageMethod;
                 
                 if (string.IsNullOrWhiteSpace(selectedText))
                 {
@@ -178,7 +180,7 @@ namespace SpellingChecker
                     $"'{selectedText}' 문장의 번역을 요청했습니다.", true);
 
                 // Create and show popup immediately with progress indicator
-                popup = new ResultPopupWindow("", selectedText, "Translation", true, enableHighlighting: false);
+                popup = new ResultPopupWindow("", selectedText, "Translation", true, enableHighlighting: false, usedSendMessageMethod: usedSendMessage);
                 popup.ShowProgressIndicator();
                 popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(popup.GetResultText());
                 popup.ConvertRequested += async (s, text) => await ReprocessTranslation(popup, text);
@@ -216,6 +218,7 @@ namespace SpellingChecker
             try
             {
                 var selectedText = _clipboardService.GetSelectedText();
+                bool usedSendMessage = _clipboardService.UsedSendMessageMethod;
                 
                 if (string.IsNullOrWhiteSpace(selectedText))
                 {
@@ -228,7 +231,7 @@ namespace SpellingChecker
                     $"'{selectedText}' 질문에 대한 답변을 요청했습니다.", true);
 
                 // Create and show popup immediately with progress indicator
-                popup = new ResultPopupWindow("", selectedText, "Common Question Answer - Ctrl+Enter to reconvert", false, enableHighlighting: false);
+                popup = new ResultPopupWindow("", selectedText, "Common Question Answer - Ctrl+Enter to reconvert", false, enableHighlighting: false, usedSendMessageMethod: usedSendMessage);
                 popup.ShowProgressIndicator();
                 popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(popup.GetResultText());
                 popup.ConvertRequested += async (s, text) => await ReprocessCommonQuestion(popup, text);
@@ -332,6 +335,7 @@ namespace SpellingChecker
             try
             {
                 var selectedText = _clipboardService.GetSelectedText();
+                bool usedSendMessage = _clipboardService.UsedSendMessageMethod;
                 
                 if (string.IsNullOrWhiteSpace(selectedText))
                 {
@@ -344,7 +348,7 @@ namespace SpellingChecker
                     $"'{selectedText}' 텍스트의 변수명을 추천합니다.", true);
 
                 // Create and show popup immediately with progress indicator
-                popup = new ResultPopupWindow("", selectedText, "Variable Name Suggestions (C#) - Ctrl+Enter to reconvert", false, enableHighlighting: false);
+                popup = new ResultPopupWindow("", selectedText, "Variable Name Suggestions (C#) - Ctrl+Enter to reconvert", false, enableHighlighting: false, usedSendMessageMethod: usedSendMessage);
                 popup.ShowProgressIndicator();
                 popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(popup.GetResultText());
                 popup.ConvertRequested += async (s, text) => await ReprocessVariableNameSuggestion(popup, text);
