@@ -25,7 +25,8 @@ namespace SpellingChecker.Services
             _settingsService = settingsService;
             _usageService = new UsageService();
             _settings = _settingsService.LoadSettings();
-            _httpClient.Timeout = TimeSpan.FromSeconds(30);
+            // Use configurable timeout from settings, default to 60 seconds
+            _httpClient.Timeout = TimeSpan.FromSeconds(_settings.RequestTimeoutSeconds > 0 ? _settings.RequestTimeoutSeconds : 60);
         }
 
         public async Task<CorrectionResult> CorrectSpellingAsync(string text)
@@ -224,6 +225,10 @@ namespace SpellingChecker.Services
         {
             _settings = _settingsService.LoadSettings(); // Reload settings for API key updates
             
+            // Update timeout if settings changed
+            var timeoutSeconds = _settings.RequestTimeoutSeconds > 0 ? _settings.RequestTimeoutSeconds : 60;
+            _httpClient.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+            
             string provider = _settings.Provider ?? "OpenAI";
             string apiKey = _settings.GetApiKeyForProvider(provider);
             
@@ -232,21 +237,32 @@ namespace SpellingChecker.Services
                 throw new InvalidOperationException($"API Key is not configured for {provider}. Please set your {provider} API key in settings.");
             }
             
-            if (provider == "OpenAI")
+            try
             {
-                return await SendOpenAIRequestAsync(requestBody);
+                if (provider == "OpenAI")
+                {
+                    return await SendOpenAIRequestAsync(requestBody);
+                }
+                else if (provider == "Anthropic")
+                {
+                    return await SendAnthropicRequestAsync(requestBody);
+                }
+                else if (provider == "Gemini")
+                {
+                    return await SendGeminiRequestAsync(requestBody);
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Unsupported provider: {provider}");
+                }
             }
-            else if (provider == "Anthropic")
+            catch (TaskCanceledException ex)
             {
-                return await SendAnthropicRequestAsync(requestBody);
+                throw new TimeoutException($"Request timed out after {timeoutSeconds} seconds. The AI service did not respond in time.", ex);
             }
-            else if (provider == "Gemini")
+            catch (HttpRequestException ex)
             {
-                return await SendGeminiRequestAsync(requestBody);
-            }
-            else
-            {
-                throw new InvalidOperationException($"Unsupported provider: {provider}");
+                throw new InvalidOperationException($"Network error occurred while communicating with {provider}: {ex.Message}", ex);
             }
         }
 
