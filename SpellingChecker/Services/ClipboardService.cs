@@ -231,16 +231,41 @@ namespace SpellingChecker.Services
                 
                 // If still no content, wait and poll for clipboard changes
                 var stopwatch = Stopwatch.StartNew();
+                int retryInterval = 200; // Retry every 200ms
+                
                 while (stopwatch.ElapsedMilliseconds < timeoutMs)
                 {
-                    Thread.Sleep(50);
-                
+                    // Simulate Ctrl+C using keybd_event (proven to work in ReplaceSelectedText)
+                    keybd_event(VK_CONTROL, 0, 0, UIntPtr.Zero);
+                    keybd_event(VK_C, 0, 0, UIntPtr.Zero);
+                    keybd_event(VK_C, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
+                    keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
+
+                    // Give the system time to process the input and copy to clipboard
+                    Thread.Sleep(10);
+
                     if (Clipboard.ContainsText())
                     {
                         string current = Clipboard.GetText();
                         if (!string.IsNullOrEmpty(current))
                         {
                             return current;
+                        }
+                    }
+                    
+                    // Wait before next retry, but keep checking clipboard during wait
+                    int waitEndTime = (int)(stopwatch.ElapsedMilliseconds + retryInterval);
+                    while (stopwatch.ElapsedMilliseconds < waitEndTime && stopwatch.ElapsedMilliseconds < timeoutMs)
+                    {
+                        Thread.Sleep(50);
+                        
+                        if (Clipboard.ContainsText())
+                        {
+                            string current = Clipboard.GetText();
+                            if (!string.IsNullOrEmpty(current))
+                            {
+                                return current;
+                            }
                         }
                     }
                 }
