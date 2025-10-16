@@ -13,6 +13,11 @@ namespace SpellingChecker.Services
     public class ClipboardService
     {
         private readonly SettingsService _settingsService;
+        
+        /// <summary>
+        /// Indicates which method was used to get the selected text (for debugging)
+        /// </summary>
+        public bool UsedSendMessageMethod { get; private set; }
 
         public ClipboardService(SettingsService settingsService)
         {
@@ -72,19 +77,25 @@ namespace SpellingChecker.Services
                 // Use clipboard method which is more reliable
                 return GetSelectedTextViaClipboard();
                 
-                // Original approach (disabled due to reliability issues):
-                // var selectedText = GetSelectedTextViaSendMessage();
-                // if (string.IsNullOrEmpty(selectedText))
-                // {
-                //     selectedText = GetSelectedTextViaClipboard();
-                // }
-                // return selectedText;
+                // If SendMessage fails, fallback to clipboard method
+                if (string.IsNullOrEmpty(selectedText))
+                {
+                    UsedSendMessageMethod = false;
+                    selectedText = GetSelectedTextViaClipboard();
+                }
+                else
+                {
+                    UsedSendMessageMethod = true;
+                }
+
+                return selectedText;
             }
             catch (Exception ex)
             {
                 // Return empty string if all methods fail
                 // Could add logging here in future: System.Diagnostics.Debug.WriteLine($"Failed to get selected text: {ex.Message}");
                 _ = ex; // Suppress warning about unused variable
+                UsedSendMessageMethod = false;
                 return string.Empty;
             }
         }
