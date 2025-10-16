@@ -22,6 +22,12 @@ namespace SpellingChecker
         private AIService _aiService;
         private ClipboardService _clipboardService;
         private SettingsService _settingsService;
+        
+        // Singleton popup windows for each mode
+        private ResultPopupWindow? _spellingCorrectionPopup;
+        private ResultPopupWindow? _translationPopup;
+        private ResultPopupWindow? _commonQuestionPopup;
+        private ResultPopupWindow? _variableNameSuggestionPopup;
 
         public MainWindow()
         {
@@ -104,7 +110,6 @@ namespace SpellingChecker
 
         private async void OnSpellingCorrectionRequested(object? sender, EventArgs e)
         {
-            ResultPopupWindow? popup = null;
             try
             {
                 var selectedText = _clipboardService.GetSelectedText();
@@ -119,19 +124,30 @@ namespace SpellingChecker
                 ShowNotification("맞춤법 교정 요청", 
                     $"'{selectedText}' 문장의 맞춤법 교정을 요청했습니다.", true);
 
-                // Create and show popup immediately with progress indicator
+                // Reuse or create popup window
                 var settings = _settingsService.LoadSettings();
-                popup = new ResultPopupWindow("", selectedText, "Spelling Correction", false, settings, enableHighlighting: true);
-                popup.ShowProgressIndicator();
-                popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(popup.GetResultText());
-                popup.ConvertRequested += async (s, text) => await ReprocessSpellingCorrection(popup, text);
-                popup.ToneChangeRequested += async (s, text) => 
+                if (_spellingCorrectionPopup == null || !_spellingCorrectionPopup.IsLoaded)
                 {
-                    // Save settings before reprocessing to persist the tone change
-                    _settingsService.SaveSettings(settings);
-                    await ReprocessSpellingCorrection(popup, text);
-                };
-                popup.Show();
+                    _spellingCorrectionPopup = new ResultPopupWindow("", selectedText, "Spelling Correction", false, settings, enableHighlighting: true);
+                    _spellingCorrectionPopup.CopyRequested += (s, args) => _clipboardService.SetClipboard(_spellingCorrectionPopup.GetResultText());
+                    _spellingCorrectionPopup.ConvertRequested += async (s, text) => await ReprocessSpellingCorrection(_spellingCorrectionPopup, text);
+                    _spellingCorrectionPopup.ToneChangeRequested += async (s, text) => 
+                    {
+                        // Save settings before reprocessing to persist the tone change
+                        _settingsService.SaveSettings(settings);
+                        await ReprocessSpellingCorrection(_spellingCorrectionPopup, text);
+                    };
+                    _spellingCorrectionPopup.Closed += (s, args) => _spellingCorrectionPopup = null;
+                    _spellingCorrectionPopup.Show();
+                }
+                else
+                {
+                    // Update existing window with new text
+                    _spellingCorrectionPopup.OriginalTextBox.Text = selectedText;
+                    _spellingCorrectionPopup.Activate();
+                }
+                
+                _spellingCorrectionPopup.ShowProgressIndicator();
 
                 // Show progress notification
                 ShowNotification("Processing...", "AI is correcting your text. Please wait...", true);
@@ -142,27 +158,26 @@ namespace SpellingChecker
                 ShowNotification("맞춤법 교정 완료", 
                     $"교정 결과는 '{result.CorrectedText}' 입니다.", true);
                 
-                popup.UpdateResultWithTone(result.CorrectedText, result.AppliedToneName);
-                popup.HideProgressIndicator();
+                _spellingCorrectionPopup.UpdateResultWithTone(result.CorrectedText, result.AppliedToneName);
+                _spellingCorrectionPopup.HideProgressIndicator();
                 
                 // Save settings after processing completes to persist tone selection
                 _settingsService.SaveSettings(settings);
             }
             catch (TimeoutException ex)
             {
-                popup?.HideProgressIndicator();
+                _spellingCorrectionPopup?.HideProgressIndicator();
                 ShowNotification("Request Timeout", "The AI service did not respond in time. Please check your network connection and try again.");
             }
             catch (Exception ex)
             {
-                popup?.HideProgressIndicator();
+                _spellingCorrectionPopup?.HideProgressIndicator();
                 ShowNotification("Error", ex.Message);
             }
         }
 
         private async void OnTranslationRequested(object? sender, EventArgs e)
         {
-            ResultPopupWindow? popup = null;
             try
             {
                 var selectedText = _clipboardService.GetSelectedText();
@@ -177,12 +192,24 @@ namespace SpellingChecker
                 ShowNotification("번역 요청", 
                     $"'{selectedText}' 문장의 번역을 요청했습니다.", true);
 
-                // Create and show popup immediately with progress indicator
-                popup = new ResultPopupWindow("", selectedText, "Translation", true, enableHighlighting: false);
-                popup.ShowProgressIndicator();
-                popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(popup.GetResultText());
-                popup.ConvertRequested += async (s, text) => await ReprocessTranslation(popup, text);
-                popup.Show();
+                // Reuse or create popup window
+                if (_translationPopup == null || !_translationPopup.IsLoaded)
+                {
+                    _translationPopup = new ResultPopupWindow("", selectedText, "Translation", true, enableHighlighting: false);
+                    _translationPopup.CopyRequested += (s, args) => _clipboardService.SetClipboard(_translationPopup.GetResultText());
+                    _translationPopup.ConvertRequested += async (s, text) => await ReprocessTranslation(_translationPopup, text);
+                    _translationPopup.Closed += (s, args) => _translationPopup = null;
+                    _translationPopup.Show();
+                }
+                else
+                {
+                    // Update existing window with new text
+                    _translationPopup.OriginalTextBox.Text = selectedText;
+                    _translationPopup.Title = "Translation";
+                    _translationPopup.Activate();
+                }
+                
+                _translationPopup.ShowProgressIndicator();
 
                 // Show progress notification
                 ShowNotification("Processing...", "AI is translating your text. Please wait...", true);
@@ -194,25 +221,24 @@ namespace SpellingChecker
                     $"번역 결과는 '{result.TranslatedText}' 입니다.\n" +
                     $"언어: {result.SourceLanguage} → {result.TargetLanguage}", true);
                 
-                popup.Title = $"Translation ({result.SourceLanguage} → {result.TargetLanguage})";
-                popup.UpdateResult(result.TranslatedText);
-                popup.HideProgressIndicator();
+                _translationPopup.Title = $"Translation ({result.SourceLanguage} → {result.TargetLanguage})";
+                _translationPopup.UpdateResult(result.TranslatedText);
+                _translationPopup.HideProgressIndicator();
             }
             catch (TimeoutException ex)
             {
-                popup?.HideProgressIndicator();
+                _translationPopup?.HideProgressIndicator();
                 ShowNotification("Request Timeout", "The AI service did not respond in time. Please check your network connection and try again.");
             }
             catch (Exception ex)
             {
-                popup?.HideProgressIndicator();
+                _translationPopup?.HideProgressIndicator();
                 ShowNotification("Error", ex.Message);
             }
         }
 
         private async void OnCommonQuestionRequested(object? sender, EventArgs e)
         {
-            ResultPopupWindow? popup = null;
             try
             {
                 var selectedText = _clipboardService.GetSelectedText();
@@ -227,12 +253,23 @@ namespace SpellingChecker
                 ShowNotification("질문 답변 요청", 
                     $"'{selectedText}' 질문에 대한 답변을 요청했습니다.", true);
 
-                // Create and show popup immediately with progress indicator
-                popup = new ResultPopupWindow("", selectedText, "Common Question Answer - Ctrl+Enter to reconvert", false, enableHighlighting: false);
-                popup.ShowProgressIndicator();
-                popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(popup.GetResultText());
-                popup.ConvertRequested += async (s, text) => await ReprocessCommonQuestion(popup, text);
-                popup.Show();
+                // Reuse or create popup window
+                if (_commonQuestionPopup == null || !_commonQuestionPopup.IsLoaded)
+                {
+                    _commonQuestionPopup = new ResultPopupWindow("", selectedText, "Common Question Answer - Ctrl+Enter to reconvert", false, enableHighlighting: false);
+                    _commonQuestionPopup.CopyRequested += (s, args) => _clipboardService.SetClipboard(_commonQuestionPopup.GetResultText());
+                    _commonQuestionPopup.ConvertRequested += async (s, text) => await ReprocessCommonQuestion(_commonQuestionPopup, text);
+                    _commonQuestionPopup.Closed += (s, args) => _commonQuestionPopup = null;
+                    _commonQuestionPopup.Show();
+                }
+                else
+                {
+                    // Update existing window with new text
+                    _commonQuestionPopup.OriginalTextBox.Text = selectedText;
+                    _commonQuestionPopup.Activate();
+                }
+                
+                _commonQuestionPopup.ShowProgressIndicator();
 
                 // Show progress notification
                 ShowNotification("Processing...", "AI is answering your question. Please wait...", true);
@@ -243,17 +280,17 @@ namespace SpellingChecker
                 ShowNotification("질문 답변 완료", 
                     $"질문에 대한 답변이 완료되었습니다.", true);
                 
-                popup.UpdateResult(result.Answer);
-                popup.HideProgressIndicator();
+                _commonQuestionPopup.UpdateResult(result.Answer);
+                _commonQuestionPopup.HideProgressIndicator();
             }
             catch (TimeoutException ex)
             {
-                popup?.HideProgressIndicator();
+                _commonQuestionPopup?.HideProgressIndicator();
                 ShowNotification("Request Timeout", "The AI service did not respond in time. Please check your network connection and try again.");
             }
             catch (Exception ex)
             {
-                popup?.HideProgressIndicator();
+                _commonQuestionPopup?.HideProgressIndicator();
                 ShowNotification("Error", ex.Message);
             }
         }
@@ -328,7 +365,6 @@ namespace SpellingChecker
 
         private async void OnVariableNameSuggestionRequested(object? sender, EventArgs e)
         {
-            ResultPopupWindow? popup = null;
             try
             {
                 var selectedText = _clipboardService.GetSelectedText();
@@ -343,12 +379,23 @@ namespace SpellingChecker
                 ShowNotification("변수명 추천 요청", 
                     $"'{selectedText}' 텍스트의 변수명을 추천합니다.", true);
 
-                // Create and show popup immediately with progress indicator
-                popup = new ResultPopupWindow("", selectedText, "Variable Name Suggestions (C#) - Ctrl+Enter to reconvert", false, enableHighlighting: false);
-                popup.ShowProgressIndicator();
-                popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(popup.GetResultText());
-                popup.ConvertRequested += async (s, text) => await ReprocessVariableNameSuggestion(popup, text);
-                popup.Show();
+                // Reuse or create popup window
+                if (_variableNameSuggestionPopup == null || !_variableNameSuggestionPopup.IsLoaded)
+                {
+                    _variableNameSuggestionPopup = new ResultPopupWindow("", selectedText, "Variable Name Suggestions (C#) - Ctrl+Enter to reconvert", false, enableHighlighting: false);
+                    _variableNameSuggestionPopup.CopyRequested += (s, args) => _clipboardService.SetClipboard(_variableNameSuggestionPopup.GetResultText());
+                    _variableNameSuggestionPopup.ConvertRequested += async (s, text) => await ReprocessVariableNameSuggestion(_variableNameSuggestionPopup, text);
+                    _variableNameSuggestionPopup.Closed += (s, args) => _variableNameSuggestionPopup = null;
+                    _variableNameSuggestionPopup.Show();
+                }
+                else
+                {
+                    // Update existing window with new text
+                    _variableNameSuggestionPopup.OriginalTextBox.Text = selectedText;
+                    _variableNameSuggestionPopup.Activate();
+                }
+                
+                _variableNameSuggestionPopup.ShowProgressIndicator();
 
                 // Show progress notification
                 ShowNotification("Processing...", "AI is suggesting variable names. Please wait...", true);
@@ -362,17 +409,17 @@ namespace SpellingChecker
                 // Format the suggestions for display
                 var formattedSuggestions = string.Join("\n", result.SuggestedNames.Select((name, index) => $"{index + 1}. {name}"));
                 
-                popup.UpdateResult(formattedSuggestions);
-                popup.HideProgressIndicator();
+                _variableNameSuggestionPopup.UpdateResult(formattedSuggestions);
+                _variableNameSuggestionPopup.HideProgressIndicator();
             }
             catch (TimeoutException ex)
             {
-                popup?.HideProgressIndicator();
+                _variableNameSuggestionPopup?.HideProgressIndicator();
                 ShowNotification("Request Timeout", "The AI service did not respond in time. Please check your network connection and try again.");
             }
             catch (Exception ex)
             {
-                popup?.HideProgressIndicator();
+                _variableNameSuggestionPopup?.HideProgressIndicator();
                 ShowNotification("Error", ex.Message);
             }
         }
