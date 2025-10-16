@@ -22,6 +22,7 @@ namespace SpellingChecker.Services
         private const uint MOD_CONTROL = 0x0002;
         private const uint MOD_SHIFT = 0x0004;
         private const uint MOD_WIN = 0x0008;
+        private const uint MOD_NOREPEAT = 0x4000;
 
         public event EventHandler? CommonQuestionRequested;
         public event EventHandler? SpellingCorrectionRequested;
@@ -74,7 +75,7 @@ namespace SpellingChecker.Services
             var commonQuestionRegistered = RegisterHotKey(
                 _windowHandle,
                 COMMON_QUESTION_HOTKEY_ID,
-                commonQuestionModifiers,
+                commonQuestionModifiers | MOD_NOREPEAT,
                 (uint)KeyInterop.VirtualKeyFromKey(commonQuestionKey)
             );
 
@@ -82,7 +83,7 @@ namespace SpellingChecker.Services
             var spellingRegistered = RegisterHotKey(
                 _windowHandle,
                 SPELLING_HOTKEY_ID,
-                spellingModifiers,
+                spellingModifiers | MOD_NOREPEAT,
                 (uint)KeyInterop.VirtualKeyFromKey(spellingKey)
             );
 
@@ -90,7 +91,7 @@ namespace SpellingChecker.Services
             var translationRegistered = RegisterHotKey(
                 _windowHandle,
                 TRANSLATION_HOTKEY_ID,
-                translationModifiers,
+                translationModifiers | MOD_NOREPEAT,
                 (uint)KeyInterop.VirtualKeyFromKey(translationKey)
             );
 
@@ -98,7 +99,7 @@ namespace SpellingChecker.Services
             var variableNameRegistered = RegisterHotKey(
                 _windowHandle,
                 VARIABLE_NAME_SUGGESTION_HOTKEY_ID,
-                variableNameModifiers,
+                variableNameModifiers | MOD_NOREPEAT,
                 (uint)KeyInterop.VirtualKeyFromKey(variableNameKey)
             );
 
