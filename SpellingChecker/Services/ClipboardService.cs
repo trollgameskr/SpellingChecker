@@ -13,11 +13,6 @@ namespace SpellingChecker.Services
     public class ClipboardService
     {
         private readonly SettingsService _settingsService;
-        
-        /// <summary>
-        /// Indicates which method was used to get the selected text (for debugging)
-        /// </summary>
-        public bool UsedSendMessageMethod { get; private set; }
 
         public ClipboardService(SettingsService settingsService)
         {
@@ -34,24 +29,6 @@ namespace SpellingChecker.Services
         private static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);
 
         [DllImport("user32.dll")]
-        private static extern IntPtr GetFocus();
-
-        [DllImport("user32.dll")]
-        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr processId);
-
-        [DllImport("user32.dll")]
-        private static extern bool AttachThreadInput(uint idAttach, uint idAttachTo, bool fAttach);
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
-
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, StringBuilder lParam);
-
-        [DllImport("kernel32.dll")]
-        private static extern uint GetCurrentThreadId();
-
-        [DllImport("user32.dll")]
         private static extern short GetAsyncKeyState(int vKey);
 
         private const byte VK_CONTROL = 0x11;
@@ -61,125 +38,26 @@ namespace SpellingChecker.Services
         private const byte VK_MENU = 0x12; // Alt key
         private const uint KEYEVENTF_KEYUP = 0x0002;
 
-        private const uint WM_GETTEXT = 0x000D;
-        private const uint WM_GETTEXTLENGTH = 0x000E;
-        private const uint EM_GETSEL = 0x00B0;
-        private const uint EM_EXGETSEL = 0x0434;
-
         /// <summary>
-        /// Gets the currently selected text using SendMessage API
+        /// Gets the currently selected text using clipboard method
         /// </summary>
         public string GetSelectedText()
         {
             try
             {
-                // First, try using SendMessage to get selected text directly
-                var selectedText = GetSelectedTextViaSendMessage();
-                
-                // If SendMessage fails, fallback to clipboard method
-                if (string.IsNullOrEmpty(selectedText))
-                {
-                    UsedSendMessageMethod = false;
-                    selectedText = GetSelectedTextViaClipboard();
-                }
-                else
-                {
-                    UsedSendMessageMethod = true;
-                }
-
-                return selectedText;
+                return GetSelectedTextViaClipboard();
             }
             catch (Exception ex)
             {
-                // Return empty string if all methods fail
+                // Return empty string if clipboard method fails
                 // Could add logging here in future: System.Diagnostics.Debug.WriteLine($"Failed to get selected text: {ex.Message}");
                 _ = ex; // Suppress warning about unused variable
-                UsedSendMessageMethod = false;
                 return string.Empty;
             }
         }
 
         /// <summary>
-        /// Gets selected text using Windows SendMessage API
-        /// </summary>
-        private string GetSelectedTextViaSendMessage()
-        {
-            try
-            {
-                var foregroundWindow = GetForegroundWindow();
-                if (foregroundWindow == IntPtr.Zero)
-                    return string.Empty;
-
-                // Get the focused control in the foreground window
-                var currentThreadId = GetCurrentThreadId();
-                var foregroundThreadId = GetWindowThreadProcessId(foregroundWindow, IntPtr.Zero);
-                
-                IntPtr focusedControl = IntPtr.Zero;
-                
-                if (foregroundThreadId != currentThreadId)
-                {
-                    // Attach to the foreground thread to get its focused control
-                    AttachThreadInput(currentThreadId, foregroundThreadId, true);
-                    focusedControl = GetFocus();
-                    AttachThreadInput(currentThreadId, foregroundThreadId, false);
-                }
-                else
-                {
-                    focusedControl = GetFocus();
-                }
-
-                if (focusedControl == IntPtr.Zero)
-                    focusedControl = foregroundWindow;
-
-                // Try to get selection using EM_GETSEL and WM_GETTEXT for edit controls
-                IntPtr selStart = IntPtr.Zero;
-                IntPtr selEnd = IntPtr.Zero;
-                
-                var result = SendMessage(focusedControl, EM_GETSEL, ref selStart, ref selEnd);
-                
-                if (selStart.ToInt32() != selEnd.ToInt32())
-                {
-                    // There is a selection
-                    var selectionLength = selEnd.ToInt32() - selStart.ToInt32();
-                    
-                    if (selectionLength > 0 && selectionLength < 100000) // Sanity check
-                    {
-                        // Get the entire text first
-                        var textLength = (int)SendMessage(focusedControl, WM_GETTEXTLENGTH, IntPtr.Zero, IntPtr.Zero);
-                        
-                        if (textLength > 0 && selEnd.ToInt32() <= textLength)
-                        {
-                            var buffer = new StringBuilder(textLength + 1);
-                            SendMessage(focusedControl, WM_GETTEXT, new IntPtr(buffer.Capacity), buffer);
-                            
-                            if (buffer.Length > 0)
-                            {
-                                // Extract the selected portion
-                                var startIndex = selStart.ToInt32();
-                                var endIndex = selEnd.ToInt32();
-                                
-                                if (startIndex >= 0 && endIndex <= buffer.Length && startIndex < endIndex)
-                                {
-                                    return buffer.ToString(startIndex, endIndex - startIndex);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                return string.Empty;
-            }
-            catch (Exception ex)
-            {
-                // Return empty if SendMessage API fails (may not be an edit control)
-                // Could add logging here in future: System.Diagnostics.Debug.WriteLine($"SendMessage failed: {ex.Message}");
-                _ = ex; // Suppress warning about unused variable
-                return string.Empty;
-            }
-        }
-
-        /// <summary>
-        /// Gets selected text via clipboard as fallback method
+        /// Gets selected text via clipboard method
         /// </summary>
         private string GetSelectedTextViaClipboard()
         {
@@ -310,9 +188,6 @@ namespace SpellingChecker.Services
                 return string.Empty;
             }
         }
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, ref IntPtr wParam, ref IntPtr lParam);
 
         /// <summary>
         /// Sets text to clipboard

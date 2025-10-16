@@ -22,9 +22,8 @@ namespace SpellingChecker.Views
         private readonly string _originalText;
         private bool _isInitializing = true;
         private string? _appliedToneName = null;
-        private bool _usedSendMessageMethod = false;
 
-        public ResultPopupWindow(string result, string original, string title, bool isTranslationMode = false, Models.AppSettings? settings = null, bool enableHighlighting = false, bool usedSendMessageMethod = false)
+        public ResultPopupWindow(string result, string original, string title, bool isTranslationMode = false, Models.AppSettings? settings = null, bool enableHighlighting = false)
         {
             InitializeComponent();
             
@@ -34,10 +33,6 @@ namespace SpellingChecker.Views
             _enableHighlighting = enableHighlighting;
             _settings = settings;
             _originalText = original;
-            _usedSendMessageMethod = usedSendMessageMethod;
-
-            // Update the debug indicator
-            UpdateDebugIndicator();
 
             // Set result text with highlighting if highlighting is enabled
             if (_enableHighlighting)
@@ -293,21 +288,6 @@ namespace SpellingChecker.Views
             else
             {
                 AppliedToneTextBlock.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        private void UpdateDebugIndicator()
-        {
-            if (SendMessageIndicator == null)
-                return;
-
-            if (_usedSendMessageMethod)
-            {
-                SendMessageIndicator.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                SendMessageIndicator.Visibility = Visibility.Collapsed;
             }
         }
 
