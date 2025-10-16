@@ -201,6 +201,13 @@ namespace SpellingChecker.Services
                 // This prevents the hotkey modifiers from interfering with the copy operation
                 WaitForModifierKeysRelease();
                 
+                // Additional delay after modifier keys are released to ensure:
+                // 1. The foreground window regains proper focus
+                // 2. The application is ready to process keyboard input
+                // 3. Any pending key events are fully processed
+                // This prevents issues where apps select all text or fail to copy
+                Thread.Sleep(50);
+                
                 string previousClipboard = string.Empty;
                 
                 // Save previous clipboard content
@@ -218,7 +225,7 @@ namespace SpellingChecker.Services
                 keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
 
                 // Give the system time to process the input and copy to clipboard
-                Thread.Sleep(10);
+                Thread.Sleep(50);
 
                 if (Clipboard.ContainsText())
                 {
@@ -235,6 +242,10 @@ namespace SpellingChecker.Services
                 
                 while (stopwatch.ElapsedMilliseconds < timeoutMs)
                 {
+                    // Ensure Ctrl key is fully released before retry
+                    // This prevents accidental Ctrl+A (select all) in some applications
+                    Thread.Sleep(50);
+                    
                     // Simulate Ctrl+C using keybd_event (proven to work in ReplaceSelectedText)
                     keybd_event(VK_CONTROL, 0, 0, UIntPtr.Zero);
                     keybd_event(VK_C, 0, 0, UIntPtr.Zero);
@@ -242,7 +253,7 @@ namespace SpellingChecker.Services
                     keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
 
                     // Give the system time to process the input and copy to clipboard
-                    Thread.Sleep(10);
+                    Thread.Sleep(50);
 
                     if (Clipboard.ContainsText())
                     {
