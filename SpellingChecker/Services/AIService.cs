@@ -217,7 +217,7 @@ namespace SpellingChecker.Services
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException($"Common question answering failed: {ex.Message}", ex);
+                throw new InvalidOperationException("Common question answering failed", ex);
             }
         }
 
