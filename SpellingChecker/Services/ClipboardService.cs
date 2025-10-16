@@ -68,16 +68,17 @@ namespace SpellingChecker.Services
         {
             try
             {
-                // First, try using SendMessage to get selected text directly
-                var selectedText = GetSelectedTextViaSendMessage();
+                // SendMessage method is unreliable with multi-byte characters and different control types
+                // Use clipboard method which is more reliable
+                return GetSelectedTextViaClipboard();
                 
-                // If SendMessage fails, fallback to clipboard method
-                if (string.IsNullOrEmpty(selectedText))
-                {
-                    selectedText = GetSelectedTextViaClipboard();
-                }
-
-                return selectedText;
+                // Original approach (disabled due to reliability issues):
+                // var selectedText = GetSelectedTextViaSendMessage();
+                // if (string.IsNullOrEmpty(selectedText))
+                // {
+                //     selectedText = GetSelectedTextViaClipboard();
+                // }
+                // return selectedText;
             }
             catch (Exception ex)
             {
@@ -88,42 +89,7 @@ namespace SpellingChecker.Services
             }
         }
 
-        /// <summary>
-        /// Adjusts the index from EM_GETSEL to account for multi-byte characters and line breaks.
-        /// Some controls return byte offsets in EM_GETSEL rather than character indices.
-        /// This function converts byte offsets to character indices.
-        /// </summary>
-        /// <param name="text">The text retrieved from WM_GETTEXT</param>
-        /// <param name="offset">The offset from EM_GETSEL (may be byte offset or character index)</param>
-        /// <returns>The character index in the string</returns>
-        private int GetAdjustedIndex(string text, int offset)
-        {
-            // EM_GETSEL may return byte offsets for multi-byte characters (e.g., UTF-8 bytes)
-            // We need to convert byte offset to character index
-            
-            int byteCount = 0;
-            int charIndex = 0;
-            
-            // Use UTF-8 encoding as it's commonly used for multi-byte text
-            var encoding = Encoding.UTF8;
-            
-            for (int i = 0; i < text.Length; i++)
-            {
-                // Check if we've reached the target offset
-                if (byteCount >= offset)
-                {
-                    return charIndex;
-                }
-                
-                // Count bytes for this character
-                // For \r, we may need to skip it in byte counting depending on the control
-                byteCount += encoding.GetByteCount(new char[] { text[i] });
-                charIndex++;
-            }
-            
-            // If we've gone through all text, return the length
-            return charIndex;
-        }
+
 
         /// <summary>
         /// Gets selected text using Windows SendMessage API
@@ -181,22 +147,14 @@ namespace SpellingChecker.Services
                             if (buffer.Length > 0)
                             {
                                 // Extract the selected portion
+                                var text = buffer.ToString();
                                 var startIndex = selStart.ToInt32();
                                 var endIndex = selEnd.ToInt32();
                                 
-                                // EM_GETSEL returns indices that count \r\n as 2 characters
-                                // But in the actual string, we need to map these indices correctly
-                                // Count the number of \r characters before startIndex and endIndex
-                                // to adjust for the difference between control indices and string indices
-                                var text = buffer.ToString();
-                                
-                                // Adjust indices by counting line breaks before each position
-                                var adjustedStart = GetAdjustedIndex(text, startIndex);
-                                var adjustedEnd = GetAdjustedIndex(text, endIndex);
-                                
-                                if (adjustedStart >= 0 && adjustedEnd <= text.Length && adjustedStart < adjustedEnd)
+                                // Use indices directly - EM_GETSEL returns character positions
+                                if (startIndex >= 0 && endIndex <= text.Length && startIndex < endIndex)
                                 {
-                                    return text.Substring(adjustedStart, adjustedEnd - adjustedStart);
+                                    return text.Substring(startIndex, endIndex - startIndex);
                                 }
                             }
                         }
