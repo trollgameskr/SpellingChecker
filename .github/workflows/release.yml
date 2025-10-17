@@ -31,31 +31,33 @@ jobs:
         Compress-Archive -Path ./publish/SpellingChecker.exe, README.md, LICENSE, CONFIG.md, QUICKSTART.md -DestinationPath SpellingChecker-${{ github.ref_name }}-win-x64.zip
       shell: pwsh
     
-    - name: Create Release
-      uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844 # v1
-      with:
-        files: |
-          SpellingChecker-${{ github.ref_name }}-win-x64.zip
-        body: |
-          ## SpellingChecker ${{ github.ref_name }}
-          
-          AI-powered spelling correction and translation tool for Windows.
-          
-          ### Installation
-          1. Download `SpellingChecker-${{ github.ref_name }}-win-x64.zip`
-          2. Extract the ZIP file
-          3. Run `SpellingChecker.exe`
-          4. Configure your OpenAI API key in Settings
-          
-          ### Features
-          - AI-powered spelling and grammar correction
-          - Korean-English translation
-          - Global hotkeys (Ctrl+Shift+Alt+Y for correction, Ctrl+Shift+Alt+T for translation)
-          - System tray integration
-          - Usage statistics tracking
-          
-          See [CHANGELOG.md](https://github.com/trollgameskr/SpellingChecker/blob/main/CHANGELOG.md) for full release notes.
-        draft: false
-        prerelease: false
+    - name: Create Release with GitHub CLI
+      run: |
+        $releaseBody = @"
+        ## SpellingChecker ${{ github.ref_name }}
+        
+        AI-powered spelling correction and translation tool for Windows.
+        
+        ### Installation
+        1. Download ``SpellingChecker-${{ github.ref_name }}-win-x64.zip``
+        2. Extract the ZIP file
+        3. Run ``SpellingChecker.exe``
+        4. Configure your OpenAI API key in Settings
+        
+        ### Features
+        - AI-powered spelling and grammar correction
+        - Korean-English translation
+        - Global hotkeys (Ctrl+Shift+Alt+Y for correction, Ctrl+Shift+Alt+T for translation)
+        - System tray integration
+        - Usage statistics tracking
+        
+        See [CHANGELOG.md](https://github.com/trollgameskr/SpellingChecker/blob/main/CHANGELOG.md) for full release notes.
+        "@
+        
+        gh release create ${{ github.ref_name }} `
+          SpellingChecker-${{ github.ref_name }}-win-x64.zip `
+          --title "SpellingChecker ${{ github.ref_name }}" `
+          --notes "$releaseBody"
+      shell: pwsh
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
