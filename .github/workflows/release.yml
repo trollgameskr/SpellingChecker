@@ -28,11 +28,12 @@ jobs:
       run: dotnet build SpellingChecker.sln --configuration Release --no-restore
     
     - name: Publish
-      run: dotnet publish SpellingChecker/SpellingChecker.csproj -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -o ./publish
+      run: dotnet publish SpellingChecker/SpellingChecker.csproj -c Release -r win-x64 --self-contained -o ./publish
     
     - name: Create release ZIP
       run: |
-        Compress-Archive -Path ./publish/SpellingChecker.exe, README.md, LICENSE, CONFIG.md, QUICKSTART.md -DestinationPath SpellingChecker-${{ github.ref_name }}-win-x64.zip
+        Copy-Item README.md, LICENSE, CONFIG.md, QUICKSTART.md -Destination ./publish/
+        Compress-Archive -Path ./publish/* -DestinationPath SpellingChecker-${{ github.ref_name }}-win-x64.zip
       shell: pwsh
     
     - name: Create Release with GitHub CLI

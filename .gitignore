@@ -121,3 +121,4 @@ ClientBin/
 *.publishsettings
 
 # Application specific
+publish/
