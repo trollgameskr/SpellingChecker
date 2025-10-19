@@ -60,7 +60,8 @@
                              Background="#F0F8FF"
                              Padding="5"
                              FontWeight="SemiBold"
-                             BorderThickness="0"/>
+                             BorderThickness="0"
+                             PreviewMouseLeftButtonDown="ResultRichTextBox_PreviewMouseLeftButtonDown"/>
                 
                 <!-- Progress Indicator Overlay -->
                 <Grid x:Name="ProgressOverlay" Grid.Row="0" Grid.RowSpan="2" Background="#B0FFFFFF" Visibility="Collapsed">
@@ -71,6 +72,37 @@
                 </Grid>
             </Grid>
         </Border>
+        
+        <!-- Word Definition Popup -->
+        <Popup x:Name="WordDefinitionPopup"
+               AllowsTransparency="True"
+               Placement="Mouse"
+               PlacementTarget="{Binding ElementName=ResultRichTextBox}"
+               StaysOpen="False">
+            <Border Background="White"
+                    BorderBrush="#2196F3"
+                    BorderThickness="2"
+                    CornerRadius="5"
+                    Padding="10"
+                    MaxWidth="400">
+                <StackPanel>
+                    <TextBlock x:Name="DefinitionWordTextBlock"
+                               FontWeight="Bold"
+                               FontSize="14"
+                               Foreground="#2196F3"
+                               Margin="0,0,0,5"/>
+                    <Separator Margin="0,0,0,5"/>
+                    <TextBlock x:Name="DefinitionTextBlock"
+                               TextWrapping="Wrap"
+                               FontSize="12"/>
+                    <ProgressBar x:Name="DefinitionProgressBar"
+                                 IsIndeterminate="True"
+                                 Height="3"
+                                 Margin="0,5,0,0"
+                                 Visibility="Collapsed"/>
+                </StackPanel>
+            </Border>
+        </Popup>
 
         <!-- Tone Preset Selection (only visible in spelling correction mode) -->
         <StackPanel x:Name="TonePresetPanel" Grid.Row="4" Margin="0,0,0,10" Visibility="Collapsed">

@@ -45,6 +45,15 @@ namespace SpellingChecker.Models
     }
 
     /// <summary>
+    /// Represents the result of a word definition lookup operation
+    /// </summary>
+    public class WordDefinitionResult
+    {
+        public string Word { get; set; } = string.Empty;
+        public string Definition { get; set; } = string.Empty;
+    }
+
+    /// <summary>
     /// Represents a tone preset for spelling correction
     /// </summary>
     public class TonePreset

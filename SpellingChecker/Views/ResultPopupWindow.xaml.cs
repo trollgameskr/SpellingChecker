@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
+using System.Windows.Input;
 
 namespace SpellingChecker.Views
 {
@@ -22,6 +23,7 @@ namespace SpellingChecker.Views
         private readonly string _originalText;
         private bool _isInitializing = true;
         private string? _appliedToneName = null;
+        private Services.AIService? _aiService;
 
         public ResultPopupWindow(string result, string original, string title, bool isTranslationMode = false, Models.AppSettings? settings = null, bool enableHighlighting = false)
         {
@@ -33,6 +35,10 @@ namespace SpellingChecker.Views
             _enableHighlighting = enableHighlighting;
             _settings = settings;
             _originalText = original;
+
+            // Initialize AI service for word definition lookup
+            var settingsService = new Services.SettingsService();
+            _aiService = new Services.AIService(settingsService);
 
             // Set result text with highlighting if highlighting is enabled
             if (_enableHighlighting)
@@ -347,6 +353,112 @@ namespace SpellingChecker.Views
                 e.Handled = true;
                 ConvertButton_Click(sender, new RoutedEventArgs());
             }
+        }
+
+        private async void ResultRichTextBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (_aiService == null)
+                return;
+
+            // Get the position of the click
+            var position = e.GetPosition(ResultRichTextBox);
+            var textPointer = ResultRichTextBox.GetPositionFromPoint(position, true);
+            
+            if (textPointer == null)
+                return;
+
+            // Get the word at the clicked position
+            var word = GetWordAtPosition(textPointer);
+            
+            if (string.IsNullOrWhiteSpace(word))
+                return;
+
+            // Show the popup with loading state
+            DefinitionWordTextBlock.Text = word;
+            DefinitionTextBlock.Text = "정의를 불러오는 중...";
+            DefinitionProgressBar.Visibility = Visibility.Visible;
+            WordDefinitionPopup.IsOpen = true;
+
+            try
+            {
+                // Get the word definition from AI service
+                var result = await _aiService.GetWordDefinitionAsync(word);
+                
+                // Update the popup with the definition
+                DefinitionTextBlock.Text = result.Definition;
+                DefinitionProgressBar.Visibility = Visibility.Collapsed;
+            }
+            catch (Exception ex)
+            {
+                DefinitionTextBlock.Text = $"오류: {ex.Message}";
+                DefinitionProgressBar.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private string GetWordAtPosition(TextPointer position)
+        {
+            if (position == null)
+                return string.Empty;
+
+            // Get the text run at the position
+            var textRun = position.Parent as Run;
+            if (textRun == null)
+            {
+                // Try to find the nearest run
+                var contextBefore = position.GetTextInRun(LogicalDirection.Backward);
+                var contextAfter = position.GetTextInRun(LogicalDirection.Forward);
+                
+                if (!string.IsNullOrEmpty(contextBefore) || !string.IsNullOrEmpty(contextAfter))
+                {
+                    var fullContext = contextBefore + contextAfter;
+                    return ExtractWordFromContext(fullContext, contextBefore.Length);
+                }
+                return string.Empty;
+            }
+
+            // Get the text of the run
+            var text = textRun.Text;
+            if (string.IsNullOrWhiteSpace(text))
+                return string.Empty;
+
+            // Find the character offset within the run
+            var runStart = textRun.ContentStart;
+            var offset = runStart.GetOffsetToPosition(position);
+            
+            return ExtractWordFromContext(text, offset);
+        }
+
+        private string ExtractWordFromContext(string text, int clickPosition)
+        {
+            if (string.IsNullOrWhiteSpace(text) || clickPosition < 0 || clickPosition > text.Length)
+                return string.Empty;
+
+            // Find the word boundaries around the click position
+            int start = clickPosition;
+            int end = clickPosition;
+
+            // Move start backwards to find the beginning of the word
+            while (start > 0 && IsWordCharacter(text[start - 1]))
+            {
+                start--;
+            }
+
+            // Move end forwards to find the end of the word
+            while (end < text.Length && IsWordCharacter(text[end]))
+            {
+                end++;
+            }
+
+            if (start >= end)
+                return string.Empty;
+
+            return text.Substring(start, end - start).Trim();
+        }
+
+        private bool IsWordCharacter(char c)
+        {
+            // Consider letters, numbers, and Korean characters as word characters
+            return char.IsLetterOrDigit(c) || (c >= 0xAC00 && c <= 0xD7A3) || c == '\'' || c == '-';
         }
     }
 }

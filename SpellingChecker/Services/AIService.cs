@@ -221,6 +221,55 @@ namespace SpellingChecker.Services
             }
         }
 
+        public async Task<WordDefinitionResult> GetWordDefinitionAsync(string word)
+        {
+            if (string.IsNullOrWhiteSpace(word))
+            {
+                return new WordDefinitionResult { Word = word, Definition = string.Empty };
+            }
+
+            try
+            {
+                var detectedLanguage = DetectLanguage(word);
+                string prompt;
+                
+                if (detectedLanguage == "Korean")
+                {
+                    prompt = $"다음 한국어 단어 또는 숙어의 뜻을 간결하게 설명해주세요. 단어의 품사와 주요 의미를 포함하고, 필요시 예문도 추가해주세요.\n\n단어/숙어: {word}";
+                }
+                else
+                {
+                    prompt = $"다음 영어 단어 또는 숙어의 뜻을 한국어로 간결하게 설명해주세요. 단어의 품사와 주요 의미를 포함하고, 필요시 예문도 추가해주세요.\n\n단어/숙어: {word}";
+                }
+
+                var requestBody = new
+                {
+                    model = _settings.Model,
+                    messages = new[]
+                    {
+                        new { role = "system", content = "당신은 사전과 같은 역할을 하는 AI입니다. 단어와 숙어의 정확한 뜻을 간결하고 명확하게 설명합니다." },
+                        new { role = "user", content = prompt }
+                    },
+                    temperature = 0.3,
+                    max_tokens = 500
+                };
+
+                var response = await SendRequestAsync(requestBody);
+                var definition = ExtractContentFromResponse(response);
+                RecordUsageFromResponse(response, "WordDefinition");
+
+                return new WordDefinitionResult
+                {
+                    Word = word,
+                    Definition = definition.Trim()
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Word definition lookup failed: {ex.Message}", ex);
+            }
+        }
+
         private async Task<string> SendRequestAsync(object requestBody)
         {
             _settings = _settingsService.LoadSettings(); // Reload settings for API key updates
