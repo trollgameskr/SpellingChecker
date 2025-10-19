@@ -209,15 +209,102 @@ namespace SpellingChecker.Services
                 var answer = ExtractContentFromResponse(response);
                 RecordUsageFromResponse(response, "CommonQuestion");
 
+                // Check if the answer contains a question for the user
+                var sampleResponses = Array.Empty<string>();
+                if (ContainsQuestionForUser(answer))
+                {
+                    sampleResponses = await GenerateSampleResponsesAsync(answer);
+                }
+
                 return new CommonQuestionResult
                 {
                     Question = question,
-                    Answer = answer.Trim()
+                    Answer = answer.Trim(),
+                    SampleResponses = sampleResponses
                 };
             }
             catch (Exception ex)
             {
                 throw new InvalidOperationException("Common question answering failed", ex);
+            }
+        }
+
+        private bool ContainsQuestionForUser(string text)
+        {
+            // Check if the text contains a question mark
+            if (text.Contains("?") || text.Contains("?"))
+            {
+                return true;
+            }
+            
+            // Check for common question patterns in Korean
+            string[] questionPatterns = new[]
+            {
+                "어떻게 생각하시나요",
+                "어떻게 생각하세요",
+                "원하시나요",
+                "원하세요",
+                "궁금하신가요",
+                "궁금하세요",
+                "알고 싶으신가요",
+                "알고 싶으세요",
+                "어떤가요",
+                "무엇인가요",
+                "언제인가요",
+                "어디인가요",
+                "왜인가요",
+                "누구인가요"
+            };
+            
+            return questionPatterns.Any(pattern => text.Contains(pattern, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private async Task<string[]> GenerateSampleResponsesAsync(string aiAnswer)
+        {
+            try
+            {
+                var prompt = $"다음 AI의 답변에는 사용자에게 질문이 포함되어 있습니다. 이 질문에 대한 2가지 적절한 응답 샘플을 생성해주세요. 각 응답은 자연스럽고 다양한 관점을 포함해야 합니다.\n\nAI 답변:\n{aiAnswer}\n\n2가지 응답 샘플을 다음 형식으로 작성해주세요:\n1. [첫 번째 응답]\n2. [두 번째 응답]";
+
+                var requestBody = new
+                {
+                    model = _settings.Model,
+                    messages = new[]
+                    {
+                        new { role = "system", content = "당신은 대화 어시스턴트입니다. 사용자가 자연스럽고 적절하게 응답할 수 있도록 다양한 응답 샘플을 제공합니다." },
+                        new { role = "user", content = prompt }
+                    },
+                    temperature = 0.8,
+                    max_tokens = 300
+                };
+
+                var response = await SendRequestAsync(requestBody);
+                var responsesText = ExtractContentFromResponse(response);
+                RecordUsageFromResponse(response, "SampleResponses");
+
+                // Parse the responses - split by newlines and take first 2 non-empty lines
+                var responses = responsesText
+                    .Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(s => s.Trim())
+                    .Where(s => !string.IsNullOrWhiteSpace(s))
+                    .Select(s => 
+                    {
+                        // Remove numbering prefix like "1. " or "2. "
+                        if (s.Length > 3 && char.IsDigit(s[0]) && s[1] == '.' && s[2] == ' ')
+                        {
+                            return s.Substring(3).Trim();
+                        }
+                        return s;
+                    })
+                    .Take(2)
+                    .ToArray();
+
+                return responses.Length == 2 ? responses : Array.Empty<string>();
+            }
+            catch (Exception)
+            {
+                // If sample response generation fails, return empty array
+                // This is a non-critical feature that shouldn't interrupt the main flow
+                return Array.Empty<string>();
             }
         }
 

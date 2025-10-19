@@ -243,7 +243,7 @@ namespace SpellingChecker
                 ShowNotification("질문 답변 완료", 
                     $"질문에 대한 답변이 완료되었습니다.", true);
                 
-                popup.UpdateResult(result.Answer);
+                popup.UpdateResultWithSampleResponses(result.Answer, result.SampleResponses);
                 popup.HideProgressIndicator();
             }
             catch (TimeoutException)
@@ -433,7 +433,7 @@ namespace SpellingChecker
                 ShowNotification("질문 답변 완료", 
                     $"질문에 대한 답변이 완료되었습니다.", true);
                 
-                popup.UpdateResult(result.Answer);
+                popup.UpdateResultWithSampleResponses(result.Answer, result.SampleResponses);
                 popup.HideProgressIndicator();
             }
             catch (TimeoutException)

@@ -87,6 +87,43 @@
                        Margin="0,0,0,0"/>
         </StackPanel>
 
+        <!-- Sample Responses Panel (only visible when AI asks a question back) -->
+        <StackPanel x:Name="SampleResponsesPanel" Grid.Row="4" Margin="0,0,0,10" Visibility="Collapsed">
+            <TextBlock Text="💡 응답 샘플 (클릭하여 사용):" FontWeight="SemiBold" Margin="0,0,0,5"/>
+            <Border x:Name="SampleResponse1Border" 
+                    BorderBrush="#2196F3" 
+                    BorderThickness="1" 
+                    CornerRadius="4"
+                    Margin="0,0,0,5"
+                    Padding="10"
+                    Background="#E3F2FD"
+                    Cursor="Hand"
+                    MouseEnter="SampleResponseBorder_MouseEnter"
+                    MouseLeave="SampleResponseBorder_MouseLeave"
+                    MouseLeftButtonDown="SampleResponse1_Click"
+                    Visibility="Collapsed">
+                <TextBlock x:Name="SampleResponse1Text" 
+                           TextWrapping="Wrap" 
+                           Foreground="#1976D2"/>
+            </Border>
+            <Border x:Name="SampleResponse2Border" 
+                    BorderBrush="#2196F3" 
+                    BorderThickness="1" 
+                    CornerRadius="4"
+                    Margin="0,0,0,0"
+                    Padding="10"
+                    Background="#E3F2FD"
+                    Cursor="Hand"
+                    MouseEnter="SampleResponseBorder_MouseEnter"
+                    MouseLeave="SampleResponseBorder_MouseLeave"
+                    MouseLeftButtonDown="SampleResponse2_Click"
+                    Visibility="Collapsed">
+                <TextBlock x:Name="SampleResponse2Text" 
+                           TextWrapping="Wrap" 
+                           Foreground="#1976D2"/>
+            </Border>
+        </StackPanel>
+
         <!-- Buttons -->
         <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Copy to Clipboard" 

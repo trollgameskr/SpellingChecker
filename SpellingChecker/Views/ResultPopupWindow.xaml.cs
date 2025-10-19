@@ -22,6 +22,7 @@ namespace SpellingChecker.Views
         private readonly string _originalText;
         private bool _isInitializing = true;
         private string? _appliedToneName = null;
+        private string[] _sampleResponses = Array.Empty<string>();
 
         public ResultPopupWindow(string result, string original, string title, bool isTranslationMode = false, Models.AppSettings? settings = null, bool enableHighlighting = false)
         {
@@ -85,6 +86,31 @@ namespace SpellingChecker.Views
             _appliedToneName = appliedToneName;
             UpdateResult(newResult);
             UpdateAppliedToneDisplay();
+        }
+
+        public void UpdateResultWithSampleResponses(string newResult, string[] sampleResponses)
+        {
+            UpdateResult(newResult);
+            _sampleResponses = sampleResponses ?? Array.Empty<string>();
+            UpdateSampleResponsesDisplay();
+        }
+
+        private void UpdateSampleResponsesDisplay()
+        {
+            if (_sampleResponses.Length >= 2)
+            {
+                SampleResponsesPanel.Visibility = Visibility.Visible;
+                
+                SampleResponse1Text.Text = _sampleResponses[0];
+                SampleResponse1Border.Visibility = Visibility.Visible;
+                
+                SampleResponse2Text.Text = _sampleResponses[1];
+                SampleResponse2Border.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                SampleResponsesPanel.Visibility = Visibility.Collapsed;
+            }
         }
 
         public void ShowProgressIndicator()
@@ -345,6 +371,40 @@ namespace SpellingChecker.Views
             if (e.Key == System.Windows.Input.Key.Enter && (System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftCtrl) || System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightCtrl)))
             {
                 e.Handled = true;
+                ConvertButton_Click(sender, new RoutedEventArgs());
+            }
+        }
+
+        private void SampleResponseBorder_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (sender is System.Windows.Controls.Border border)
+            {
+                border.Background = new SolidColorBrush(Color.FromRgb(187, 222, 251)); // Lighter blue on hover
+            }
+        }
+
+        private void SampleResponseBorder_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (sender is System.Windows.Controls.Border border)
+            {
+                border.Background = new SolidColorBrush(Color.FromRgb(227, 242, 253)); // Original light blue
+            }
+        }
+
+        private void SampleResponse1_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (_sampleResponses.Length >= 1)
+            {
+                OriginalTextBox.Text = _sampleResponses[0];
+                ConvertButton_Click(sender, new RoutedEventArgs());
+            }
+        }
+
+        private void SampleResponse2_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (_sampleResponses.Length >= 2)
+            {
+                OriginalTextBox.Text = _sampleResponses[1];
                 ConvertButton_Click(sender, new RoutedEventArgs());
             }
         }

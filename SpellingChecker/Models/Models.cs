@@ -42,6 +42,7 @@ namespace SpellingChecker.Models
     {
         public string Question { get; set; } = string.Empty;
         public string Answer { get; set; } = string.Empty;
+        public string[] SampleResponses { get; set; } = Array.Empty<string>();
     }
 
     /// <summary>
