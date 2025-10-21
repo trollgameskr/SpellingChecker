@@ -83,6 +83,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Accessible from Settings window
 - **Change highlighting**: Spelling corrections now highlight changed words in yellow for easy identification of modifications
 
+### Fixed
+- Fixed culture-related exception that occurred when opening the Settings window
+  - Removed `InvariantGlobalization` setting that was causing WPF data binding failures
+  - Culture resources (including Korean language support) are now properly included
+
 ### Planned Features
 - Customizable hotkeys
 - Support for additional languages (Japanese, Chinese, Spanish, etc.)
