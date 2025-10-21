@@ -122,3 +122,4 @@ ClientBin/
 
 # Application specific
 publish/
+publish-test-*/
