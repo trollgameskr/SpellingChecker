@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Interop;
+using SpellingChecker.Models;
 using SpellingChecker.Services;
 using SpellingChecker.Views;
 using Application = System.Windows.Application;
@@ -89,6 +90,28 @@ namespace SpellingChecker
             // Add hook to process hotkey messages
             HwndSource? source = PresentationSource.FromVisual(this) as HwndSource;
             source?.AddHook(HwndHook);
+
+            // Check if API key is configured, if not, show settings window
+            CheckAndShowSettingsIfNeeded(settings);
+        }
+
+        private void CheckAndShowSettingsIfNeeded(AppSettings settings)
+        {
+            // Check if API key is set for the current provider
+            var apiKey = settings.GetApiKeyForProvider(settings.Provider ?? "OpenAI");
+            
+            if (string.IsNullOrWhiteSpace(apiKey))
+            {
+                // Show notification that settings are required
+                ShowNotification("설정 필요", "API 키가 설정되지 않았습니다. 설정 창을 열어 구성해주세요.");
+                
+                // Open settings window automatically
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    var settingsWindow = new SettingsWindow();
+                    settingsWindow.ShowDialog();
+                }), System.Windows.Threading.DispatcherPriority.Background);
+            }
         }
 
         private IntPtr HwndHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
