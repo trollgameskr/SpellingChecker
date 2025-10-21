@@ -26,13 +26,6 @@ namespace SpellingChecker.Services
                 },
                 new TonePreset
                 {
-                    Id = "default-strict-boss",
-                    Name = "근엄한 팀장님 톤",
-                    Description = "권위 있고 엄격한 말투, 지시와 조언이 섞인 느낌.",
-                    IsDefault = true
-                },
-                new TonePreset
-                {
                     Id = "default-eager-newbie",
                     Name = "싹싹한 신입 사원 톤",
                     Description = "해맑고 공손하며 적극적인 태도의 말투.",
@@ -40,60 +33,39 @@ namespace SpellingChecker.Services
                 },
                 new TonePreset
                 {
-                    Id = "default-mz-gen",
-                    Name = "MZ세대 톤",
-                    Description = "최신 유행어와 인터넷 밈을 섞은 가벼운 말투.",
+                    Id = "default-cat",
+                    Name = "고양이",
+                    Description = "야옹채로 응답",
                     IsDefault = true
                 },
                 new TonePreset
                 {
-                    Id = "default-bored-parttime",
-                    Name = "심드렁한 알바생 톤",
-                    Description = "의욕 없는 듯한 무심한 말투, 최소한의 답변 느낌.",
+                    Id = "default-friendly",
+                    Name = "\"~어요\" ",
+                    Description = "\"~했습니다\" 대신 \"~했어요\"로 친근감있게 표현",
                     IsDefault = true
                 },
                 new TonePreset
                 {
-                    Id = "default-polite-guard",
-                    Name = "유난히 예의 바른 경비원 톤",
-                    Description = "과도하게 공손하고 절차를 강조하는 말투.",
+                    Id = "default-ieungBatchim",
+                    Name = "단어에 이응 받침",
+                    Description = "모든 단어에 이응 받침을 붙인다",
                     IsDefault = true
                 },
                 new TonePreset
                 {
-                    Id = "default-excited-host",
-                    Name = "오버하는 홈쇼핑 쇼호스트 톤",
-                    Description = "지나치게 흥분하며 모든 것을 최고라 강조하는 말투.",
+                    Id = "default-shyDisposition",
+                    Name = "소심",
+                    Description = "매우 소심해서 지나치게 주저하며 말하는 7세 아이 말투",
                     IsDefault = true
                 },
                 new TonePreset
                 {
-                    Id = "default-comedian",
-                    Name = "유행어 난발하는 예능인 톤",
-                    Description = "빠른 말속에 웃긴 상황과 유행어를 연속적으로 넣는 말투.",
+                    Id = "default-exclamationMark",
+                    Name = "문장 끝에 느낌표",
+                    Description = "문장 끝에 항상 느낌표를 붙인다",
                     IsDefault = true
                 },
-                new TonePreset
-                {
-                    Id = "default-grandma",
-                    Name = "100년 된 할머니 톤",
-                    Description = "옛스러운 단어와 느릿한 말투, 추억 섞인 문장.",
-                    IsDefault = true
-                },
-                new TonePreset
-                {
-                    Id = "default-chaebol",
-                    Name = "드라마 재벌 2세 톤",
-                    Description = "거만하고 사치스러운 분위기의 말투.",
-                    IsDefault = true
-                },
-                new TonePreset
-                {
-                    Id = "default-foreigner",
-                    Name = "외국인 한국어 학습자 톤",
-                    Description = "문법이 조금 서툴고 귀여운 표현이 섞인 말투.",
-                    IsDefault = true
-                }
             };
         }
 
