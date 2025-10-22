@@ -369,7 +369,12 @@ namespace SpellingChecker
                 // Create and show popup immediately with progress indicator
                 popup = new ResultPopupWindow("", selectedText, "Variable Name Suggestions (C#) - Ctrl+Enter to reconvert", false, enableHighlighting: false);
                 popup.ShowProgressIndicator();
-                popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(popup.GetResultText());
+                
+                // Set copy handler to copy only the first variable name
+                popup.CopyRequested += (s, args) => {
+                    var firstVariableName = ExtractFirstVariableName(popup.GetResultText());
+                    _clipboardService.SetClipboard(firstVariableName);
+                };
                 popup.ConvertRequested += async (s, text) => await ReprocessVariableNameSuggestion(popup, text);
                 popup.Show();
 
@@ -501,6 +506,41 @@ namespace SpellingChecker
             }
             
             _notifyIcon?.ShowBalloonTip(3000, title, message, ToolTipIcon.Info);
+        }
+
+        /// <summary>
+        /// Extracts the first variable name from formatted variable name suggestions.
+        /// Expected format: "1. variableName\n2. variableName2\n..."
+        /// </summary>
+        /// <param name="formattedText">The formatted text containing numbered variable names</param>
+        /// <returns>The first variable name without the number prefix</returns>
+        private string ExtractFirstVariableName(string formattedText)
+        {
+            if (string.IsNullOrWhiteSpace(formattedText))
+            {
+                return string.Empty;
+            }
+
+            // Split by newlines and get the first line
+            var lines = formattedText.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            if (lines.Length == 0)
+            {
+                return formattedText.Trim();
+            }
+
+            var firstLine = lines[0].Trim();
+            
+            // Remove the number prefix (e.g., "1. " from "1. variableName")
+            // The format is: "number. variableName"
+            var dotIndex = firstLine.IndexOf('.');
+            if (dotIndex > 0 && dotIndex < firstLine.Length - 1)
+            {
+                // Extract everything after the dot and space
+                return firstLine.Substring(dotIndex + 1).TrimStart();
+            }
+
+            // If no dot found, return the whole line (fallback)
+            return firstLine;
         }
 
         protected override void OnClosing(CancelEventArgs e)
