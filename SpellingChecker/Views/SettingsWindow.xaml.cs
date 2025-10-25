@@ -258,7 +258,7 @@ namespace SpellingChecker.Views
         private void DeleteAllSettingsButton_Click(object sender, RoutedEventArgs e)
         {
             var result = MessageBox.Show(
-                "Are you sure you want to delete all saved settings?\n\nThis will:\n- Delete all API keys\n- Reset all settings to defaults\n- Remove custom tone presets\n- Clear usage statistics\n\nThe application will need to be restarted after deletion.",
+                "This will permanently delete all your saved settings and require an application restart.\n\nThis action cannot be undone.\n\nAre you sure you want to continue?",
                 "Delete All Settings",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning);
