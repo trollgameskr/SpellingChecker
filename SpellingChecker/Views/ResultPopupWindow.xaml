@@ -6,7 +6,8 @@
         WindowStartupLocation="Manual"
         Topmost="True"
         ResizeMode="CanResize"
-        Background="White">
+        Background="White"
+        Icon="/app.ico">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

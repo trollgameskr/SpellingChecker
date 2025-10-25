@@ -255,6 +255,37 @@ namespace SpellingChecker.Views
             Close();
         }
 
+        private void DeleteAllSettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show(
+                "Are you sure you want to delete all saved settings?\n\nThis will:\n- Delete all API keys\n- Reset all settings to defaults\n- Remove custom tone presets\n- Clear usage statistics\n\nThe application will need to be restarted after deletion.",
+                "Delete All Settings",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    _settingsService.DeleteAllSettings();
+                    MessageBox.Show(
+                        "All settings have been deleted successfully.\n\nPlease restart the application.",
+                        "Settings Deleted",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                    Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                        $"Failed to delete settings: {ex.Message}",
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                }
+            }
+        }
+
         private void ViewUsageStatisticsButton_Click(object sender, RoutedEventArgs e)
         {
             var usageWindow = new UsageStatisticsWindow();

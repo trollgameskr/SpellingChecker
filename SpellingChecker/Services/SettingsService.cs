@@ -69,5 +69,23 @@ namespace SpellingChecker.Services
                 throw new InvalidOperationException("Failed to save settings", ex);
             }
         }
+
+        /// <summary>
+        /// Delete all saved settings and reset to defaults
+        /// </summary>
+        public void DeleteAllSettings()
+        {
+            try
+            {
+                if (File.Exists(SettingsPath))
+                {
+                    File.Delete(SettingsPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Failed to delete settings", ex);
+            }
+        }
     }
 }
