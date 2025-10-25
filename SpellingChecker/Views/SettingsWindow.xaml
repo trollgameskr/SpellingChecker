@@ -5,7 +5,8 @@
         Height="800" Width="650"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
-        Background="White">
+        Background="White"
+        Icon="/app.ico">
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <Grid Margin="20">
         <Grid.RowDefinitions>
@@ -233,6 +234,16 @@
         <StackPanel Grid.Row="9" 
                     Orientation="Horizontal" 
                     HorizontalAlignment="Right">
+            <Button Content="🗑️ Delete All Settings" 
+                    Click="DeleteAllSettingsButton_Click" 
+                    Padding="15,10" 
+                    Margin="0,0,10,0"
+                    Background="#F44336"
+                    Foreground="White"
+                    BorderThickness="0"
+                    Cursor="Hand"
+                    FontWeight="SemiBold"
+                    ToolTip="Delete all saved settings and reset to defaults"/>
             <Button Content="Save" 
                     Click="SaveButton_Click" 
                     Padding="30,10" 
