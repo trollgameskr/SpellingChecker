@@ -354,6 +354,7 @@ namespace SpellingChecker.Views
             // Close window when ESC is pressed
             if (e.Key == System.Windows.Input.Key.Escape)
             {
+                e.Handled = true;
                 Close();
             }
         }
