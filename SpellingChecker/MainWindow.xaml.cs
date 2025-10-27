@@ -51,6 +51,7 @@ namespace SpellingChecker
 
             var contextMenu = new ContextMenuStrip();
             contextMenu.Items.Add("Settings", null, OnSettingsClick);
+            contextMenu.Items.Add("Check for Updates", null, OnCheckForUpdatesClick);
             contextMenu.Items.Add(new ToolStripSeparator());
             contextMenu.Items.Add("Exit", null, OnExitClick);
             
@@ -93,6 +94,9 @@ namespace SpellingChecker
 
             // Check if API key is configured, if not, show settings window
             CheckAndShowSettingsIfNeeded(settings);
+
+            // Check for updates on startup
+            CheckForUpdatesOnStartup();
         }
 
         private void CheckAndShowSettingsIfNeeded(AppSettings settings)
@@ -541,6 +545,53 @@ namespace SpellingChecker
 
             // If no dot found, return the whole line (fallback)
             return firstLine;
+        }
+
+        private async void CheckForUpdatesOnStartup()
+        {
+            try
+            {
+                // Add a small delay to not interfere with startup
+                await Task.Delay(3000);
+
+                var updateInfo = await UpdateService.CheckForUpdatesAsync();
+                if (updateInfo.UpdateAvailable)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        var updateDialog = new UpdateDialog(updateInfo);
+                        updateDialog.Show();
+                    });
+                }
+            }
+            catch (Exception)
+            {
+                // Silently fail - don't interrupt user experience if update check fails
+            }
+        }
+
+        private async void OnCheckForUpdatesClick(object? sender, EventArgs e)
+        {
+            try
+            {
+                ShowNotification("업데이트 확인", "업데이트를 확인하는 중...");
+
+                var updateInfo = await UpdateService.CheckForUpdatesAsync();
+                
+                if (updateInfo.UpdateAvailable)
+                {
+                    var updateDialog = new UpdateDialog(updateInfo);
+                    updateDialog.Show();
+                }
+                else
+                {
+                    ShowNotification("업데이트 확인", "현재 최신 버전을 사용하고 있습니다.");
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowNotification("업데이트 확인 실패", $"업데이트를 확인하는 동안 오류가 발생했습니다: {ex.Message}");
+            }
         }
 
         protected override void OnClosing(CancelEventArgs e)
