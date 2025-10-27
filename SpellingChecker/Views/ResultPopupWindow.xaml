@@ -7,7 +7,8 @@
         Topmost="True"
         ResizeMode="CanResize"
         Background="White"
-        Icon="/app.ico">
+        Icon="/app.ico"
+        KeyDown="Window_KeyDown">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
