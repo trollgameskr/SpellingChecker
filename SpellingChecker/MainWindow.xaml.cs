@@ -380,6 +380,7 @@ namespace SpellingChecker
                     _clipboardService.SetClipboard(firstVariableName);
                 };
                 popup.ConvertRequested += async (s, text) => await ReprocessVariableNameSuggestion(popup, text);
+                popup.ToggleModeRequested += async (s, isFunctionMode) => await ToggleVariableFunctionMode(popup, selectedText, isFunctionMode);
                 popup.Show();
 
                 // Show progress notification
@@ -427,6 +428,44 @@ namespace SpellingChecker
                 
                 ShowNotification("변수명 추천 완료", 
                     $"추천된 변수명: {string.Join(", ", result.SuggestedNames)}", true);
+                
+                // Format the suggestions for display
+                var formattedSuggestions = string.Join("\n", result.SuggestedNames.Select((name, index) => $"{index + 1}. {name}"));
+                
+                popup.UpdateResult(formattedSuggestions);
+                popup.HideProgressIndicator();
+            }
+            catch (TimeoutException)
+            {
+                popup.HideProgressIndicator();
+                ShowNotification("Request Timeout", "The AI service did not respond in time. Please check your network connection and try again.");
+            }
+            catch (Exception ex)
+            {
+                popup.HideProgressIndicator();
+                ShowNotification("Error", ex.Message);
+            }
+        }
+
+        private async Task ToggleVariableFunctionMode(ResultPopupWindow popup, string originalText, bool isFunctionMode)
+        {
+            try
+            {
+                ShowNotification("Processing...", isFunctionMode ? "AI is suggesting function names. Please wait..." : "AI is suggesting variable names. Please wait...", true);
+
+                VariableNameSuggestionResult result;
+                if (isFunctionMode)
+                {
+                    result = await _aiService.SuggestFunctionNamesAsync(originalText);
+                    ShowNotification("함수명 추천 완료", 
+                        $"추천된 함수명: {string.Join(", ", result.SuggestedNames)}", true);
+                }
+                else
+                {
+                    result = await _aiService.SuggestVariableNamesAsync(originalText);
+                    ShowNotification("변수명 추천 완료", 
+                        $"추천된 변수명: {string.Join(", ", result.SuggestedNames)}", true);
+                }
                 
                 // Format the suggestions for display
                 var formattedSuggestions = string.Join("\n", result.SuggestedNames.Select((name, index) => $"{index + 1}. {name}"));

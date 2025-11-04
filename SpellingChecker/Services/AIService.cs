@@ -144,14 +144,14 @@ namespace SpellingChecker.Services
 
             try
             {
-                var prompt = $"다음 한글 텍스트를 C# 변수명 규칙에 맞게 3개의 변수명을 추천해주세요. 각 변수명은 camelCase 형식이어야 하며, 의미가 명확해야 합니다.\n\n텍스트: {text}\n\n각 변수명을 새 줄로 구분하여 반환하고, 설명이나 번호는 붙이지 마세요. 변수명만 반환하세요.";
+                var prompt = $"다음 한글 텍스트를 C# 변수명 규칙에 맞게 3개의 변수명을 추천해주세요. 각 변수명은 camelCase 형식이어야 하며, 명사 형태로 의미가 명확해야 합니다.\n\n텍스트: {text}\n\n각 변수명을 새 줄로 구분하여 반환하고, 설명이나 번호는 붙이지 마세요. 변수명만 반환하세요.";
 
                 var requestBody = new
                 {
                     model = _settings.Model,
                     messages = new[]
                     {
-                        new { role = "system", content = "당신은 C# 프로그래밍 전문가입니다. 한글 텍스트를 의미있는 영어 변수명으로 변환하는 것을 도와줍니다. Microsoft C# 명명 규칙을 따르며, camelCase를 사용합니다." },
+                        new { role = "system", content = "당신은 C# 프로그래밍 전문가입니다. 한글 텍스트를 의미있는 영어 변수명으로 변환하는 것을 도와줍니다. Microsoft C# 명명 규칙을 따르며, camelCase를 사용하고 명사 형태로 작성합니다." },
                         new { role = "user", content = prompt }
                     },
                     temperature = 0.5,
@@ -179,6 +179,53 @@ namespace SpellingChecker.Services
             catch (Exception ex)
             {
                 throw new InvalidOperationException($"Variable name suggestion failed: {ex.Message}", ex);
+            }
+        }
+
+        public async Task<VariableNameSuggestionResult> SuggestFunctionNamesAsync(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return new VariableNameSuggestionResult { OriginalText = text, SuggestedNames = Array.Empty<string>() };
+            }
+
+            try
+            {
+                var prompt = $"다음 한글 텍스트를 C# 함수명 규칙에 맞게 3개의 함수명을 추천해주세요. 각 함수명은 PascalCase 형식이어야 하며, 동사나 동사구 형태로 의미가 명확해야 합니다.\n\n텍스트: {text}\n\n각 함수명을 새 줄로 구분하여 반환하고, 설명이나 번호는 붙이지 마세요. 함수명만 반환하세요 (괄호 포함).";
+
+                var requestBody = new
+                {
+                    model = _settings.Model,
+                    messages = new[]
+                    {
+                        new { role = "system", content = "당신은 C# 프로그래밍 전문가입니다. 한글 텍스트를 의미있는 영어 함수명으로 변환하는 것을 도와줍니다. Microsoft C# 명명 규칙을 따르며, PascalCase를 사용하고 동사나 동사구 형태로 작성합니다." },
+                        new { role = "user", content = prompt }
+                    },
+                    temperature = 0.5,
+                    max_tokens = 200
+                };
+
+                var response = await SendRequestAsync(requestBody);
+                var suggestionsText = ExtractContentFromResponse(response);
+                RecordUsageFromResponse(response, "FunctionNameSuggestion");
+
+                // Parse the suggestions - split by newlines and take first 3 non-empty lines
+                var suggestions = suggestionsText
+                    .Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(s => s.Trim())
+                    .Where(s => !string.IsNullOrWhiteSpace(s))
+                    .Take(3)
+                    .ToArray();
+
+                return new VariableNameSuggestionResult
+                {
+                    OriginalText = text,
+                    SuggestedNames = suggestions
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Function name suggestion failed: {ex.Message}", ex);
             }
         }
 

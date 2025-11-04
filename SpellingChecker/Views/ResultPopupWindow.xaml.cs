@@ -15,6 +15,7 @@ namespace SpellingChecker.Views
         public event EventHandler? CopyRequested;
         public event EventHandler<string>? ConvertRequested;
         public event EventHandler<string>? ToneChangeRequested;
+        public event EventHandler<bool>? ToggleModeRequested; // true = to function mode, false = to variable mode
 
         private readonly bool _isTranslationMode;
         private readonly bool _enableHighlighting;
@@ -369,90 +370,12 @@ namespace SpellingChecker.Views
             // Update button text
             ToggleVariableFunctionButton.Content = _isVariableMode ? "변수 → 함수" : "함수 → 변수";
 
-            // Get current result text
-            var currentResult = GetResultText();
+            // Show progress indicator
+            ShowProgressIndicator();
+            SetProgressText(_isVariableMode ? "변수명 생성 중..." : "함수명 생성 중...");
 
-            // Convert the names
-            var convertedResult = ConvertNamingStyle(currentResult, _isVariableMode);
-
-            // Update the display
-            SetResultTextPlain(convertedResult);
-        }
-
-        private string ConvertNamingStyle(string text, bool toVariableMode)
-        {
-            if (string.IsNullOrWhiteSpace(text))
-                return text;
-
-            var lines = text.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-            var convertedLines = new List<string>();
-
-            foreach (var line in lines)
-            {
-                var trimmedLine = line.Trim();
-                
-                // Extract the number prefix if exists (e.g., "1. ", "2. ", etc.)
-                var dotIndex = trimmedLine.IndexOf('.');
-                string prefix = "";
-                string name = trimmedLine;
-                
-                if (dotIndex > 0 && dotIndex < trimmedLine.Length - 1)
-                {
-                    // Check if the part before dot is a number
-                    var beforeDot = trimmedLine.Substring(0, dotIndex).Trim();
-                    if (int.TryParse(beforeDot, out _))
-                    {
-                        prefix = trimmedLine.Substring(0, dotIndex + 1) + " ";
-                        name = trimmedLine.Substring(dotIndex + 1).TrimStart();
-                    }
-                }
-
-                // Remove trailing parentheses if present (for function mode)
-                name = name.TrimEnd('(', ')', ' ');
-
-                // Convert naming style
-                string convertedName;
-                if (toVariableMode)
-                {
-                    // Convert to camelCase (variable style)
-                    convertedName = ToCamelCase(name);
-                }
-                else
-                {
-                    // Convert to PascalCase with parentheses (function style)
-                    convertedName = ToPascalCase(name) + "()";
-                }
-
-                convertedLines.Add(prefix + convertedName);
-            }
-
-            return string.Join("\n", convertedLines);
-        }
-
-        private string ToCamelCase(string text)
-        {
-            if (string.IsNullOrEmpty(text))
-                return text;
-
-            // If already in camelCase, return as is
-            if (char.IsLower(text[0]))
-                return text;
-
-            // Convert first character to lowercase
-            return char.ToLower(text[0]) + text.Substring(1);
-        }
-
-        private string ToPascalCase(string text)
-        {
-            if (string.IsNullOrEmpty(text))
-                return text;
-
-            // If already in PascalCase, return as is
-            if (char.IsUpper(text[0]))
-                return text;
-
-            // Convert first character to uppercase
-            return char.ToUpper(text[0]) + text.Substring(1);
+            // Request AI to generate new suggestions with appropriate naming
+            ToggleModeRequested?.Invoke(this, !_isVariableMode); // true = function mode, false = variable mode
         }
 
         private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
