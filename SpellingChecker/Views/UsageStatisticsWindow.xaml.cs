@@ -323,7 +323,7 @@ namespace SpellingChecker.Views
     public class CostToKRWConverter : System.Windows.Data.IValueConverter
     {
         // Approximate exchange rate - can be updated as needed
-        public const decimal USD_TO_KRW_RATE = 1350m;
+        public const decimal USD_TO_KRW_RATE = 1400m;
 
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
