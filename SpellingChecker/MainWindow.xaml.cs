@@ -371,7 +371,7 @@ namespace SpellingChecker
                     $"'{selectedText}' 텍스트의 변수명을 추천합니다.", true);
 
                 // Create and show popup immediately with progress indicator
-                popup = new ResultPopupWindow("", selectedText, "Variable Name Suggestions (C#) - Ctrl+Enter to reconvert", false, enableHighlighting: false);
+                popup = new ResultPopupWindow("", selectedText, "Variable Name Suggestions (C#) - Ctrl+Enter to reconvert", false, enableHighlighting: false, isVariableNameMode: true);
                 popup.ShowProgressIndicator();
                 
                 // Set copy handler to copy only the first variable name

@@ -91,6 +91,16 @@
 
         <!-- Buttons -->
         <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="ToggleVariableFunctionButton"
+                    Content="변수 → 함수" 
+                    Click="ToggleVariableFunctionButton_Click" 
+                    Padding="15,5" 
+                    Margin="0,0,10,0"
+                    Background="#FF9800"
+                    Foreground="White"
+                    BorderThickness="0"
+                    Cursor="Hand"
+                    Visibility="Collapsed"/>
             <Button Content="Copy to Clipboard" 
                     Click="CopyButton_Click" 
                     Padding="15,5" 
