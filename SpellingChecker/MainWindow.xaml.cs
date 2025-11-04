@@ -392,10 +392,7 @@ namespace SpellingChecker
                 ShowNotification("변수명 추천 완료", 
                     $"추천된 변수명: {string.Join(", ", result.SuggestedNames)}", true);
                 
-                // Format the suggestions for display
-                var formattedSuggestions = string.Join("\n", result.SuggestedNames.Select((name, index) => $"{index + 1}. {name}"));
-                
-                popup.UpdateResult(formattedSuggestions);
+                popup.UpdateResult(FormatNameSuggestions(result.SuggestedNames));
                 popup.HideProgressIndicator();
             }
             catch (TimeoutException)
@@ -429,10 +426,7 @@ namespace SpellingChecker
                 ShowNotification("변수명 추천 완료", 
                     $"추천된 변수명: {string.Join(", ", result.SuggestedNames)}", true);
                 
-                // Format the suggestions for display
-                var formattedSuggestions = string.Join("\n", result.SuggestedNames.Select((name, index) => $"{index + 1}. {name}"));
-                
-                popup.UpdateResult(formattedSuggestions);
+                popup.UpdateResult(FormatNameSuggestions(result.SuggestedNames));
                 popup.HideProgressIndicator();
             }
             catch (TimeoutException)
@@ -467,10 +461,7 @@ namespace SpellingChecker
                         $"추천된 변수명: {string.Join(", ", result.SuggestedNames)}", true);
                 }
                 
-                // Format the suggestions for display
-                var formattedSuggestions = string.Join("\n", result.SuggestedNames.Select((name, index) => $"{index + 1}. {name}"));
-                
-                popup.UpdateResult(formattedSuggestions);
+                popup.UpdateResult(FormatNameSuggestions(result.SuggestedNames));
                 popup.HideProgressIndicator();
             }
             catch (TimeoutException)
@@ -549,6 +540,16 @@ namespace SpellingChecker
             }
             
             _notifyIcon?.ShowBalloonTip(3000, title, message, ToolTipIcon.Info);
+        }
+
+        /// <summary>
+        /// Formats variable/function name suggestions for display.
+        /// </summary>
+        /// <param name="suggestions">Array of suggested names</param>
+        /// <returns>Formatted string with numbered suggestions</returns>
+        private string FormatNameSuggestions(string[] suggestions)
+        {
+            return string.Join("\n", suggestions.Select((name, index) => $"{index + 1}. {name}"));
         }
 
         /// <summary>
