@@ -13,7 +13,7 @@ namespace SpellingChecker.Views
     public partial class UsageStatisticsWindow : Window
     {
         private readonly UsageService _usageService;
-        private const decimal USD_TO_KRW_RATE = 1350m; // Approximate exchange rate
+        private static readonly CostToKRWConverter KRWConverter = new CostToKRWConverter();
 
         public UsageStatisticsWindow()
         {
@@ -34,7 +34,7 @@ namespace SpellingChecker.Views
             CompletionTokensText.Text = statistics.TotalCompletionTokens.ToString("N0");
             TotalTokensText.Text = statistics.TotalTokens.ToString("N0");
             TotalCostText.Text = statistics.TotalCost.ToString("C6");
-            TotalCostKRWText.Text = $"₩{(statistics.TotalCost * USD_TO_KRW_RATE):N0}";
+            TotalCostKRWText.Text = $"₩{(statistics.TotalCost * CostToKRWConverter.USD_TO_KRW_RATE):N0}";
 
             // Load data based on current view mode
             LoadDataGridContent(startDate, endDate);
@@ -175,7 +175,7 @@ namespace SpellingChecker.Views
             };
             krwColumn.Binding = new System.Windows.Data.Binding("Cost")
             {
-                Converter = new CostToKRWConverter()
+                Converter = KRWConverter
             };
             HistoryDataGrid.Columns.Add(krwColumn);
 
@@ -232,7 +232,7 @@ namespace SpellingChecker.Views
             };
             krwColumn.Binding = new System.Windows.Data.Binding("Cost")
             {
-                Converter = new CostToKRWConverter()
+                Converter = KRWConverter
             };
             HistoryDataGrid.Columns.Add(krwColumn);
 
@@ -322,7 +322,8 @@ namespace SpellingChecker.Views
     /// </summary>
     public class CostToKRWConverter : System.Windows.Data.IValueConverter
     {
-        private const decimal USD_TO_KRW_RATE = 1350m;
+        // Approximate exchange rate - can be updated as needed
+        public const decimal USD_TO_KRW_RATE = 1350m;
 
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
