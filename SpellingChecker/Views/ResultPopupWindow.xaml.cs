@@ -15,6 +15,7 @@ namespace SpellingChecker.Views
         public event EventHandler? CopyRequested;
         public event EventHandler<string>? ConvertRequested;
         public event EventHandler<string>? ToneChangeRequested;
+        public event EventHandler<bool>? ToggleModeRequested; // true = to function mode, false = to variable mode
 
         private readonly bool _isTranslationMode;
         private readonly bool _enableHighlighting;
@@ -22,8 +23,10 @@ namespace SpellingChecker.Views
         private readonly string _originalText;
         private bool _isInitializing = true;
         private string? _appliedToneName = null;
+        private bool _isVariableMode = true; // true = variable mode (camelCase), false = function mode (PascalCase)
+        private readonly bool _isVariableNameMode;
 
-        public ResultPopupWindow(string result, string original, string title, bool isTranslationMode = false, Models.AppSettings? settings = null, bool enableHighlighting = false)
+        public ResultPopupWindow(string result, string original, string title, bool isTranslationMode = false, Models.AppSettings? settings = null, bool enableHighlighting = false, bool isVariableNameMode = false)
         {
             InitializeComponent();
             
@@ -33,6 +36,13 @@ namespace SpellingChecker.Views
             _enableHighlighting = enableHighlighting;
             _settings = settings;
             _originalText = original;
+            _isVariableNameMode = isVariableNameMode;
+
+            // Show toggle button only in variable name mode
+            if (_isVariableNameMode)
+            {
+                ToggleVariableFunctionButton.Visibility = Visibility.Visible;
+            }
 
             // Set result text with highlighting if highlighting is enabled
             if (_enableHighlighting)
@@ -347,6 +357,25 @@ namespace SpellingChecker.Views
                 e.Handled = true;
                 ConvertButton_Click(sender, new RoutedEventArgs());
             }
+        }
+
+        private void ToggleVariableFunctionButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!_isVariableNameMode)
+                return;
+
+            // Toggle mode
+            _isVariableMode = !_isVariableMode;
+
+            // Update button text
+            ToggleVariableFunctionButton.Content = _isVariableMode ? "변수 → 함수" : "함수 → 변수";
+
+            // Show progress indicator
+            ShowProgressIndicator();
+            SetProgressText(_isVariableMode ? "변수명 생성 중..." : "함수명 생성 중...");
+
+            // Request AI to generate new suggestions with appropriate naming
+            ToggleModeRequested?.Invoke(this, !_isVariableMode); // true = function mode, false = variable mode
         }
 
         private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
