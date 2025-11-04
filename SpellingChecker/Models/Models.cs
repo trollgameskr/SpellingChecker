@@ -139,6 +139,34 @@ namespace SpellingChecker.Models
     }
 
     /// <summary>
+    /// Daily aggregated usage statistics
+    /// </summary>
+    public class DailyUsageStatistics
+    {
+        public DateTime Date { get; set; }
+        public int OperationCount { get; set; }
+        public int CorrectionCount { get; set; }
+        public int TranslationCount { get; set; }
+        public int TotalTokens { get; set; }
+        public decimal Cost { get; set; }
+    }
+
+    /// <summary>
+    /// Monthly aggregated usage statistics
+    /// </summary>
+    public class MonthlyUsageStatistics
+    {
+        public int Year { get; set; }
+        public int Month { get; set; }
+        public string MonthName => new DateTime(Year, Month, 1).ToString("yyyy-MM");
+        public int OperationCount { get; set; }
+        public int CorrectionCount { get; set; }
+        public int TranslationCount { get; set; }
+        public int TotalTokens { get; set; }
+        public decimal Cost { get; set; }
+    }
+
+    /// <summary>
     /// AI Provider configuration helper
     /// </summary>
     public static class AIProviderConfig
