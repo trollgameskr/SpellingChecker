@@ -126,6 +126,72 @@ namespace SpellingChecker.Services
             };
         }
 
+        public List<DailyUsageStatistics> GetDailyStatistics(DateTime? startDate = null, DateTime? endDate = null)
+        {
+            var records = LoadAllRecords();
+
+            if (startDate.HasValue)
+            {
+                records = records.Where(r => r.Timestamp >= startDate.Value).ToList();
+            }
+
+            if (endDate.HasValue)
+            {
+                records = records.Where(r => r.Timestamp <= endDate.Value).ToList();
+            }
+
+            // Group by date and aggregate
+            var dailyStats = records
+                .GroupBy(r => r.Timestamp.Date)
+                .Select(g => new DailyUsageStatistics
+                {
+                    Date = g.Key,
+                    OperationCount = g.Count(),
+                    CorrectionCount = g.Count(r => r.OperationType == "Correction"),
+                    TranslationCount = g.Count(r => r.OperationType == "Translation"),
+                    TotalTokens = g.Sum(r => r.TotalTokens),
+                    Cost = g.Sum(r => r.Cost)
+                })
+                .OrderByDescending(d => d.Date)
+                .ToList();
+
+            return dailyStats;
+        }
+
+        public List<MonthlyUsageStatistics> GetMonthlyStatistics(DateTime? startDate = null, DateTime? endDate = null)
+        {
+            var records = LoadAllRecords();
+
+            if (startDate.HasValue)
+            {
+                records = records.Where(r => r.Timestamp >= startDate.Value).ToList();
+            }
+
+            if (endDate.HasValue)
+            {
+                records = records.Where(r => r.Timestamp <= endDate.Value).ToList();
+            }
+
+            // Group by year and month and aggregate
+            var monthlyStats = records
+                .GroupBy(r => new { r.Timestamp.Year, r.Timestamp.Month })
+                .Select(g => new MonthlyUsageStatistics
+                {
+                    Year = g.Key.Year,
+                    Month = g.Key.Month,
+                    OperationCount = g.Count(),
+                    CorrectionCount = g.Count(r => r.OperationType == "Correction"),
+                    TranslationCount = g.Count(r => r.OperationType == "Translation"),
+                    TotalTokens = g.Sum(r => r.TotalTokens),
+                    Cost = g.Sum(r => r.Cost)
+                })
+                .OrderByDescending(m => m.Year)
+                .ThenByDescending(m => m.Month)
+                .ToList();
+
+            return monthlyStats;
+        }
+
         public void ClearHistory()
         {
             try

@@ -74,8 +74,9 @@
 
                 <!-- Column 3 -->
                 <StackPanel Grid.Row="1" Grid.Column="2">
-                    <TextBlock Text="Total Cost (USD)" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                    <TextBlock Text="Total Cost" FontWeight="SemiBold" Margin="0,0,0,5"/>
                     <TextBlock x:Name="TotalCostText" Text="$0.00" FontSize="24" FontWeight="Bold" Foreground="#4CAF50"/>
+                    <TextBlock x:Name="TotalCostKRWText" Text="₩0" FontSize="16" Foreground="#666" Margin="0,5,0,0"/>
                 </StackPanel>
             </Grid>
         </Border>
@@ -84,7 +85,19 @@
         <StackPanel Grid.Row="2" 
                     Orientation="Horizontal" 
                     Margin="0,0,0,10">
-            <TextBlock Text="Filter by Period:" 
+            <TextBlock Text="View:" 
+                       VerticalAlignment="Center" 
+                       Margin="0,0,10,0"
+                       FontWeight="SemiBold"/>
+            <ComboBox x:Name="ViewModeComboBox" 
+                      Width="150" 
+                      SelectionChanged="ViewModeComboBox_SelectionChanged"
+                      Margin="0,0,20,0">
+                <ComboBoxItem Content="Summary" IsSelected="True"/>
+                <ComboBoxItem Content="Daily Breakdown"/>
+                <ComboBoxItem Content="Monthly Breakdown"/>
+            </ComboBox>
+            <TextBlock Text="Period:" 
                        VerticalAlignment="Center" 
                        Margin="0,0,10,0"
                        FontWeight="SemiBold"/>
