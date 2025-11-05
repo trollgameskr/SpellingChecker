@@ -27,7 +27,7 @@ namespace SpellingChecker.Services
                 new TonePreset
                 {
                     Id = "default-eager-newbie",
-                    Name = "싹싹한 신입 사원 톤",
+                    Name = "공손하며 적극적",
                     Description = "해맑고 공손하며 적극적인 태도의 말투.",
                     IsDefault = true
                 },
@@ -64,6 +64,13 @@ namespace SpellingChecker.Services
                     Id = "default-exclamationMark",
                     Name = "문장 끝에 느낌표",
                     Description = "문장 끝에 항상 느낌표를 붙인다",
+                    IsDefault = true
+                },
+                new TonePreset
+                {
+                    Id = "default-unsungChe",
+                    Name = "음슴체",
+                    Description = "문장의 종결이 명사형 어미 '-(으)ㅁ'으로 끝나는 문체를 일컫습니다. 동사를 명사형으로 바꿔서 문장을 끝내는 방식. 예를 들어 \"먹음\", \"있음\" 같은 형태",
                     IsDefault = true
                 },
             };
