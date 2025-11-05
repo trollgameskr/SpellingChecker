@@ -112,7 +112,7 @@ namespace SpellingChecker.Services
                     previousClipboard = Clipboard.GetText();
                 }
 
-                Clipboard.Clear();
+                ClearClipboardWithRetry();
 
                 // Simulate Ctrl+C using keybd_event (proven to work in ReplaceSelectedText)
                 keybd_event(VK_CONTROL, 0, 0, UIntPtr.Zero);
@@ -175,7 +175,7 @@ namespace SpellingChecker.Services
 
                 if (!string.IsNullOrEmpty(previousClipboard))
                 {
-                    Clipboard.SetText(previousClipboard);
+                    SetClipboardWithRetry(previousClipboard);
                 }
                 
                 return string.Empty;
@@ -190,13 +190,86 @@ namespace SpellingChecker.Services
         }
 
         /// <summary>
-        /// Sets text to clipboard
+        /// Sets text to clipboard with retry logic to handle clipboard lock errors
         /// </summary>
         public void SetClipboard(string text)
         {
             if (!string.IsNullOrEmpty(text))
             {
-                Clipboard.SetText(text);
+                SetClipboardWithRetry(text);
+            }
+        }
+
+        /// <summary>
+        /// Sets text to clipboard with retry logic to handle clipboard lock errors
+        /// </summary>
+        /// <param name="text">Text to set to clipboard</param>
+        /// <param name="maxRetries">Maximum number of retry attempts</param>
+        /// <param name="retryDelayMs">Delay between retries in milliseconds</param>
+        private void SetClipboardWithRetry(string text, int maxRetries = 5, int retryDelayMs = 50)
+        {
+            for (int attempt = 0; attempt < maxRetries; attempt++)
+            {
+                try
+                {
+                    Clipboard.SetText(text);
+                    return; // Success - exit the method
+                }
+                catch (COMException ex) when (ex.HResult == unchecked((int)0x800401D0)) // CLIPBRD_E_CANT_OPEN
+                {
+                    // Clipboard is locked by another process
+                    if (attempt < maxRetries - 1)
+                    {
+                        // Wait before retrying
+                        Thread.Sleep(retryDelayMs);
+                    }
+                    else
+                    {
+                        // Last attempt failed - rethrow the exception
+                        throw;
+                    }
+                }
+                catch (Exception)
+                {
+                    // For other exceptions, rethrow immediately
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Clears clipboard with retry logic to handle clipboard lock errors
+        /// </summary>
+        /// <param name="maxRetries">Maximum number of retry attempts</param>
+        /// <param name="retryDelayMs">Delay between retries in milliseconds</param>
+        private void ClearClipboardWithRetry(int maxRetries = 5, int retryDelayMs = 50)
+        {
+            for (int attempt = 0; attempt < maxRetries; attempt++)
+            {
+                try
+                {
+                    Clipboard.Clear();
+                    return; // Success - exit the method
+                }
+                catch (COMException ex) when (ex.HResult == unchecked((int)0x800401D0)) // CLIPBRD_E_CANT_OPEN
+                {
+                    // Clipboard is locked by another process
+                    if (attempt < maxRetries - 1)
+                    {
+                        // Wait before retrying
+                        Thread.Sleep(retryDelayMs);
+                    }
+                    else
+                    {
+                        // Last attempt failed - rethrow the exception
+                        throw;
+                    }
+                }
+                catch (Exception)
+                {
+                    // For other exceptions, rethrow immediately
+                    throw;
+                }
             }
         }
 
