@@ -211,6 +211,10 @@ namespace SpellingChecker.Services
         /// <param name="retryDelayMs">Delay between retries in milliseconds</param>
         private void SetClipboardWithRetry(string text, int maxRetries = CLIPBOARD_RETRY_MAX_ATTEMPTS, int retryDelayMs = CLIPBOARD_RETRY_DELAY_MS)
         {
+            // Small delay before first attempt to ensure any previous clipboard operations are complete
+            // This prevents self-locking when the app has just read from clipboard
+            Thread.Sleep(10);
+            
             for (int attempt = 0; attempt < maxRetries; attempt++)
             {
                 try
@@ -220,7 +224,7 @@ namespace SpellingChecker.Services
                 }
                 catch (COMException ex) when (ex.HResult == CLIPBRD_E_CANT_OPEN)
                 {
-                    // Clipboard is locked by another process
+                    // Clipboard is locked by another process (or by our own previous read operation)
                     if (attempt < maxRetries - 1)
                     {
                         // Wait before retrying
@@ -247,6 +251,10 @@ namespace SpellingChecker.Services
         /// <param name="retryDelayMs">Delay between retries in milliseconds</param>
         private void ClearClipboardWithRetry(int maxRetries = CLIPBOARD_RETRY_MAX_ATTEMPTS, int retryDelayMs = CLIPBOARD_RETRY_DELAY_MS)
         {
+            // Small delay before first attempt to ensure any previous clipboard operations are complete
+            // This prevents self-locking when the app has just read from clipboard
+            Thread.Sleep(10);
+            
             for (int attempt = 0; attempt < maxRetries; attempt++)
             {
                 try
@@ -256,7 +264,7 @@ namespace SpellingChecker.Services
                 }
                 catch (COMException ex) when (ex.HResult == CLIPBRD_E_CANT_OPEN)
                 {
-                    // Clipboard is locked by another process
+                    // Clipboard is locked by another process (or by our own previous read operation)
                     if (attempt < maxRetries - 1)
                     {
                         // Wait before retrying
