@@ -101,14 +101,6 @@
                     BorderThickness="0"
                     Cursor="Hand"
                     Visibility="Collapsed"/>
-            <Button Content="Copy to Clipboard" 
-                    Click="CopyButton_Click" 
-                    Padding="15,5" 
-                    Margin="0,0,10,0"
-                    Background="#4CAF50"
-                    Foreground="White"
-                    BorderThickness="0"
-                    Cursor="Hand"/>
             <Button Content="변환" 
                     Click="ConvertButton_Click" 
                     Padding="15,5" 
