@@ -33,12 +33,12 @@ jobs:
         
         $content = Get-Content $csprojPath -Raw
         
-        if ($content -notmatch '<Version>[^<]*</Version>') {
+        if ($content -notmatch '<Version>\s*[^<]+\s*</Version>') {
           throw "Version tag not found in .csproj file"
         }
         
-        $content = $content -replace '<Version>[^<]*</Version>', "<Version>$version</Version>"
-        Set-Content $csprojPath $content -NoNewline
+        $content = $content -replace '<Version>\s*[^<]+\s*</Version>', "<Version>$version</Version>"
+        Set-Content $csprojPath $content
         Write-Host "Updated version from $tagName to: $version"
       shell: pwsh
     
