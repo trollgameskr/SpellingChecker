@@ -37,6 +37,9 @@ namespace SpellingChecker.Services
         private const byte VK_SHIFT = 0x10;
         private const byte VK_MENU = 0x12; // Alt key
         private const uint KEYEVENTF_KEYUP = 0x0002;
+        private const int CLIPBRD_E_CANT_OPEN = unchecked((int)0x800401D0); // Clipboard cannot be opened
+        private const int CLIPBOARD_RETRY_MAX_ATTEMPTS = 5;
+        private const int CLIPBOARD_RETRY_DELAY_MS = 50;
 
         /// <summary>
         /// Gets the currently selected text using clipboard method
@@ -112,7 +115,7 @@ namespace SpellingChecker.Services
                     previousClipboard = Clipboard.GetText();
                 }
 
-                Clipboard.Clear();
+                ClearClipboardWithRetry();
 
                 // Simulate Ctrl+C using keybd_event (proven to work in ReplaceSelectedText)
                 keybd_event(VK_CONTROL, 0, 0, UIntPtr.Zero);
@@ -175,7 +178,7 @@ namespace SpellingChecker.Services
 
                 if (!string.IsNullOrEmpty(previousClipboard))
                 {
-                    Clipboard.SetText(previousClipboard);
+                    SetClipboardWithRetry(previousClipboard);
                 }
                 
                 return string.Empty;
@@ -190,13 +193,94 @@ namespace SpellingChecker.Services
         }
 
         /// <summary>
-        /// Sets text to clipboard
+        /// Sets text to clipboard with retry logic to handle clipboard lock errors
         /// </summary>
         public void SetClipboard(string text)
         {
             if (!string.IsNullOrEmpty(text))
             {
-                Clipboard.SetText(text);
+                SetClipboardWithRetry(text);
+            }
+        }
+
+        /// <summary>
+        /// Sets text to clipboard with retry logic to handle clipboard lock errors
+        /// </summary>
+        /// <param name="text">Text to set to clipboard</param>
+        /// <param name="maxRetries">Maximum number of retry attempts</param>
+        /// <param name="retryDelayMs">Delay between retries in milliseconds</param>
+        private void SetClipboardWithRetry(string text, int maxRetries = CLIPBOARD_RETRY_MAX_ATTEMPTS, int retryDelayMs = CLIPBOARD_RETRY_DELAY_MS)
+        {
+            // Small delay before first attempt to ensure any previous clipboard operations are complete
+            // This prevents self-locking when the app has just read from clipboard
+            Thread.Sleep(10);
+            
+            for (int attempt = 0; attempt < maxRetries; attempt++)
+            {
+                try
+                {
+                    Clipboard.SetText(text);
+                    return; // Success - exit the method
+                }
+                catch (COMException ex) when (ex.HResult == CLIPBRD_E_CANT_OPEN)
+                {
+                    // Clipboard is locked by another process (or by our own previous read operation)
+                    if (attempt < maxRetries - 1)
+                    {
+                        // Wait before retrying
+                        Thread.Sleep(retryDelayMs);
+                    }
+                    else
+                    {
+                        // Last attempt failed - rethrow the exception
+                        throw;
+                    }
+                }
+                catch (Exception)
+                {
+                    // For other exceptions, rethrow immediately
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Clears clipboard with retry logic to handle clipboard lock errors
+        /// </summary>
+        /// <param name="maxRetries">Maximum number of retry attempts</param>
+        /// <param name="retryDelayMs">Delay between retries in milliseconds</param>
+        private void ClearClipboardWithRetry(int maxRetries = CLIPBOARD_RETRY_MAX_ATTEMPTS, int retryDelayMs = CLIPBOARD_RETRY_DELAY_MS)
+        {
+            // Small delay before first attempt to ensure any previous clipboard operations are complete
+            // This prevents self-locking when the app has just read from clipboard
+            Thread.Sleep(10);
+            
+            for (int attempt = 0; attempt < maxRetries; attempt++)
+            {
+                try
+                {
+                    Clipboard.Clear();
+                    return; // Success - exit the method
+                }
+                catch (COMException ex) when (ex.HResult == CLIPBRD_E_CANT_OPEN)
+                {
+                    // Clipboard is locked by another process (or by our own previous read operation)
+                    if (attempt < maxRetries - 1)
+                    {
+                        // Wait before retrying
+                        Thread.Sleep(retryDelayMs);
+                    }
+                    else
+                    {
+                        // Last attempt failed - rethrow the exception
+                        throw;
+                    }
+                }
+                catch (Exception)
+                {
+                    // For other exceptions, rethrow immediately
+                    throw;
+                }
             }
         }
 
