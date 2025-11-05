@@ -37,6 +37,9 @@ namespace SpellingChecker.Services
         private const byte VK_SHIFT = 0x10;
         private const byte VK_MENU = 0x12; // Alt key
         private const uint KEYEVENTF_KEYUP = 0x0002;
+        private const int CLIPBRD_E_CANT_OPEN = unchecked((int)0x800401D0); // Clipboard cannot be opened
+        private const int CLIPBOARD_RETRY_MAX_ATTEMPTS = 5;
+        private const int CLIPBOARD_RETRY_DELAY_MS = 50;
 
         /// <summary>
         /// Gets the currently selected text using clipboard method
@@ -206,7 +209,7 @@ namespace SpellingChecker.Services
         /// <param name="text">Text to set to clipboard</param>
         /// <param name="maxRetries">Maximum number of retry attempts</param>
         /// <param name="retryDelayMs">Delay between retries in milliseconds</param>
-        private void SetClipboardWithRetry(string text, int maxRetries = 5, int retryDelayMs = 50)
+        private void SetClipboardWithRetry(string text, int maxRetries = CLIPBOARD_RETRY_MAX_ATTEMPTS, int retryDelayMs = CLIPBOARD_RETRY_DELAY_MS)
         {
             for (int attempt = 0; attempt < maxRetries; attempt++)
             {
@@ -215,7 +218,7 @@ namespace SpellingChecker.Services
                     Clipboard.SetText(text);
                     return; // Success - exit the method
                 }
-                catch (COMException ex) when (ex.HResult == unchecked((int)0x800401D0)) // CLIPBRD_E_CANT_OPEN
+                catch (COMException ex) when (ex.HResult == CLIPBRD_E_CANT_OPEN)
                 {
                     // Clipboard is locked by another process
                     if (attempt < maxRetries - 1)
@@ -242,7 +245,7 @@ namespace SpellingChecker.Services
         /// </summary>
         /// <param name="maxRetries">Maximum number of retry attempts</param>
         /// <param name="retryDelayMs">Delay between retries in milliseconds</param>
-        private void ClearClipboardWithRetry(int maxRetries = 5, int retryDelayMs = 50)
+        private void ClearClipboardWithRetry(int maxRetries = CLIPBOARD_RETRY_MAX_ATTEMPTS, int retryDelayMs = CLIPBOARD_RETRY_DELAY_MS)
         {
             for (int attempt = 0; attempt < maxRetries; attempt++)
             {
@@ -251,7 +254,7 @@ namespace SpellingChecker.Services
                     Clipboard.Clear();
                     return; // Success - exit the method
                 }
-                catch (COMException ex) when (ex.HResult == unchecked((int)0x800401D0)) // CLIPBRD_E_CANT_OPEN
+                catch (COMException ex) when (ex.HResult == CLIPBRD_E_CANT_OPEN)
                 {
                     // Clipboard is locked by another process
                     if (attempt < maxRetries - 1)
