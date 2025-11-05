@@ -600,7 +600,7 @@ namespace SpellingChecker
                     Dispatcher.Invoke(() =>
                     {
                         var updateDialog = new UpdateDialog(updateInfo);
-                        updateDialog.Show();
+                        updateDialog.ShowDialog();
                     });
                 }
             }
@@ -621,7 +621,7 @@ namespace SpellingChecker
                 if (updateInfo.UpdateAvailable)
                 {
                     var updateDialog = new UpdateDialog(updateInfo);
-                    updateDialog.Show();
+                    updateDialog.ShowDialog();
                 }
                 else
                 {
