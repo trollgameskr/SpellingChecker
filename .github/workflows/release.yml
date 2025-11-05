@@ -21,6 +21,16 @@ jobs:
       with:
         dotnet-version: '9.0.x'
     
+    - name: Update Version in .csproj
+      run: |
+        $version = "${{ github.ref_name }}".TrimStart('v')
+        $csprojPath = "SpellingChecker/SpellingChecker.csproj"
+        $content = Get-Content $csprojPath -Raw
+        $content = $content -replace '<Version>.*?</Version>', "<Version>$version</Version>"
+        Set-Content $csprojPath $content -NoNewline
+        Write-Host "Updated version to: $version"
+      shell: pwsh
+    
     - name: Restore dependencies
       run: dotnet restore SpellingChecker.sln
     
