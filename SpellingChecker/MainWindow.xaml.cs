@@ -150,7 +150,6 @@ namespace SpellingChecker
                 var settings = _settingsService.LoadSettings();
                 popup = new ResultPopupWindow("", selectedText, "Spelling Correction", false, settings, enableHighlighting: true);
                 popup.ShowProgressIndicator();
-                popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(popup.GetResultText());
                 popup.ConvertRequested += async (s, text) => await ReprocessSpellingCorrection(popup, text);
                 popup.ToneChangeRequested += async (s, text) => 
                 {
@@ -207,7 +206,6 @@ namespace SpellingChecker
                 // Create and show popup immediately with progress indicator
                 popup = new ResultPopupWindow("", selectedText, "Translation", true, enableHighlighting: false);
                 popup.ShowProgressIndicator();
-                popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(popup.GetResultText());
                 popup.ConvertRequested += async (s, text) => await ReprocessTranslation(popup, text);
                 popup.Show();
 
@@ -257,7 +255,6 @@ namespace SpellingChecker
                 // Create and show popup immediately with progress indicator
                 popup = new ResultPopupWindow("", selectedText, "Common Question Answer - Ctrl+Enter to reconvert", false, enableHighlighting: false);
                 popup.ShowProgressIndicator();
-                popup.CopyRequested += (s, args) => _clipboardService.SetClipboard(popup.GetResultText());
                 popup.ConvertRequested += async (s, text) => await ReprocessCommonQuestion(popup, text);
                 popup.Show();
 
@@ -374,11 +371,6 @@ namespace SpellingChecker
                 popup = new ResultPopupWindow("", selectedText, "Variable Name Suggestions (C#) - Ctrl+Enter to reconvert", false, enableHighlighting: false, isVariableNameMode: true);
                 popup.ShowProgressIndicator();
                 
-                // Set copy handler to copy only the first variable name
-                popup.CopyRequested += (s, args) => {
-                    var firstVariableName = ExtractFirstVariableName(popup.GetResultText());
-                    _clipboardService.SetClipboard(firstVariableName);
-                };
                 popup.ConvertRequested += async (s, text) => await ReprocessVariableNameSuggestion(popup, text);
                 popup.ToggleModeRequested += async (s, isFunctionMode) => await ToggleVariableFunctionMode(popup, selectedText, isFunctionMode);
                 popup.Show();

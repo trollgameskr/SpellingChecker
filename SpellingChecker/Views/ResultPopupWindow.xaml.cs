@@ -12,7 +12,6 @@ namespace SpellingChecker.Views
     /// </summary>
     public partial class ResultPopupWindow : Window
     {
-        public event EventHandler? CopyRequested;
         public event EventHandler<string>? ConvertRequested;
         public event EventHandler<string>? ToneChangeRequested;
         public event EventHandler<bool>? ToggleModeRequested; // true = to function mode, false = to variable mode
@@ -329,12 +328,6 @@ namespace SpellingChecker.Views
                 // (user may have edited it)
                 ToneChangeRequested?.Invoke(this, OriginalTextBox.Text);
             }
-        }
-
-        private void CopyButton_Click(object sender, RoutedEventArgs e)
-        {
-            CopyRequested?.Invoke(this, EventArgs.Empty);
-            MessageBox.Show("Copied to clipboard!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void ConvertButton_Click(object sender, RoutedEventArgs e)
