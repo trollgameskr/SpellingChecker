@@ -19,6 +19,7 @@ namespace SpellingChecker
     public partial class MainWindow : Window
     {
         private NotifyIcon? _notifyIcon;
+        private System.Drawing.Icon? _trayIcon;
         private HotkeyService _hotkeyService;
         private AIService _aiService;
         private ClipboardService _clipboardService;
@@ -43,7 +44,6 @@ namespace SpellingChecker
         private void InitializeSystemTray()
         {
             // Load custom icon from embedded resource
-            System.Drawing.Icon? appIcon = null;
             try
             {
                 // Try to load from WPF resource
@@ -53,30 +53,31 @@ namespace SpellingChecker
                 {
                     using (var stream = streamResourceInfo.Stream)
                     {
-                        appIcon = new System.Drawing.Icon(stream);
+                        _trayIcon = new System.Drawing.Icon(stream);
                     }
                 }
             }
             catch
             {
+                // WPF resource loading failed, try file system as fallback
                 try
                 {
-                    // Fallback: try to load from file system
                     var iconPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app.ico");
                     if (System.IO.File.Exists(iconPath))
                     {
-                        appIcon = new System.Drawing.Icon(iconPath);
+                        _trayIcon = new System.Drawing.Icon(iconPath);
                     }
                 }
                 catch
                 {
-                    // Fallback to default icon if loading fails
+                    // Both resource and file loading failed - will use system default icon
+                    // This is acceptable as a final fallback
                 }
             }
 
             _notifyIcon = new NotifyIcon
             {
-                Icon = appIcon ?? System.Drawing.SystemIcons.Application,
+                Icon = _trayIcon ?? System.Drawing.SystemIcons.Application,
                 Visible = true,
                 Text = "AI Spelling Checker"
             };
@@ -662,6 +663,7 @@ namespace SpellingChecker
         {
             _hotkeyService?.Dispose();
             _notifyIcon?.Dispose();
+            _trayIcon?.Dispose();
             base.OnClosing(e);
         }
     }
