@@ -19,6 +19,7 @@ namespace SpellingChecker
     public partial class MainWindow : Window
     {
         private NotifyIcon? _notifyIcon;
+        private System.Drawing.Icon? _trayIcon;
         private HotkeyService _hotkeyService;
         private AIService _aiService;
         private ClipboardService _clipboardService;
@@ -42,9 +43,41 @@ namespace SpellingChecker
 
         private void InitializeSystemTray()
         {
+            // Load custom icon from embedded resource
+            try
+            {
+                // Try to load from WPF resource
+                var iconUri = new Uri("pack://application:,,,/app.ico");
+                var streamResourceInfo = Application.GetResourceStream(iconUri);
+                if (streamResourceInfo != null)
+                {
+                    using (var stream = streamResourceInfo.Stream)
+                    {
+                        _trayIcon = new System.Drawing.Icon(stream);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // WPF resource loading failed, try file system as fallback
+                try
+                {
+                    var iconPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app.ico");
+                    if (System.IO.File.Exists(iconPath))
+                    {
+                        _trayIcon = new System.Drawing.Icon(iconPath);
+                    }
+                }
+                catch (Exception)
+                {
+                    // Both resource and file loading failed - will use system default icon
+                    // This is acceptable as a final fallback
+                }
+            }
+
             _notifyIcon = new NotifyIcon
             {
-                Icon = System.Drawing.SystemIcons.Application, // Will be replaced with custom icon
+                Icon = _trayIcon ?? System.Drawing.SystemIcons.Application,
                 Visible = true,
                 Text = "AI Spelling Checker"
             };
@@ -630,6 +663,7 @@ namespace SpellingChecker
         {
             _hotkeyService?.Dispose();
             _notifyIcon?.Dispose();
+            _trayIcon?.Dispose();
             base.OnClosing(e);
         }
     }
