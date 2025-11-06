@@ -42,9 +42,41 @@ namespace SpellingChecker
 
         private void InitializeSystemTray()
         {
+            // Load custom icon from embedded resource
+            System.Drawing.Icon? appIcon = null;
+            try
+            {
+                // Try to load from WPF resource
+                var iconUri = new Uri("pack://application:,,,/app.ico");
+                var streamResourceInfo = Application.GetResourceStream(iconUri);
+                if (streamResourceInfo != null)
+                {
+                    using (var stream = streamResourceInfo.Stream)
+                    {
+                        appIcon = new System.Drawing.Icon(stream);
+                    }
+                }
+            }
+            catch
+            {
+                try
+                {
+                    // Fallback: try to load from file system
+                    var iconPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app.ico");
+                    if (System.IO.File.Exists(iconPath))
+                    {
+                        appIcon = new System.Drawing.Icon(iconPath);
+                    }
+                }
+                catch
+                {
+                    // Fallback to default icon if loading fails
+                }
+            }
+
             _notifyIcon = new NotifyIcon
             {
-                Icon = System.Drawing.SystemIcons.Application, // Will be replaced with custom icon
+                Icon = appIcon ?? System.Drawing.SystemIcons.Application,
                 Visible = true,
                 Text = "AI Spelling Checker"
             };
