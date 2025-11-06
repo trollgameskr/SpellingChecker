@@ -57,7 +57,7 @@ namespace SpellingChecker
                     }
                 }
             }
-            catch
+            catch (Exception)
             {
                 // WPF resource loading failed, try file system as fallback
                 try
@@ -68,7 +68,7 @@ namespace SpellingChecker
                         _trayIcon = new System.Drawing.Icon(iconPath);
                     }
                 }
-                catch
+                catch (Exception)
                 {
                     // Both resource and file loading failed - will use system default icon
                     // This is acceptable as a final fallback
